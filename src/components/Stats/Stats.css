@@ -1,0 +1,42 @@
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  direction: rtl;
+  font-family: "Noto Sans Arabic", sans-serif;
+  background: #ffffff;
+}
+
+
+.stats-section {
+  margin-right: 100px;
+  margin-left: 100px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.stat-card {
+  background: #FFFFFF;
+  border: 1px solid #DCE9FF;
+  border-radius: 12px;
+  padding: 10px  5px;
+  gap: 32px;
+  text-align: center;
+  box-shadow: 0 2px 8px #1E40AF0D;
+}
+
+.stat-card h3 {
+  margin: 0;
+  color: #00288E;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.stat-card p {
+  margin-top: 10px;
+
+  color: #444653;
+
+  font-size: 16px;
+}

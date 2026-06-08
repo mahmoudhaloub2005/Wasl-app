@@ -1,0 +1,122 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Noto Sans Arabic", sans-serif;
+}
+
+body {
+  direction: rtl;
+  background: #ffffff;
+}
+
+.navbar {
+  width: 946px;
+  height: 74px;
+  margin: 35px auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: #f8f9ff;
+  border-radius: 77px;
+  padding: 0 30px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo img {
+  width: 49px;
+  height: 48px;
+}
+
+.logo h2 {
+  font-size: 30px;
+  font-weight: 700;
+  color: #00288e;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  list-style: none;
+}
+
+.links li {
+  position: relative;
+  font-size: 16px;
+  color: #444653;
+  cursor: pointer;
+  padding-bottom: 8px;
+  transition: 0.3s;
+
+  user-select: none;
+  outline: none;
+}
+
+.links li:hover {
+  color: #00288e;
+}
+
+.links li::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+
+  width: 0;
+  height: 2px;
+
+  background: #855300;
+  transition: 0.3s;
+}
+
+.links li.active {
+  color: #00288e;
+}
+
+.links li.active::after {
+  width: 100%;
+}
+
+.links li:focus,
+.links li:focus-visible,
+.links li:active {
+  outline: none;
+  box-shadow: none;
+}
+
+.links li::selection {
+  background: transparent;
+}
+
+.btn {
+  width: 114px;
+  height: 40px;
+
+  border: none;
+  border-radius: 12px;
+
+  background: #00288e;
+  color: #ffffff;
+
+  font-size: 16px;
+  font-weight: 400;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background: #0b3ab6;
+}
