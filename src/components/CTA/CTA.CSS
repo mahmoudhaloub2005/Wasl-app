@@ -1,0 +1,65 @@
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  list-style: none;
+  direction: rtl;
+  font-family: "Noto Sans Arabic", sans-serif;
+  background: #ffffff;
+}
+
+.cta {
+  width: 90%;
+  margin: 80px auto;
+}
+
+.cta-box {
+  background: #1E40AF;
+  border-radius: 22px;
+  padding: 60px 20px;
+  text-align: center;
+
+}
+.cta-box h2 {
+  color: white;
+  font-size: 48px;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.cta-box p {
+  color: #CBDBF5;
+  margin-bottom: 35px;
+}
+
+.cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.signup-btn {
+  background: #FEA619;
+  color: #00288EB2;
+  border: none;
+  border-radius: 10px;
+  padding: 14px 32px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.contact-btn {
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 14px 32px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.signup-btn:hover,
+.contact-btn:hover {
+  transform: translateY(-2px);
+  transition: 0.3s;
+}

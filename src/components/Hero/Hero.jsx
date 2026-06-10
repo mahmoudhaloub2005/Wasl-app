@@ -1,6 +1,6 @@
-import "./Hero.css";
-import { IoFlash } from "react-icons/io5";
 import { FaCheckCircle } from "react-icons/fa";
+import { IoFlash } from "react-icons/io5";
+import "./Hero.css";
 
 function Hero() {
   return (

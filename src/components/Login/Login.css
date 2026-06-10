@@ -1,0 +1,119 @@
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  list-style: none;
+  font-family: "Noto Sans Arabic", sans-serif;
+  background: #ffffff;
+}
+
+.login-section {
+  display: flex;
+  justify-content: center;
+  margin: 40px 0;
+}
+
+.login-container {
+  width: 1000px;
+  min-height: 520px;
+  display: flex;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(0,0,0,.08);
+  background: white;
+}
+
+.login-form {
+  flex: 1;
+  padding: 60px;
+  direction: rtl;
+}
+
+.login-form h4 {
+  color: #1b4db1;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  margin-bottom: 30px;
+  color: #555;
+  font-size: 14px;
+}
+
+.login-form label {
+  display: block;
+  margin-bottom: 8px;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  background: #f3f6fb;
+  border-radius: 8px;
+}
+
+.password-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.password-row a {
+  text-decoration: none;
+  color: #1b4db1;
+  font-size: 13px;
+}
+
+.remember {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.login-form button {
+  width: 100%;
+  margin-top: 25px;
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  background: #0a36a7;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.create-account {
+  margin-top: 25px;
+  text-align: center;
+}
+
+.create-account span {
+  color: #d78b1e;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.login-info {
+  flex: 1;
+  background: #0a36a7;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px;
+  text-align: center;
+}
+
+.login-info h2 {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+.login-info p {
+  line-height: 1.8;
+}
