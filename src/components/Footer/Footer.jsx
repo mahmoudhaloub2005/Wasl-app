@@ -5,7 +5,7 @@ function Footer() {
   return (
     <footer className="footer">
       <div className="footer-container">
-<p className="copyright">  .2024Wassl Digital Platform. All rights reserved © </p>
+<p className="copyright">  .2026Wassl Digital Platform. All rights reserved © </p>
 
         <ul className="footer-links">
           <li>اتفاقية الخدمة</li>

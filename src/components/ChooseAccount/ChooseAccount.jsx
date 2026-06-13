@@ -25,7 +25,7 @@ function ChooseAccount() {
             onClick={() => setSelected("user")}
           >
             <div className="icon">
-              <img src={homeIcon} alt="مواطن" />
+              <img className="imag" src={homeIcon} alt="مواطن" />
             </div>
             <h3>مواطن / مشترك</h3>
             <p>
@@ -39,7 +39,7 @@ function ChooseAccount() {
             onClick={() => setSelected("provider")}
           >
             <div className="icon">
-              <img src={generatorIcon} alt="مزود" />
+              <img className="imag" src={generatorIcon} alt="مزود" />
             </div>
             <h3>مزود خدمة مولدات</h3>
             <p>

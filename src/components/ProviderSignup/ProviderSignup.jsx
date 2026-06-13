@@ -3,7 +3,6 @@ import security from "../../assets/icons/security.svg";
 import images from "../../assets/images/images.png"
 import icons from "../../assets/icons/icons.svg"
 import icons1 from "../../assets/icons/icons1.svg"
-
 import "./ProviderSignup.css";
 
 function ProviderSignupForm() {
