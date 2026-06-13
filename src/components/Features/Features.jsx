@@ -20,7 +20,7 @@ function Features() {
 
       <div className="features-grid">
         <div
-          className={`feature-card ${activeCard === 0 ? "active" : ""}`}
+          className={`feature-card1 ${activeCard === 0 ? "active" : ""}`}
           onClick={() => setActiveCard(0)}
         >
           <FaBolt />
@@ -31,7 +31,7 @@ function Features() {
         </div>
 
         <div
-          className={`feature-card ${activeCard === 1 ? "active" : ""}`}
+          className={`feature-card1 ${activeCard === 1 ? "active" : ""}`}
           onClick={() => setActiveCard(1)}
         >
           <FaShieldAlt />
@@ -42,7 +42,7 @@ function Features() {
         </div>
 
         <div
-          className={`feature-card ${activeCard === 2 ? "active" : ""}`}
+          className={`feature-card1 ${activeCard === 2 ? "active" : ""}`}
           onClick={() => setActiveCard(2)}
         >
           <FaBell />
@@ -53,7 +53,7 @@ function Features() {
         </div>
 
         <div
-          className={`feature-card ${activeCard === 3 ? "active" : ""}`}
+          className={`feature-card1 ${activeCard === 3 ? "active" : ""}`}
           onClick={() => setActiveCard(3)}
         >
           <FaUsers />

@@ -1,0 +1,273 @@
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  list-style: none;
+  font-family: "Noto Sans Arabic", sans-serif;
+  background: #ffffff;
+}
+.provider-signup {
+  min-height: 100vh;
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  direction: rtl;
+  padding: 30px;
+}
+
+.provider-wrapper {
+  width: 1164px;
+  height: 860px;
+  background: #f7f8fc;
+  border-radius: 20px;
+  padding: 30px;
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+
+  box-shadow: 0 5px 25px rgba(0,0,0,.05);
+}
+
+/* ================================= */
+/* الفورم */
+/* ================================= */
+
+.signup-card {
+  width: 488px;
+height: 588px;
+  background: white;
+  border-radius: 14px;
+  padding: 35px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  box-shadow: 0 4px 15px rgba(0,0,0,.04);
+}
+
+.signup-card h2 {
+  color: #00288E;
+  text-align: center;
+  font-size: 20px;
+  margin-bottom: 12px;
+  margin-left:200px;
+}
+
+.subtitle1 {
+  text-align: center;
+  color: #444653;
+  font-size: 13px;
+  line-height: 1.8;
+  margin-bottom: 25px;
+  margin-left: 132px;
+}
+
+.signup-card label {
+  font-weight: 600;
+  color: #0B1C30;
+  margin-bottom: 10px;
+}
+
+.input-box {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.input-box input {
+  width: 100%;
+  height: 48px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0 45px 0 15px;
+  outline: none;
+}
+
+.input-box svg {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  color: #999;
+  font-size: 18px;
+}
+
+.note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.note svg {
+  color: #444653;
+}
+
+.continue-btn {
+  width: 100%;
+  height: 48px;
+  background:#01288E;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.back-login {
+  text-decoration: none;
+  color:  #00288E;
+  margin-top: 18px;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.security {
+  margin: 25px 0 15px;
+  text-align: center;
+  color: #b0b0b0;
+  position: relative;
+  font-size: 12px;
+}
+
+.security::before,
+.security::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 34%;
+  height: 1px;
+  background: #e7e7e7;
+}
+
+.security::before {
+  right: 0;
+}
+
+.security::after {
+  left: 0;
+}
+
+.security-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  color: #777;
+  font-size: 13px;
+}
+
+.security-footer img {
+  width: 35px;
+}
+
+/* ================================= */
+/* القسم الأزرق */
+/* ================================= */
+
+.login-info1 {
+  background: #00288E;
+  border-radius: 18px;
+  padding: 50px 40px;
+  color: white;
+  width: 548px;
+  height: 700px;
+}
+
+.icon-box1 {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin: 0 auto 25px;
+}
+
+.icon-box1 img {
+      width:90px;
+      margin-bottom:20px;
+
+}
+
+.login-info1 h2 {
+  text-align: center;
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+.login-info1 p {
+  text-align: center;
+  line-height: 2;
+  font-size: 14px;
+  color: rgba(255,255,255,.9);
+  margin-bottom: 40px;
+}
+
+.feature-card {
+  width: 374px;
+  height: 98px;
+  background: #EFF4FF;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 10px 16px;
+}
+
+.feature-card img {
+  width: 20px;
+  height: 20px;
+  margin-bottom: 2px;
+}
+
+.feature-card h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #0b1f44;
+  line-height: 1;
+}
+
+.feature-card span {
+  margin: 0;
+  margin-top: 1px;
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.1;
+}
+
+@media (max-width: 992px) {
+  .provider-wrapper {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .signup-card {
+    width: 100%;
+  }
+
+  .login-info {
+    width: 100%;
+  }
+}
+.login-info1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-info1 h2 {
+  margin-top: 20px;
+}
+
+.login-info p {
+  max-width: 500px;
+  margin-bottom: 40px;
+}

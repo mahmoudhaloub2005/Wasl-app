@@ -1,10 +1,20 @@
 import "./Login.css";
-
+import images from "../../assets/images/images.png"
 function Login() {
   return (
     <section className="login-section">
       <div className="login-container">
+ <div className="login-info">
+   <div className="icon-box">
+    <img src={images} alt="images" />
+  </div>
+          <h2>وصل - مستقبل الطاقة المحلية</h2>
 
+          <p>
+            منصة وصل توفر لك تحكماً كاملاً في استهلاك الطاقة
+            والربط مع المزودين وإدارة فواتيرك بسهولة.
+          </p>
+        </div>
         <div className="login-form">
           <h4>مرحباً بك مجدداً</h4>
 
@@ -39,15 +49,6 @@ function Login() {
 
           <p className="create-account">
             ليس لديك حساب؟ <span>إنشاء حساب جديد</span>
-          </p>
-        </div>
-
-        <div className="login-info">
-          <h2>وصل - مستقبل الطاقة المحلية</h2>
-
-          <p>
-            منصة وصل توفر لك تحكماً كاملاً في استهلاك الطاقة
-            والربط مع المزودين وإدارة فواتيرك بسهولة.
           </p>
         </div>
 
