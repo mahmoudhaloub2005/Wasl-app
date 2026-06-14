@@ -1,0 +1,346 @@
+/* ===========================
+   ProviderRegister.css
+=========================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Noto Sans Arabic", sans-serif;
+}
+
+body {
+  direction: rtl;
+}
+
+.provider-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #F8F9FF;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding-top: 40px;
+  padding-bottom: 60px;
+}
+
+/* =======================
+      Progress
+======================= */
+
+.steps {
+  width: 520px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 40px;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  font-size: 12px;
+  color: #808080;
+
+  min-width: 90px;
+}
+
+.circle {
+  width: 30px;
+  height: 30px;
+
+  border-radius: 50%;
+
+  background: #E5EEFF;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #666;
+  font-size: 13px;
+  font-weight: 700;
+
+  margin-bottom: 8px;
+}
+
+.step.active .circle {
+  background: #00288E;
+  color: white;
+}
+
+.step.active span {
+  color: #00288E;
+  font-weight: 700;
+}
+
+.line {
+  width: 95px;
+  height: 2px;
+  background: #d8dde8;
+  margin-bottom: 25px;
+}
+
+/* =======================
+          Card
+======================= */
+
+.provider-card {
+  width: 670px;
+
+  background: white;
+
+  border-radius: 14px;
+
+  padding: 35px 45px;
+
+  box-shadow:
+    0 4px 20px rgba(0,0,0,.05);
+
+  border: 1px solid #ececec;
+}
+
+.provider-card h2 {
+  text-align: center;
+
+  color: #0B1C30;
+
+  font-size: 34px;
+
+  margin-bottom: 12px;
+}
+
+.desc {
+  text-align: center;
+
+  color: #444653;
+
+  font-size: 14px;
+
+  margin-bottom: 35px;
+}
+
+/* =======================
+          Form
+======================= */
+
+.row {
+  display: flex;
+
+  gap: 22px;
+
+  margin-bottom: 24px;
+}
+
+.input-group {
+  flex: 1;
+}
+
+.input-group label {
+  display: block;
+
+  margin-bottom: 10px;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  color: #444653;
+}
+
+.full {
+  margin-bottom: 24px;
+}
+
+.input {
+  height: 52px;
+
+  background: #EFF4FF;
+
+  border-radius: 8px;
+
+  padding: 0 16px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  border: 1px solid transparent;
+
+  transition: .3s;
+}
+
+.input:hover {
+  border: 1px solid #0d3aa9;
+}
+
+.input input {
+  border: none;
+
+  background: transparent;
+
+  width: 100%;
+
+  outline: none;
+
+  text-align: right;
+
+  font-size: 16px;
+
+  color: #444653;
+}
+
+.input svg {
+  color: #444653;
+
+  font-size: 20px;
+
+  flex-shrink: 0;
+}
+
+.password {
+  gap: 15px;
+}
+
+/* =======================
+      checkbox
+======================= */
+
+.check {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: flex-start;
+
+  gap: 10px;
+
+  margin-top: 12px;
+
+  margin-bottom: 40px;
+
+  font-size: 15px;
+
+  color: #444653;
+}
+
+.check input {
+  width: 20px;
+  height: 20px;
+
+  cursor: pointer;
+}
+
+.check a {
+  color: #00288E;
+
+  text-decoration: none;
+
+  font-weight: 700;
+}
+
+/* =======================
+        Button
+======================= */
+
+.next-btn1 {
+  width: 100%;
+
+  height: 56px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  background: #01288E;
+
+  color: white;
+
+  font-size: 28px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: .3s;
+}
+
+
+
+/* =======================
+        Login
+======================= */
+
+.login-text {
+  margin-top: 28px;
+
+  text-align: center;
+
+  color: #444653;
+
+  font-size: 16px;
+}
+
+.login-text a {
+  color: #0d3aa9;
+
+  text-decoration: none;
+
+  font-weight: 700;
+}
+
+/* =======================
+      Responsive
+======================= */
+
+@media (max-width:768px) {
+
+  .provider-card {
+
+    width: 95%;
+
+    padding: 25px;
+
+  }
+
+  .steps {
+
+    width: 100%;
+
+  }
+
+  .row {
+
+    flex-direction: column;
+
+    gap: 20px;
+
+  }
+
+  .line {
+
+    width: 45px;
+
+  }
+
+  .provider-card h2 {
+
+    font-size: 26px;
+
+  }
+
+  .next-btn {
+
+    font-size: 20px;
+
+  }
+
+}
