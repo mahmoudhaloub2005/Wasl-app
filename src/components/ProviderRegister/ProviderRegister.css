@@ -13,31 +13,35 @@ body {
   direction: rtl;
 }
 
+/* =======================
+        Page
+======================= */
+
 .provider-page {
   width: 100%;
   min-height: 100vh;
-  background: #F8F9FF;
+  background: #f8f9ff;
 
   display: flex;
   flex-direction: column;
   align-items: center;
 
-  padding-top: 40px;
-  padding-bottom: 60px;
+  padding-top: 80px;
+  padding-bottom: 70px;
 }
 
 /* =======================
-      Progress
+      Progress Steps
 ======================= */
 
 .steps {
-  width: 520px;
+  width: 620px;
 
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
 
-  margin-bottom: 40px;
+  margin-bottom: 58px;
 }
 
 .step {
@@ -45,46 +49,54 @@ body {
   flex-direction: column;
   align-items: center;
 
-  font-size: 12px;
-  color: #808080;
+  min-width: 130px;
 
-  min-width: 90px;
+  color: #444653;
 }
 
 .circle {
-  width: 30px;
-  height: 30px;
+  width: 44px;
+  height: 44px;
 
   border-radius: 50%;
 
-  background: #E5EEFF;
+  background: #d5e9ff;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  color: #666;
-  font-size: 13px;
+  color: #071a3d;
+  font-size: 15px;
   font-weight: 700;
 
-  margin-bottom: 8px;
+  margin-bottom: 14px;
+}
+
+.step span {
+  font-size: 15px;
+  white-space: nowrap;
+  color: #444653;
 }
 
 .step.active .circle {
-  background: #00288E;
+  background: #00288e;
   color: white;
+  box-shadow: 0 0 0 5px #dbeafe;
 }
 
 .step.active span {
-  color: #00288E;
+  color: #00288e;
   font-weight: 700;
 }
 
 .line {
-  width: 95px;
-  height: 2px;
-  background: #d8dde8;
-  margin-bottom: 25px;
+  width: 100px;
+  height: 4px;
+
+  background: #dbeafe;
+
+  margin-top: 20px;
 }
 
 /* =======================
@@ -92,16 +104,15 @@ body {
 ======================= */
 
 .provider-card {
-  width: 670px;
+  width: 896px;
 
   background: white;
 
   border-radius: 14px;
 
-  padding: 35px 45px;
+  padding: 48px 49px 64px;
 
-  box-shadow:
-    0 4px 20px rgba(0,0,0,.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 
   border: 1px solid #ececec;
 }
@@ -109,11 +120,12 @@ body {
 .provider-card h2 {
   text-align: center;
 
-  color: #0B1C30;
+  color: #0b1c30;
 
-  font-size: 34px;
+  font-size: 36px;
+  font-weight: 800;
 
-  margin-bottom: 12px;
+  margin-bottom: 18px;
 }
 
 .desc {
@@ -121,9 +133,10 @@ body {
 
   color: #444653;
 
-  font-size: 14px;
+  font-size: 15px;
+  line-height: 1.8;
 
-  margin-bottom: 35px;
+  margin-bottom: 42px;
 }
 
 /* =======================
@@ -133,9 +146,9 @@ body {
 .row {
   display: flex;
 
-  gap: 22px;
+  gap: 32px;
 
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .input-group {
@@ -155,13 +168,13 @@ body {
 }
 
 .full {
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .input {
   height: 52px;
 
-  background: #EFF4FF;
+  background: #eff4ff;
 
   border-radius: 8px;
 
@@ -175,11 +188,13 @@ body {
 
   border: 1px solid transparent;
 
-  transition: .3s;
+  transition: 0.3s;
 }
 
-.input:hover {
+.input:hover,
+.input:focus-within {
   border: 1px solid #0d3aa9;
+  background: #f6f9ff;
 }
 
 .input input {
@@ -198,6 +213,10 @@ body {
   color: #444653;
 }
 
+.input input::placeholder {
+  color: #8a94a6;
+}
+
 .input svg {
   color: #444653;
 
@@ -211,7 +230,7 @@ body {
 }
 
 /* =======================
-      checkbox
+      Checkbox
 ======================= */
 
 .check {
@@ -240,7 +259,7 @@ body {
 }
 
 .check a {
-  color: #00288E;
+  color: #00288e;
 
   text-decoration: none;
 
@@ -260,20 +279,24 @@ body {
 
   border-radius: 12px;
 
-  background: #01288E;
+  background: #00288e;
 
   color: white;
 
-  font-size: 28px;
+  font-size: 22px;
 
   font-weight: 700;
 
   cursor: pointer;
 
-  transition: .3s;
+  transition: 0.3s;
 }
 
-
+.next-btn1:hover {
+  background: #001f70;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0, 40, 142, 0.25);
+}
 
 /* =======================
         Login
@@ -301,46 +324,42 @@ body {
       Responsive
 ======================= */
 
-@media (max-width:768px) {
+@media (max-width: 900px) {
+  .provider-page {
+    padding: 50px 15px 60px;
+  }
 
   .provider-card {
-
     width: 95%;
-
-    padding: 25px;
-
+    padding: 35px 25px;
   }
 
   .steps {
-
     width: 100%;
-
-  }
-
-  .row {
-
-    flex-direction: column;
-
-    gap: 20px;
-
   }
 
   .line {
+    width: 55px;
+  }
 
-    width: 45px;
+  .step {
+    min-width: 95px;
+  }
 
+  .step span {
+    font-size: 12px;
+  }
+
+  .row {
+    flex-direction: column;
+    gap: 20px;
   }
 
   .provider-card h2 {
-
-    font-size: 26px;
-
+    font-size: 28px;
   }
 
-  .next-btn {
-
-    font-size: 20px;
-
+  .next-btn1 {
+    font-size: 18px;
   }
-
 }

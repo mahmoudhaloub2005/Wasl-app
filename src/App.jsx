@@ -9,6 +9,8 @@ import OtpPage from "./pages/OtpPage"
 import NewPassword from "./pages/NewPassword"
 import ResetSuccess from "./pages/ResetSuccess"
 import ProviderRegister from "./pages/ProviderRegister"
+import ProviderGeneratorInfo from "./pages/ProviderGeneratorInfo"
+import ProviderDocuments from "./pages/ProviderDocuments"
 function App() {
   return (
     <>
@@ -23,6 +25,9 @@ function App() {
       <NewPassword/>
       <ResetSuccess/>
       <ProviderRegister/>
+      <ProviderGeneratorInfo/>
+      <ProviderDocuments/>
+  
  </>
 
   );
