@@ -13,6 +13,7 @@ import ProviderGeneratorInfo from "./pages/ProviderGeneratorInfo"
 import ProviderDocuments from "./pages/ProviderDocuments"
 import ProviderPending from "./pages/ProviderPending"
 import ProviderSuccess from "./pages/ProviderSuccess"
+import ContactUs from "./pages/ContactUs"
 function App() {
   return (
     <>
@@ -31,6 +32,7 @@ function App() {
       <ProviderDocuments/>
       <ProviderPending/>
       <ProviderSuccess/>
+      <ContactUs/>
  </>
 
   );
