@@ -138,3 +138,22 @@ body {
     color: #00288E;
      text-decoration: none; 
 }
+.error-msg {
+  color: #dc2626;
+  font-size: 14px;
+  margin: 10px 0;
+  text-align: center;
+}
+
+.resend-btn {
+  border: none;
+  background: none;
+  color: #00288e;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.resend-btn:hover {
+  text-decoration: underline;
+}

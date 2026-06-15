@@ -11,6 +11,8 @@ import ResetSuccess from "./pages/ResetSuccess"
 import ProviderRegister from "./pages/ProviderRegister"
 import ProviderGeneratorInfo from "./pages/ProviderGeneratorInfo"
 import ProviderDocuments from "./pages/ProviderDocuments"
+import ProviderPending from "./pages/ProviderPending"
+import ProviderSuccess from "./pages/ProviderSuccess"
 function App() {
   return (
     <>
@@ -27,7 +29,8 @@ function App() {
       <ProviderRegister/>
       <ProviderGeneratorInfo/>
       <ProviderDocuments/>
-  
+      <ProviderPending/>
+      <ProviderSuccess/>
  </>
 
   );

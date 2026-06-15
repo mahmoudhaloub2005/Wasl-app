@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./Features.css";
 import {
   FaBolt,
@@ -8,7 +8,46 @@ import {
 } from "react-icons/fa";
 
 function Features() {
-  const [activeCard, setActiveCard] = useState(0);
+  const [activeCard, setActiveCard] = useState(() => {
+    const savedCard = localStorage.getItem("activeFeatureCard");
+
+    if (savedCard !== null) {
+      return Number(savedCard);
+    }
+
+    return 0;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("activeFeatureCard", activeCard);
+  }, [activeCard]);
+
+  const featuresData = [
+    {
+      icon: FaBolt,
+      title: "مراقبة الاستهلاك",
+      description: "تابع استهلاكك للطاقة لحظة بلحظة من أي مكان.",
+    },
+    {
+      icon: FaShieldAlt,
+      title: "دفع إلكتروني آمن",
+      description: "ادفع فواتيرك بسهولة وأمان باستخدام وسائل الدفع المختلفة.",
+    },
+    {
+      icon: FaBell,
+      title: "تنبيهات فورية",
+      description: "استقبل إشعارات مباشرة حول الفواتير والانقطاعات.",
+    },
+    {
+      icon: FaUsers,
+      title: "مجتمع المزودين",
+      description: "تواصل مع مزودي الطاقة واستكشف الخدمات المتاحة.",
+    },
+  ];
+
+  const handleCardClick = (index) => {
+    setActiveCard(index);
+  };
 
   return (
     <section className="features">
@@ -19,49 +58,23 @@ function Features() {
       </p>
 
       <div className="features-grid">
-        <div
-          className={`feature-card1 ${activeCard === 0 ? "active" : ""}`}
-          onClick={() => setActiveCard(0)}
-        >
-          <FaBolt />
-          <h3>مراقبة الاستهلاك</h3>
-          <p>
-            تابع استهلاكك للطاقة لحظة بلحظة من أي مكان.
-          </p>
-        </div>
+        {featuresData.map((feature, index) => {
+          const Icon = feature.icon;
 
-        <div
-          className={`feature-card1 ${activeCard === 1 ? "active" : ""}`}
-          onClick={() => setActiveCard(1)}
-        >
-          <FaShieldAlt />
-          <h3>دفع إلكتروني آمن</h3>
-          <p>
-            ادفع فواتيرك بسهولة وأمان باستخدام وسائل الدفع المختلفة.
-          </p>
-        </div>
+          return (
+            <div
+              key={index}
+              className={`feature-card1 ${activeCard === index ? "active" : ""}`}
+              onClick={() => handleCardClick(index)}
+            >
+              <Icon />
 
-        <div
-          className={`feature-card1 ${activeCard === 2 ? "active" : ""}`}
-          onClick={() => setActiveCard(2)}
-        >
-          <FaBell />
-          <h3>تنبيهات فورية</h3>
-          <p>
-            استقبل إشعارات مباشرة حول الفواتير والانقطاعات.
-          </p>
-        </div>
+              <h3>{feature.title}</h3>
 
-        <div
-          className={`feature-card1 ${activeCard === 3 ? "active" : ""}`}
-          onClick={() => setActiveCard(3)}
-        >
-          <FaUsers />
-          <h3>مجتمع المزودين</h3>
-          <p>
-            تواصل مع مزودي الطاقة واستكشف الخدمات المتاحة.
-          </p>
-        </div>
+              <p>{feature.description}</p>
+            </div>
+          );
+        })}
       </div>
     </section>
   );

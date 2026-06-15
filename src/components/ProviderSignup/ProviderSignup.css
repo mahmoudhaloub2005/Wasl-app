@@ -271,3 +271,9 @@ height: 588px;
   max-width: 500px;
   margin-bottom: 40px;
 }
+.signup-error {
+  color: #dc2626;
+  font-size: 14px;
+  margin: 8px 0 12px;
+  text-align: right;
+}

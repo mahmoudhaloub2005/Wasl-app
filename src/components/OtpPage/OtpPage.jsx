@@ -1,13 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import "./OtpPage.css";
-import imag from "../../assets/icons/image.png"
+import imag from "../../assets/icons/image.png";
 
 export default function OtpPage() {
   const [otp, setOtp] = useState(new Array(6).fill(""));
-  const [timer, setTimer] = useState(120); // 2 minutes
+  const [timer, setTimer] = useState(120);
+  const [error, setError] = useState("");
+
   const inputsRef = useRef([]);
 
-  // ⏱️ Countdown
   useEffect(() => {
     if (timer <= 0) return;
 
@@ -24,9 +25,9 @@ export default function OtpPage() {
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
+    setError("");
 
-    // move next
-    if (value && index < 5) {
+    if (value && index < otp.length - 1) {
       inputsRef.current[index + 1].focus();
     }
   };
@@ -39,40 +40,57 @@ export default function OtpPage() {
 
   const handleVerify = () => {
     const code = otp.join("");
+
+    if (code.length < 6) {
+      setError("يرجى إدخال رمز التحقق كاملًا");
+      return;
+    }
+
+    setError("");
+
+    console.log("رمز التحقق:", code);
+
+    // هون بعدين بتحط كود التحقق من الـ API
     alert("OTP Entered: " + code);
   };
 
   const formatTime = () => {
-    const m = String(Math.floor(timer / 60)).padStart(2, "0");
-    const s = String(timer % 60).padStart(2, "0");
-    return `${m}:${s}`;
+    const minutes = String(Math.floor(timer / 60)).padStart(2, "0");
+    const seconds = String(timer % 60).padStart(2, "0");
+
+    return `${minutes}:${seconds}`;
   };
 
   const resend = () => {
     setTimer(120);
     setOtp(new Array(6).fill(""));
-    inputsRef.current[0].focus();
+    setError("");
+
+    setTimeout(() => {
+      inputsRef.current[0]?.focus();
+    }, 0);
+
+    // هون بعدين بتحط كود إعادة إرسال الرمز من الـ API
+    console.log("تم إعادة إرسال الرمز");
   };
 
   return (
     <div className="otp-page">
-
-      
-
-      {/* Card */}
       <div className="otp-container">
         <div className="otp-card">
-            <img className="icon1" src={imag} alt="" />
+          <img className="icon1" src={imag} alt="logo" />
 
           <h2>التحقق من البريد الإلكتروني</h2>
+
           <div className="p2">
             <p>
-              تم إرسال رمز التحقق إلى بريدك: <a href="">user@example.com</a>
+              تم إرسال رمز التحقق إلى بريدك:
+              <a href="#"> user@example.com</a>
             </p>
           </div>
+
           <p>أدخل رمز التحقق المكون من 6 أرقام</p>
 
-          {/* OTP Inputs */}
           <div className="otp-inputs">
             {otp.map((num, index) => (
               <input
@@ -87,21 +105,25 @@ export default function OtpPage() {
             ))}
           </div>
 
+          {error && <p className="error-msg">{error}</p>}
+
           <button className="verify-btn" onClick={handleVerify}>
             تأكيد الرمز
           </button>
 
-          {/* Timer */}
           <div className="resend">
             {timer > 0 ? (
-              <p>إعادة الإرسال الرمز خلال {formatTime()}</p>
+              <p>إعادة إرسال الرمز خلال {formatTime()}</p>
             ) : (
-              <a onClick={resend} style={{ cursor: "pointer" }}>
+              <button className="resend-btn" onClick={resend}>
                 إعادة إرسال الرمز
-              </a>
+              </button>
             )}
           </div>
-          <div className="link"> <a href=""> تغيير البريد الإلكتروني </a></div>
+
+          <div className="link">
+            <a href="#">تغيير البريد الإلكتروني</a>
+          </div>
         </div>
       </div>
     </div>

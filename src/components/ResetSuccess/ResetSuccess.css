@@ -233,3 +233,32 @@
     font-size: 12px;
   }
 }
+.support-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.back-link {
+  border: none;
+  background: none;
+  color: #00288e;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.support-message {
+  margin-top: 10px;
+  color: #00288e;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+}
