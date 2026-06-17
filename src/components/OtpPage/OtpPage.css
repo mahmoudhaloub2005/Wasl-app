@@ -33,8 +33,12 @@ body {
   border-radius: 18px;
   text-align: center;
   box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
 }
-
+.otp-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+}
 .icon {
   font-size: 28px;
   margin-bottom: 10px;
@@ -133,4 +137,23 @@ body {
 .p2 a{
     color: #00288E;
      text-decoration: none; 
+}
+.error-msg {
+  color: #dc2626;
+  font-size: 14px;
+  margin: 10px 0;
+  text-align: center;
+}
+
+.resend-btn {
+  border: none;
+  background: none;
+  color: #00288e;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.resend-btn:hover {
+  text-decoration: underline;
 }

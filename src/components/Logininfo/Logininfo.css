@@ -1,19 +1,29 @@
-body {
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   list-style: none;
+}
+
+body {
   font-family: "Noto Sans Arabic", sans-serif;
   background: #ffffff;
+  direction: rtl;
 }
+
+/* ================= Login Container ================= */
+
 .login-container {
   width: 1000px;
+  max-width: 90%;
   margin: 40px auto;
   display: flex;
   justify-content: center;
   gap: 25px;
   align-items: stretch;
 }
+
+/* ================= Blue Info Card ================= */
 
 .login-info {
   width: 45%;
@@ -40,8 +50,10 @@ body {
 
 .login-info p {
   line-height: 1.8;
-  
+  font-size: 16px;
 }
+
+/* ================= Signup Form ================= */
 
 .signup-form {
   width: 45%;
@@ -61,7 +73,10 @@ body {
   text-align: center;
   color: #444653;
   margin-bottom: 25px;
+  line-height: 1.7;
 }
+
+/* ================= Form Inputs ================= */
 
 .form-group {
   display: flex;
@@ -78,10 +93,20 @@ body {
 .form-group input {
   height: 45px;
   border: none;
+  outline: none;
   background: #edf1fa;
   border-radius: 8px;
   padding: 0 12px;
+  font-family: "Noto Sans Arabic", sans-serif;
+  font-size: 14px;
 }
+
+.form-group input:focus {
+  border: 1px solid #00288E;
+  background: #ffffff;
+}
+
+/* ================= Row Inputs ================= */
 
 .row {
   display: flex;
@@ -91,6 +116,8 @@ body {
 .row .form-group {
   flex: 1;
 }
+
+/* ================= Terms ================= */
 
 .terms {
   display: flex;
@@ -103,7 +130,7 @@ body {
 
 .terms label {
   font-size: 14px;
-  color:#444653;
+  color: #444653;
 }
 
 .terms a {
@@ -118,6 +145,8 @@ body {
   cursor: pointer;
 }
 
+/* ================= Button ================= */
+
 .signups-btn {
   width: 100%;
   height: 50px;
@@ -127,15 +156,198 @@ body {
   color: white;
   font-size: 16px;
   cursor: pointer;
+  font-family: "Noto Sans Arabic", sans-serif;
+  transition: 0.3s;
 }
+
+.signups-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(254, 166, 25, 0.3);
+}
+
+/* ================= Login Link ================= */
 
 .login-link {
   text-align: center;
   margin-top: 15px;
+  color: #444653;
 }
 
 .login-link a {
   color: #00288E;
   text-decoration: none;
   font-weight: bold;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
+
+/* ================= Responsive ================= */
+
+/* Laptop Small */
+@media (max-width: 1100px) {
+  .login-container {
+    width: 90%;
+    gap: 20px;
+  }
+
+  .login-info {
+    padding: 35px 25px;
+  }
+
+  .signup-form {
+    padding: 30px 25px;
+  }
+
+  .login-info h2 {
+    font-size: 30px;
+  }
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  .login-container {
+    flex-direction: column;
+    align-items: center;
+    margin: 35px auto;
+  }
+
+  .login-info,
+  .signup-form {
+    width: 100%;
+    max-width: 600px;
+  }
+
+  .login-info {
+    min-height: 280px;
+  }
+
+  .login-info h2 {
+    font-size: 28px;
+  }
+
+  .login-info p {
+    font-size: 15px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .login-container {
+    width: 94%;
+    max-width: 94%;
+    margin: 25px auto;
+    gap: 18px;
+  }
+
+  .login-info,
+  .signup-form {
+    border-radius: 16px;
+  }
+
+  .login-info {
+    padding: 30px 20px;
+  }
+
+  .icon-box img {
+    width: 70px;
+    margin-bottom: 18px;
+  }
+
+  .login-info h2 {
+    font-size: 24px;
+    margin-bottom: 14px;
+  }
+
+  .login-info p {
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  .signup-form {
+    padding: 25px 18px;
+  }
+
+  .signup-form h2 {
+    font-size: 23px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .form-group {
+    margin-bottom: 14px;
+  }
+
+  .form-group input {
+    height: 44px;
+    font-size: 14px;
+  }
+
+  .terms {
+    justify-content: flex-start;
+    align-items: flex-start;
+    line-height: 1.6;
+    font-size: 13px;
+  }
+
+  .terms label {
+    font-size: 13px;
+  }
+
+  .terms input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-top: 3px;
+  }
+
+  .signups-btn {
+    height: 48px;
+    font-size: 15px;
+  }
+
+  .login-link {
+    font-size: 14px;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 380px) {
+  .login-info {
+    padding: 25px 15px;
+  }
+
+  .signup-form {
+    padding: 22px 14px;
+  }
+
+  .login-info h2 {
+    font-size: 22px;
+  }
+
+  .signup-form h2 {
+    font-size: 21px;
+  }
+
+  .form-group label {
+    font-size: 13px;
+  }
+
+  .terms label {
+    font-size: 12px;
+  }
+}
+.error-msg {
+  color: #dc2626;
+  font-size: 14px;
+  margin: 8px 0 12px;
+  text-align: right;
 }

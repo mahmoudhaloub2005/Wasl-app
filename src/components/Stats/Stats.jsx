@@ -1,27 +1,40 @@
+import { useState } from "react";
 import "./Stats.css";
 
+function useStats() {
+  const [stats] = useState([
+    {
+      number: "50k+",
+      title: "مشترك نشط",
+    },
+    {
+      number: "200+",
+      title: "مزود طاقة معتمد",
+    },
+    {
+      number: "99.9%",
+      title: "وقت التشغيل",
+    },
+    {
+      number: "24/7",
+      title: "دعم فني متواصل",
+    },
+  ]);
+
+  return stats;
+}
+
 function Stats() {
+  const stats = useStats();
+
   return (
     <section className="stats-section">
-      <div className="stat-card">
-        <h3>50k+</h3>
-        <p>مشترك نشط</p>
-      </div>
-
-      <div className="stat-card">
-        <h3>200+</h3>
-        <p>مزود طاقة معتمد</p>
-      </div>
-
-      <div className="stat-card">
-        <h3>99.9%</h3>
-        <p>وقت التشغيل</p>
-      </div>
-
-      <div className="stat-card">
-        <h3>24/7</h3>
-        <p>دعم فني متواصل</p>
-      </div>
+      {stats.map((item, index) => (
+        <div className="stat-card" key={index}>
+          <h3>{item.number}</h3>
+          <p>{item.title}</p>
+        </div>
+      ))}
     </section>
   );
 }

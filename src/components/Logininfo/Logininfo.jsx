@@ -1,10 +1,51 @@
+import { useState } from "react";
 import "./Logininfo.css";
 import images from "../../assets/images/images.png";
 
 function Logininfo() {
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+    terms: false,
+  });
+
+  const [error, setError] = useState("");
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!formData.terms) {
+      setError("يجب الموافقة على الشروط والأحكام");
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("كلمة المرور غير متطابقة");
+      return;
+    }
+
+    setError("");
+
+    console.log("بيانات التسجيل:", formData);
+
+    // هون بعدين بتحط كود إرسال البيانات للـ API
+  };
+
   return (
     <div className="login-container">
-      <div className="signup-form">
+      <form className="signup-form" onSubmit={handleSubmit}>
         <h2>انضم كمشترك جديد</h2>
 
         <p className="subtitle">
@@ -13,55 +54,93 @@ function Logininfo() {
 
         <div className="form-group">
           <label>الاسم الكامل</label>
-          <input type="text" placeholder="أدخل اسمك الثلاثي" />
+          <input
+            type="text"
+            name="fullName"
+            value={formData.fullName}
+            onChange={handleChange}
+            placeholder="أدخل اسمك الثلاثي"
+          />
         </div>
 
         <div className="row">
           <div className="form-group">
             <label>الإيميل</label>
-            <input type="email" placeholder="**@**.com" />
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="**@**.com"
+            />
           </div>
 
           <div className="form-group">
             <label>الهاتف</label>
-            <input type="text" placeholder="05********" />
+            <input
+              type="text"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              placeholder="05********"
+            />
           </div>
         </div>
 
         <div className="row">
           <div className="form-group">
             <label>كلمة المرور</label>
-            <input type="password" placeholder="********" />
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="********"
+            />
           </div>
 
           <div className="form-group">
             <label>تأكيد كلمة المرور</label>
-            <input type="password" placeholder="********" />
+            <input
+              type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              placeholder="********"
+            />
           </div>
         </div>
 
-       <div className="terms">
-  <input type="checkbox" id="terms" />
+        <div className="terms">
+          <input
+            type="checkbox"
+            id="terms"
+            name="terms"
+            checked={formData.terms}
+            onChange={handleChange}
+          />
 
-  <label htmlFor="terms">
-    أوافق على
-    <a href="/"> الشروط والأحكام </a>
-    و
-    <a href="/"> سياسة الخصوصية </a>
-    الخاصة بمنصة وصل.
-  </label>
-</div>
+          <label htmlFor="terms">
+            أوافق على
+            <a href="/"> الشروط والأحكام </a>
+            و
+            <a href="/"> سياسة الخصوصية </a>
+            الخاصة بمنصة وصل.
+          </label>
+        </div>
 
-        <button className="signups-btn">
-           إنشاء حسابي
+        {error && <p className="error-msg">{error}</p>}
+
+        <button type="submit" className="signups-btn">
+          إنشاء حسابي
         </button>
 
         <p className="login-link">
           لديك حساب بالفعل؟ <a href="/">تسجيل الدخول</a>
         </p>
-        
-      </div>
-<div className="login-info">
+      </form>
+
+      <div className="login-info">
         <div className="icon-box">
           <img src={images} alt="logo" />
         </div>
@@ -73,7 +152,6 @@ function Logininfo() {
           والربط مع المزودين وإدارة فواتيرك بسهولة.
         </p>
       </div>
-
     </div>
   );
 }

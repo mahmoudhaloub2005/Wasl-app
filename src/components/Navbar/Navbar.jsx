@@ -7,6 +7,10 @@ function Navbar() {
 
   const links = ["المزودون", "الأسعار", "الشبكة", "المجتمع"];
 
+  const handleActiveLink = (item) => {
+    setActive(item);
+  };
+
   return (
     <nav className="navbar">
       <div className="logo">
@@ -17,10 +21,10 @@ function Navbar() {
       <ul className="links">
         {links.map((item) => (
           <li
-             key={item}
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={() => setActive(item)}
-             className={active === item ? "active" : ""}
+            key={item}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => handleActiveLink(item)}
+            className={active === item ? "active" : ""}
           >
             {item}
           </li>
