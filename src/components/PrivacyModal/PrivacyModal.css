@@ -1,0 +1,104 @@
+
+.privacy-overlay{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.35);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:999;
+
+}
+
+.privacy-modal{
+
+    width:800px;
+
+    background:white;
+
+    border-radius:18px;
+
+    padding:35px;
+
+    position:relative;
+
+}
+
+.close-btn{
+
+    position:absolute;
+
+    left:20px;
+
+    top:20px;
+
+    background:none;
+
+    border:none;
+
+    cursor:pointer;
+
+    font-size:22px;
+
+}
+
+.privacy-modal h2{
+
+    color:#00288E;
+
+    margin-bottom:30px;
+
+    text-align:right;
+
+}
+
+.privacy-content{
+
+    max-height:450px;
+
+    overflow-y:auto;
+
+}
+
+.privacy-content h3{
+
+    color:#00288E;
+
+    margin-top:25px;
+
+}
+
+.privacy-content p{
+
+    line-height:1.9;
+
+    color:#555;
+
+}
+
+.accept-btn{
+
+    margin-top:30px;
+
+    width:150px;
+
+    height:45px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#00288E;
+
+    color:white;
+
+    cursor:pointer;
+
+}
