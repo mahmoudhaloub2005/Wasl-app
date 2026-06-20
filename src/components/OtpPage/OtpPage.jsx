@@ -1,8 +1,16 @@
 import { useState, useRef, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./OtpPage.css";
 import imag from "../../assets/icons/image.png";
 
 export default function OtpPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const email = location.state?.email || "user@example.com";
+  const flow = location.state?.flow || "signup";
+  const accountType = location.state?.accountType || "user";
+
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const [timer, setTimer] = useState(120);
   const [error, setError] = useState("");
@@ -28,13 +36,13 @@ export default function OtpPage() {
     setError("");
 
     if (value && index < otp.length - 1) {
-      inputsRef.current[index + 1].focus();
+      inputsRef.current[index + 1]?.focus();
     }
   };
 
   const handleKeyDown = (e, index) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
-      inputsRef.current[index - 1].focus();
+      inputsRef.current[index - 1]?.focus();
     }
   };
 
@@ -50,8 +58,21 @@ export default function OtpPage() {
 
     console.log("رمز التحقق:", code);
 
-    // هون بعدين بتحط كود التحقق من الـ API
-    alert("OTP Entered: " + code);
+    if (flow === "reset-password") {
+      navigate("/new-password", {
+        state: {
+          email: email,
+        },
+      });
+      return;
+    }
+
+    if (flow === "signup" && accountType === "user") {
+      navigate("/login");
+      return;
+    }
+
+    navigate("/login");
   };
 
   const formatTime = () => {
@@ -70,8 +91,16 @@ export default function OtpPage() {
       inputsRef.current[0]?.focus();
     }, 0);
 
-    // هون بعدين بتحط كود إعادة إرسال الرمز من الـ API
-    console.log("تم إعادة إرسال الرمز");
+    console.log("تم إعادة إرسال الرمز إلى:", email);
+  };
+
+  const handleChangeEmail = () => {
+    if (flow === "reset-password") {
+      navigate("/forgot-password");
+      return;
+    }
+
+    navigate("/login-info");
   };
 
   return (
@@ -85,7 +114,7 @@ export default function OtpPage() {
           <div className="p2">
             <p>
               تم إرسال رمز التحقق إلى بريدك:
-              <a href="#"> user@example.com</a>
+              <span> {email}</span>
             </p>
           </div>
 
@@ -107,7 +136,7 @@ export default function OtpPage() {
 
           {error && <p className="error-msg">{error}</p>}
 
-          <button className="verify-btn" onClick={handleVerify}>
+          <button className="verify-btn" type="button" onClick={handleVerify}>
             تأكيد الرمز
           </button>
 
@@ -115,14 +144,24 @@ export default function OtpPage() {
             {timer > 0 ? (
               <p>إعادة إرسال الرمز خلال {formatTime()}</p>
             ) : (
-              <button className="resend-btn" onClick={resend}>
+              <button className="resend-btn" type="button" onClick={resend}>
                 إعادة إرسال الرمز
               </button>
             )}
           </div>
 
+          {/* <div className="link">
+            <button
+              type="button"
+              className="change-email-btn"
+              onClick={handleChangeEmail}
+            >
+              تغيير البريد الإلكتروني
+            </button>
+          </div> */}
+
           <div className="link">
-            <a href="#">تغيير البريد الإلكتروني</a>
+            <Link to="/login">العودة لتسجيل الدخول</Link>
           </div>
         </div>
       </div>

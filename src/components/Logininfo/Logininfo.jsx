@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import "./Logininfo.css";
 import images from "../../assets/images/images.png";
 
@@ -13,6 +14,7 @@ function Logininfo() {
   });
 
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -21,26 +23,51 @@ function Logininfo() {
       ...formData,
       [name]: type === "checkbox" ? checked : value,
     });
+
+    setError("");
+    setSuccessMessage("");
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    if (
+      !formData.fullName ||
+      !formData.email ||
+      !formData.phone ||
+      !formData.password ||
+      !formData.confirmPassword
+    ) {
+      setError("يرجى تعبئة جميع الحقول المطلوبة");
+      setSuccessMessage("");
+      return;
+    }
+
     if (!formData.terms) {
       setError("يجب الموافقة على الشروط والأحكام");
+      setSuccessMessage("");
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
       setError("كلمة المرور غير متطابقة");
+      setSuccessMessage("");
       return;
     }
 
     setError("");
+    setSuccessMessage("تم إنشاء الحساب بنجاح");
 
     console.log("بيانات التسجيل:", formData);
 
-    // هون بعدين بتحط كود إرسال البيانات للـ API
+    setFormData({
+      fullName: "",
+      email: "",
+      phone: "",
+      password: "",
+      confirmPassword: "",
+      terms: false,
+    });
   };
 
   return (
@@ -122,21 +149,31 @@ function Logininfo() {
 
           <label htmlFor="terms">
             أوافق على
-            <a href="/"> الشروط والأحكام </a>
+            <Link to="/terms"> الشروط والأحكام </Link>
             و
-            <a href="/"> سياسة الخصوصية </a>
+            <Link to="/terms"> سياسة الخصوصية </Link>
             الخاصة بمنصة وصل.
           </label>
         </div>
 
-        {error && <p className="error-msg">{error}</p>}
+        {error && (
+          <p className="form-status-message form-status-error">
+            {error}
+          </p>
+        )}
+
+        {successMessage && (
+          <p className="form-status-message form-status-success">
+            {successMessage}
+          </p>
+        )}
 
         <button type="submit" className="signups-btn">
           إنشاء حسابي
         </button>
 
         <p className="login-link">
-          لديك حساب بالفعل؟ <a href="/">تسجيل الدخول</a>
+          لديك حساب بالفعل؟ <Link to="/login">تسجيل الدخول</Link>
         </p>
       </form>
 

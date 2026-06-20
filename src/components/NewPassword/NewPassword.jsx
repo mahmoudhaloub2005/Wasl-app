@@ -1,9 +1,12 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "./NewPassword.css";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import imag from "../../assets/icons/image.png";
 
 const NewPassword = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     password: "",
     confirmPassword: "",
@@ -30,6 +33,11 @@ const NewPassword = () => {
       return;
     }
 
+    if (formData.password.length < 6) {
+      setError("كلمة المرور يجب أن تكون 6 أحرف على الأقل");
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setError("كلمة المرور غير متطابقة");
       return;
@@ -39,7 +47,7 @@ const NewPassword = () => {
 
     console.log("كلمة المرور الجديدة:", formData.password);
 
-    // هون بعدين بتحط كود إرسال كلمة المرور للـ API
+    navigate("/reset-success");
   };
 
   return (
@@ -63,7 +71,11 @@ const NewPassword = () => {
               placeholder="كلمة المرور الجديدة"
             />
 
-            <span onClick={() => setShowPassword(!showPassword)}>
+            <span
+              onClick={() => setShowPassword(!showPassword)}
+              role="button"
+              tabIndex={0}
+            >
               {showPassword ? <FiEyeOff /> : <FiEye />}
             </span>
           </div>
@@ -77,7 +89,11 @@ const NewPassword = () => {
               placeholder="تأكيد كلمة المرور"
             />
 
-            <span onClick={() => setShowConfirm(!showConfirm)}>
+            <span
+              onClick={() => setShowConfirm(!showConfirm)}
+              role="button"
+              tabIndex={0}
+            >
               {showConfirm ? <FiEyeOff /> : <FiEye />}
             </span>
           </div>
@@ -88,9 +104,9 @@ const NewPassword = () => {
             تحديث كلمة المرور
           </button>
 
-          <a href="#" className="back">
+          <Link to="/login" className="back">
             ➜ العودة لتسجيل الدخول
-          </a>
+          </Link>
         </form>
       </div>
     </section>

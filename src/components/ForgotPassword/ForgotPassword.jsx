@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "./ForgotPassword.css";
 import { FiMail } from "react-icons/fi";
 
@@ -7,6 +8,8 @@ import icnes from "../../assets/icons/icons2.svg";
 import icnes1 from "../../assets/icons/icons3.svg";
 
 function ForgotPassword() {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -29,17 +32,20 @@ function ForgotPassword() {
     setTimeout(() => {
       setIsLoading(false);
       setMessage("تم إرسال رمز التحقق إلى بريدك الإلكتروني");
-      console.log("البريد الإلكتروني:", email);
+
+      navigate("/otp", {
+        state: {
+          email: email,
+          flow: "reset-password",
+        },
+      });
     }, 1000);
   };
 
   return (
     <div className="page">
-
-      {/* Card */}
       <div className="container">
         <div className="card">
-
           <img className="icon1" src={imag} alt="" />
 
           <h2>استعادة كلمة المرور</h2>
@@ -48,7 +54,7 @@ function ForgotPassword() {
             أدخل بريدك الإلكتروني المسجل وسنرسل لك رابط إعادة تعيين كلمة المرور
           </p>
 
-          <label className="email-label"> البريد الالكتروني </label>
+          <label className="email-label">البريد الالكتروني</label>
 
           <div className="input-box">
             <FiMail />
@@ -61,28 +67,23 @@ function ForgotPassword() {
             />
           </div>
 
-          {message && (
-            <p className="forgot-message">
-              {message}
-            </p>
-          )}
+          {message && <p className="forgot-message">{message}</p>}
 
           <button
             className="send-btn"
+            type="button"
             onClick={handleSendCode}
             disabled={isLoading}
           >
             {isLoading ? "جاري الإرسال..." : "إرسال رمز التحقق"}
           </button>
 
-          <a href="#" className="back">
+          <Link to="/login" className="back">
             ➜ العودة لتسجيل الدخول
-          </a>
-
+          </Link>
         </div>
       </div>
 
-      {/* Footer */}
       <div className="footers">
         <p className="p1">
           <img className="p1" src={icnes1} alt="" />
@@ -92,7 +93,6 @@ function ForgotPassword() {
           الدعم الفني 24/7
         </p>
       </div>
-
     </div>
   );
 }

@@ -1,43 +1,30 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaCheckCircle } from "react-icons/fa";
 import "./ResetSuccess.css";
-import { FiCheckCircle } from "react-icons/fi";
+
 import imag from "../../assets/icons/image.png";
 
-function useResetSuccess() {
-  const [supportMessage, setSupportMessage] = useState("");
+function ResetSuccess() {
+  const navigate = useNavigate();
+  const [showSupportMessage, setShowSupportMessage] = useState(false);
 
   const handleLogin = () => {
-    console.log("الانتقال إلى صفحة تسجيل الدخول");
-
-    // هون بعدين بتحط الانتقال لصفحة تسجيل الدخول
-    // مثال لو بتستخدم react-router-dom:
-    // navigate("/login");
+    navigate("/login");
   };
 
   const handleSupport = () => {
-    setSupportMessage("سيتم تحويلك إلى الدعم الفني خلال لحظات");
-
-    // هون بعدين بتحط رابط الدعم الفني أو صفحة الدعم
+    setShowSupportMessage(true);
   };
-
-  return {
-    supportMessage,
-    handleLogin,
-    handleSupport,
-  };
-}
-
-const ResetSuccess = () => {
-  const { supportMessage, handleLogin, handleSupport } = useResetSuccess();
 
   return (
-    <div className="reset-page">
+    <section className="reset-page">
       <div className="reset-container">
         <div className="reset-card">
-          <img className="icon1" src={imag} alt="logo" />
+          <img className="icon1" src={imag} alt="وصل" />
 
           <div className="icon-wrapper">
-            <FiCheckCircle className="success-icon" />
+            <FaCheckCircle className="success-icon" />
           </div>
 
           <h2>تم تغيير كلمة المرور بنجاح</h2>
@@ -46,25 +33,35 @@ const ResetSuccess = () => {
             يمكنك الآن تسجيل الدخول إلى حسابك باستخدام كلمة مرور جديدة.
           </p>
 
-          <button className="login-btn" onClick={handleLogin}>
+          <button
+            type="button"
+            className="login-btn"
+            onClick={handleLogin}
+          >
             تسجيل الدخول الآن
           </button>
 
           <div className="support-box">
-            <p className="pp">تواجه مشكلة ؟</p>
+            <span className="pp">تواجه مشكلة؟</span>
 
-            <button className="back-link" onClick={handleSupport}>
+            <button
+              type="button"
+              className="back-link"
+              onClick={handleSupport}
+            >
               تواصل مع الدعم الفني
             </button>
           </div>
 
-          {supportMessage && (
-            <p className="support-message">{supportMessage}</p>
+          {showSupportMessage && (
+            <div className="support-message">
+              سيتم تحويلك إلى الدعم الفني خلال لحظات
+            </div>
           )}
         </div>
       </div>
-    </div>
+    </section>
   );
-};
+}
 
 export default ResetSuccess;

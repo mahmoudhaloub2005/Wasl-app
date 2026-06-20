@@ -1,8 +1,11 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "./Login.css";
 import images from "../../assets/images/images.png";
 
 function Login() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -36,14 +39,14 @@ function Login() {
     setTimeout(() => {
       console.log("بيانات تسجيل الدخول:", formData);
       setIsLoading(false);
-      alert("تم تسجيل الدخول بنجاح");
+
+      navigate("/");
     }, 1000);
   };
 
   return (
     <section className="login-section">
       <div className="login-container">
-
         <div className="login-info">
           <div className="icon-box">
             <img src={images} alt="images" />
@@ -75,7 +78,10 @@ function Login() {
 
           <div className="password-row">
             <label>كلمة المرور</label>
-            <a href="#">نسيت كلمة المرور؟</a>
+
+            <Link to="/forgot-password">
+              نسيت كلمة المرور؟
+            </Link>
           </div>
 
           <input
@@ -96,15 +102,17 @@ function Login() {
             <span>تذكرني على هذا الجهاز</span>
           </div>
 
-          <button onClick={handleLogin} disabled={isLoading}>
+          <button type="button" onClick={handleLogin} disabled={isLoading}>
             {isLoading ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
           </button>
 
           <p className="create-account">
-            ليس لديك حساب؟ <span>إنشاء حساب جديد</span>
+            ليس لديك حساب؟{" "}
+            <span onClick={() => navigate("/choose-account")}>
+              إنشاء حساب جديد
+            </span>
           </p>
         </div>
-
       </div>
     </section>
   );

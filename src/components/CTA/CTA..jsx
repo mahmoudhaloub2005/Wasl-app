@@ -1,19 +1,19 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./CTA.css";
 
 function CTA() {
+  const navigate = useNavigate();
   const [lastAction, setLastAction] = useState("");
 
   const handleSignup = () => {
     setLastAction("signup");
-    console.log("المستخدم ضغط على سجل حسابك الآن");
-    alert("سيتم نقلك إلى صفحة اختيار نوع الحساب");
+    navigate("/choose-account");
   };
 
   const handleContact = () => {
     setLastAction("support");
-    console.log("المستخدم ضغط على تواصل مع الدعم");
-    alert("سيتم فتح صفحة الدعم الفني");
+    navigate("/contact-us");
   };
 
   return (
@@ -26,11 +26,11 @@ function CTA() {
         </p>
 
         <div className="cta-buttons">
-          <button className="signup-btn" onClick={handleSignup}>
+          <button className="signup-btn" type="button" onClick={handleSignup}>
             سجل حسابك الآن
           </button>
 
-          <button className="contact-btn" onClick={handleContact}>
+          <button className="contact-btn" type="button" onClick={handleContact}>
             تواصل مع الدعم
           </button>
         </div>

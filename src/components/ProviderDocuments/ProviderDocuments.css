@@ -421,3 +421,8 @@
     width: 100%;
   }
 }
+.back-document-link {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}

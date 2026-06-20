@@ -1,0 +1,159 @@
+.terms-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(31, 41, 55, 0.45);
+  z-index: 9999;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  padding-top: 52px;
+  font-family: "Noto Sans Arabic", sans-serif;
+  direction: rtl;
+}
+
+.terms-modal {
+  width: 800px;
+  max-width: 90%;
+  max-height: 84vh;
+
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+}
+
+/* Header */
+.terms-header {
+  height: 80px;
+  border-bottom: 1px solid #cfd6e3;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  padding: 0 42px;
+  position: relative;
+}
+
+.terms-header h2 {
+  margin: 0;
+  color: #00288e;
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.terms-close {
+  position: absolute;
+  left: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  border: none;
+  background: transparent;
+  color: #374151;
+  font-size: 28px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Body */
+.terms-body {
+  padding: 55px 46px 35px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.terms-section {
+  margin-bottom: 38px;
+}
+
+.terms-section h3 {
+  margin: 0 0 18px;
+  color: #00288e;
+  font-size: 25px;
+  font-weight: 800;
+  text-align: right;
+}
+
+.terms-section p {
+  margin: 0;
+  color: #374151;
+  font-size: 16px;
+  line-height: 2;
+  text-align: right;
+}
+
+/* Footer */
+.terms-footer {
+  min-height: 96px;
+  border-top: 1px solid #cfd6e3;
+  padding: 22px 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  direction: ltr;
+}
+
+.terms-footer button {
+  width: 172px;
+  height: 52px;
+
+  border: none;
+  border-radius: 7px;
+  background: #00288e;
+  color: #ffffff;
+
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: "Noto Sans Arabic", sans-serif;
+
+  transition: 0.3s;
+}
+
+.terms-footer button:hover {
+  background: #001f70;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .terms-overlay {
+    padding-top: 25px;
+  }
+
+  .terms-modal {
+    max-height: 90vh;
+  }
+
+  .terms-header {
+    height: 70px;
+    padding: 0 24px;
+  }
+
+  .terms-header h2 {
+    font-size: 23px;
+  }
+
+  .terms-body {
+    padding: 35px 24px 25px;
+  }
+
+  .terms-section h3 {
+    font-size: 21px;
+  }
+
+  .terms-section p {
+    font-size: 14px;
+  }
+}

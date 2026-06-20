@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FaCheckCircle } from "react-icons/fa";
 import { IoFlash } from "react-icons/io5";
 import "./Hero.css";
 
 function Hero() {
+  const navigate = useNavigate();
+
   const [currentAmp, setCurrentAmp] = useState(0);
   const [progress, setProgress] = useState(0);
   const [lastAction, setLastAction] = useState("");
@@ -36,14 +39,25 @@ function Hero() {
 
   const handleStart = () => {
     setLastAction("start");
-    console.log("المستخدم ضغط على ابدأ الآن");
-    alert("سيتم نقلك إلى صفحة اختيار نوع الحساب");
+    navigate("/choose-account");
   };
 
   const handleMore = () => {
     setLastAction("more");
-    console.log("المستخدم ضغط على اعرف المزيد");
-    alert("سيتم عرض المزيد عن منصة وصل");
+
+    const statsSection = document.getElementById("stats-section");
+
+    if (statsSection) {
+      statsSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    } else {
+      window.scrollTo({
+        top: 700,
+        behavior: "smooth",
+      });
+    }
   };
 
   return (
@@ -57,11 +71,11 @@ function Hero() {
         </p>
 
         <div className="hero-buttons">
-          <button className="start-btn" onClick={handleStart}>
+          <button className="start-btn" type="button" onClick={handleStart}>
             ابدأ الآن ←
           </button>
 
-          <button className="more-btn" onClick={handleMore}>
+          <button className="more-btn" type="button" onClick={handleMore}>
             اعرف المزيد
           </button>
         </div>
@@ -69,7 +83,6 @@ function Hero() {
 
       <div className="hero-image">
         <div className="dashboard">
-
           <div className="dashboard-header"></div>
 
           <div className="current-card">
@@ -110,7 +123,6 @@ function Hero() {
               <p>يعمل بكفاءة عالية</p>
             </div>
           </div>
-
         </div>
       </div>
     </section>

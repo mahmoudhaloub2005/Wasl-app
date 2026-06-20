@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./ProviderDocuments.css";
 import {
   FiCheck,
@@ -10,7 +11,7 @@ import {
   FiArrowLeft,
 } from "react-icons/fi";
 
-function useProviderDocuments() {
+function useProviderDocuments(navigate) {
   const [files, setFiles] = useState({
     idFile: null,
     ownershipFile: null,
@@ -43,32 +44,44 @@ function useProviderDocuments() {
     console.log("إثبات الملكية:", files.ownershipFile);
     console.log("الرخصة:", files.licenseFile);
 
-    setMessage("تم تقديم الطلب بنجاح، سيتم مراجعته خلال 24-48 ساعة");
-    setMessageType("success");
+    setMessage("");
+    setMessageType("");
+
+    navigate("/provider-pending", {
+      state: {
+        files,
+      },
+    });
+  };
+
+  const handleBack = () => {
+    navigate("/provider-generator-info");
   };
 
   return {
     files,
     message,
     messageType,
-    canSubmit,
     handleFileChange,
     handleSubmit,
+    handleBack,
   };
 }
 
 function ProviderDocuments() {
+  const navigate = useNavigate();
+
   const {
     files,
     message,
     messageType,
     handleFileChange,
     handleSubmit,
-  } = useProviderDocuments();
+    handleBack,
+  } = useProviderDocuments(navigate);
 
   return (
     <main className="provider-documents-page">
-      {/* Steps */}
       <div className="provider-documents-steps">
         <div className="provider-documents-step active">
           <div className="provider-documents-circle">3</div>
@@ -94,7 +107,6 @@ function ProviderDocuments() {
         </div>
       </div>
 
-      {/* Heading */}
       <div className="documents-heading">
         <h3>رفع المستندات الرسمية</h3>
         <p>
@@ -102,10 +114,8 @@ function ProviderDocuments() {
         </p>
       </div>
 
-      {/* Upload Cards */}
       <section className="documents-wrapper">
         <div className="documents-row">
-          {/* صورة الهوية */}
           <div className="document-card">
             <div className="document-card-header">
               <span className="required">إلزامي</span>
@@ -143,7 +153,6 @@ function ProviderDocuments() {
             </label>
           </div>
 
-          {/* إثبات الملكية */}
           <div className="document-card">
             <div className="document-card-header">
               <span className="required">إلزامي</span>
@@ -184,7 +193,6 @@ function ProviderDocuments() {
           </div>
         </div>
 
-        {/* الرخصة */}
         <div className="license-document-card">
           <div className="license-info">
             <div className="document-icon green">
@@ -224,7 +232,6 @@ function ProviderDocuments() {
         </div>
       </section>
 
-      {/* Submit */}
       <section className="documents-submit-section">
         <p className="review-text">
           سيتم مراجعة طلبك من قبل فريق وصل خلال 24-48 ساعة عمل.
@@ -245,16 +252,21 @@ function ProviderDocuments() {
 
         <div className="documents-actions">
           <button
+            type="button"
             className="submit-document-btn"
             onClick={handleSubmit}
           >
             تقديم الطلب
           </button>
 
-          <a href="#" className="back-document-link">
+          <button
+            type="button"
+            className="back-document-link"
+            onClick={handleBack}
+          >
             <FiArrowLeft />
             الرجوع للسابق
-          </a>
+          </button>
         </div>
       </section>
     </main>

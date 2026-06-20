@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FiMapPin,
   FiInfo,
@@ -8,7 +9,9 @@ import {
 } from "react-icons/fi";
 import "./ProviderGeneratorInfo.css";
 
-function useProviderGeneratorInfo() {
+function ProviderGeneratorInfo() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     generatorType: "",
     capacity: "",
@@ -30,6 +33,10 @@ function useProviderGeneratorInfo() {
     setMessage("");
   };
 
+  const handleBack = () => {
+    navigate("/provider-register");
+  };
+
   const handleSubmit = () => {
     if (
       !formData.generatorType ||
@@ -44,24 +51,17 @@ function useProviderGeneratorInfo() {
 
     console.log("بيانات المولد:", formData);
 
-    setMessage("تم حفظ بيانات المولد بنجاح");
-  };
+    setMessage("");
 
-  return {
-    formData,
-    message,
-    handleChange,
-    handleSubmit,
+    navigate("/provider-documents", {
+      state: {
+        generatorData: formData,
+      },
+    });
   };
-}
-
-function ProviderGeneratorInfo() {
-  const { formData, message, handleChange, handleSubmit } =
-    useProviderGeneratorInfo();
 
   return (
     <section className="generator-page2">
-      {/* خطوات التسجيل */}
       <div className="steps-wrapper2">
         <div className="step-item2">
           <div className="step-circle2 done">
@@ -191,9 +191,11 @@ function ProviderGeneratorInfo() {
         {message && <p className="generator-message2">{message}</p>}
 
         <div className="buttons-row2">
-          <button className="back-btn2">رجوع</button>
+          <button className="back-btn2" type="button" onClick={handleBack}>
+            رجوع
+          </button>
 
-          <button className="next-btn2" onClick={handleSubmit}>
+          <button className="next-btn2" type="button" onClick={handleSubmit}>
             متابعة للخطوة الأخيرة
             <FiArrowLeft />
           </button>

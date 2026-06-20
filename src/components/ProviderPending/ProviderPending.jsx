@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./ProviderPending.css";
 import { FiHelpCircle } from "react-icons/fi";
 import { BsHourglassSplit } from "react-icons/bs";
@@ -27,7 +28,26 @@ function useProgressAnimation() {
 }
 
 function ProviderPending() {
+  const navigate = useNavigate();
   const progress = useProgressAnimation();
+
+  useEffect(() => {
+    if (progress === 100) {
+      const timer = setTimeout(() => {
+        navigate("/provider-success");
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [progress, navigate]);
+
+  const handleSupportClick = () => {
+    navigate("/contact-us");
+  };
+
+  const handleLogoutClick = () => {
+    navigate("/login");
+  };
 
   return (
     <main className="provider-pending-page">
@@ -58,12 +78,20 @@ function ProviderPending() {
           </div>
         </div>
 
-        <button className="support-btn">
+        <button
+          type="button"
+          className="support-btn"
+          onClick={handleSupportClick}
+        >
           <FiHelpCircle />
           تواصل مع الدعم الفني
         </button>
 
-        <button className="logout-btn">
+        <button
+          type="button"
+          className="logout-btn"
+          onClick={handleLogoutClick}
+        >
           تسجيل الخروج
         </button>
       </section>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "./ProviderRegister.css";
 import {
   FiUser,
@@ -9,7 +10,7 @@ import {
   FiEyeOff,
 } from "react-icons/fi";
 
-function useProviderRegister() {
+function useProviderRegister(navigate) {
   const [formData, setFormData] = useState({
     fullName: "",
     facilityName: "",
@@ -54,9 +55,13 @@ function useProviderRegister() {
 
     setMessage("");
 
-    console.log("بيانات التسجيل:", formData);
+    console.log("بيانات تسجيل مزود الخدمة:", formData);
 
-    // هون بعدين بتحط الانتقال للخطوة الثانية أو إرسال البيانات للـ API
+    navigate("/provider-generator-info", {
+      state: {
+        providerData: formData,
+      },
+    });
   };
 
   return {
@@ -70,6 +75,8 @@ function useProviderRegister() {
 }
 
 const ProviderRegister = () => {
+  const navigate = useNavigate();
+
   const {
     formData,
     showPassword,
@@ -77,11 +84,10 @@ const ProviderRegister = () => {
     setShowPassword,
     handleChange,
     handleSubmit,
-  } = useProviderRegister();
+  } = useProviderRegister(navigate);
 
   return (
     <div className="provider-page">
-      {/* Progress */}
       <div className="steps">
         <div className="step active">
           <div className="circle">1</div>
@@ -103,7 +109,6 @@ const ProviderRegister = () => {
         </div>
       </div>
 
-      {/* Card */}
       <form className="provider-card" onSubmit={handleSubmit}>
         <h2>تسجيل مزود الخدمة</h2>
 
@@ -208,7 +213,7 @@ const ProviderRegister = () => {
 
           <span>
             أوافق على
-            <a href="#"> الشروط والأحكام </a>
+            <Link to="/terms"> الشروط والأحكام </Link>
             وسياسة الخصوصية.
           </span>
         </div>
@@ -221,7 +226,7 @@ const ProviderRegister = () => {
 
         <p className="login-text">
           لديك حساب بالفعل؟
-          <a href="#"> تسجيل الدخول</a>
+          <Link to="/login"> تسجيل الدخول</Link>
         </p>
       </form>
     </div>

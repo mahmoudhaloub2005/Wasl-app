@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./ChooseAccount.css";
 
 import homeIcon from "../../assets/icons/image1.svg";
 import generatorIcon from "../../assets/icons/image2.svg";
 
 function ChooseAccount() {
+  const navigate = useNavigate();
   const [selected, setSelected] = useState(null);
 
   const handleSelect = (accountType) => {
@@ -18,20 +20,19 @@ function ChooseAccount() {
     }
 
     if (selected === "user") {
-      console.log("تم اختيار حساب مواطن / مشترك");
-      // هون بعدين بنروح لصفحة تسجيل المواطن
+      navigate("/login-info");
+      return;
     }
 
     if (selected === "provider") {
-      console.log("تم اختيار حساب مزود خدمة مولدات");
-      // هون بعدين بنروح لصفحة تسجيل المزود
+      navigate("/provider-register");
+      return;
     }
   };
 
   return (
     <section className="choose-page">
       <div className="choose-box">
-
         <h1>كيف تود استخدام وصل؟</h1>
 
         <p className="subtitle">
@@ -39,8 +40,6 @@ function ChooseAccount() {
         </p>
 
         <div className="cards">
-
-          {/* مواطن */}
           <div
             className={`card ${selected === "user" ? "active" : ""}`}
             onClick={() => handleSelect("user")}
@@ -56,7 +55,6 @@ function ChooseAccount() {
             </p>
           </div>
 
-          {/* مزود */}
           <div
             className={`card ${selected === "provider" ? "active" : ""}`}
             onClick={() => handleSelect("provider")}
@@ -71,17 +69,15 @@ function ChooseAccount() {
               أدر المشتركين، تابع التحصيل المالي، وحالات الاشتراك بسهولة.
             </p>
           </div>
-
         </div>
 
-        {/* زر المتابعة */}
         <button
           className={`next-btn ${selected ? "active" : ""}`}
+          type="button"
           onClick={handleNext}
         >
           المتابعة للتسجيل
         </button>
-
       </div>
     </section>
   );
