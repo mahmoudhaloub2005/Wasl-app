@@ -18,12 +18,8 @@ import ProviderSuccess from "./pages/ProviderSuccess";
 
 import ContactUs from "./pages/ContactUs";
 import TermsModal from "./pages/TermsModal";
-
-import PrivacyModal from "./pages/PrivacyModal";
-import ServiceModal from "./pages/ServiceModal";
-import ProviderPage from "./pages/ProviderPage";
-import SupportPage from "./pages/Support";
-
+import ProviderModal from "./components/ProviderModal/ProviderModal"
+import PrivacyModal from "./components/PrivacyModal/PrivacyModal";
 function App() {
   return (
     <Routes>
@@ -45,12 +41,32 @@ function App() {
       <Route path="/provider-success" element={<ProviderSuccess />} />
 
       <Route path="/contact-us" element={<ContactUs />} />
-      <Route path="/terms" element={<TermsModal />} />
-
-      <Route path="/privacy" element={<PrivacyModal />} />
-      <Route path="/service" element={<ServiceModal />} />
-      <Route path="/provider" element={<ProviderPage />} />
-      <Route path="/support" element={<SupportPage />} />
+     <Route
+  path="/terms"
+  element={
+    <>
+      <Home />
+      <TermsModal />
+    </>
+  }
+/>
+<Route
+  path="/provider-modal"
+  element={
+    <>
+      <Home />
+      <ProviderModal />
+    </>
+  }
+/>      <Route
+  path="/privacy"
+  element={
+    <>
+      <Home />
+      <PrivacyModal />
+    </>
+  }
+/>
     </Routes>
   );
 }

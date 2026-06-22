@@ -1,80 +1,60 @@
-import { useState } from "react";
-import { FiX } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 import "./TermsModal.css";
 
 function TermsModal() {
-  const [isOpen, setIsOpen] = useState(true);
+  const navigate = useNavigate();
 
   const handleClose = () => {
-    setIsOpen(false);
+    navigate("/");
   };
 
-  const handleAgree = () => {
-    console.log("تمت الموافقة على الشروط");
-    setIsOpen(false);
+  const handleAccept = () => {
+    navigate("/");
   };
-
-  if (!isOpen) return null;
 
   return (
     <div className="terms-overlay">
-      <div className="terms-modal">
+      <div className="terms-modal" dir="rtl">
         <div className="terms-header">
-          <button className="terms-close" onClick={handleClose}>
-            <FiX />
-          </button>
-
           <h2>اتفاقية الخدمة</h2>
+
+          <button className="terms-close" onClick={handleClose}>
+            ×
+          </button>
         </div>
 
         <div className="terms-body">
-          <div className="terms-section">
+          <section className="terms-section">
             <h3>1. مقدمة وتعريفات</h3>
             <p>
               تحكم هذه الاتفاقية استخدامك لمنصة وصل، وهي خدمة رقمية تسهل الربط
               بين مزودي طاقة المولدات الكهربائية والمستهلكين. بدخولك إلى المنصة
               أو استخدامها، فإنك توافق على الالتزام بهذه الشروط.
             </p>
-          </div>
+          </section>
 
-          <div className="terms-section">
+          <section className="terms-section">
             <h3>2. حساب المستخدم</h3>
             <p>
               لضمان تجربة آمنة، يتوجب على المستخدمين تقديم معلومات دقيقة ومحدثة
               عند إنشاء الحساب. أنت مسؤول بشكل كامل عن الحفاظ على سرية بيانات
               اعتماد دخولك وعن جميع الأنشطة التي تحدث تحت حسابك.
             </p>
-          </div>
+          </section>
 
-          <div className="terms-section">
-            <h3>3. وصف الخدمات</h3>
+          <section className="terms-section">
+            <h3>3. استخدام المنصة</h3>
             <p>
-              توفر وصل واجهة لإدارة استهلاك الطاقة، ومراقبة العدادات الذكية،
-              ودفع الفواتير إلكترونياً. يرجى ملاحظة أن وصل هي وسيط تقني ولا
-              تملك المولدات الكهربائية مباشرة.
+              يجب استخدام منصة وصل للأغراض المشروعة فقط، ويُمنع استخدام الخدمة
+              بأي طريقة تؤثر على استقرار المنصة أو حقوق المستخدمين الآخرين.
             </p>
-          </div>
-
-          <div className="terms-section">
-            <h3>4. الرسوم والفوترة</h3>
-            <p>
-              يتم احتساب الرسوم بناءً على سعر الأمبير المتفق عليه من قبل المزود
-              المحلي، بالإضافة إلى رسوم الخدمة التقنية لمنصة وصل.
-            </p>
-          </div>
-
-          <div className="terms-section">
-            <h3>5. حدود المسؤولية</h3>
-            <p>
-              تسعى وصل جاهدة لضمان استمرارية عمل المنصة بنسبة توافر عالية،
-              ولكنها لا تضمن عدم حدوث أخطاء تقنية ناتجة عن تحديثات النظام أو
-              ظروف خارجة عن السيطرة.
-            </p>
-          </div>
+          </section>
         </div>
 
         <div className="terms-footer">
-          <button onClick={handleAgree}>أوافق على الشروط</button>
+          <button className="terms-accept-btn" onClick={handleAccept}>
+            أوافق على الشروط
+          </button>
         </div>
       </div>
     </div>
