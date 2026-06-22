@@ -20,6 +20,8 @@ import ContactUs from "./pages/ContactUs";
 import TermsModal from "./pages/TermsModal";
 import ProviderModal from "./components/ProviderModal/ProviderModal"
 import PrivacyModal from "./components/PrivacyModal/PrivacyModal";
+
+import CustomerHome from "./pages/Customer/CustomerHome/CustomerHome";
 function App() {
   return (
     <Routes>
@@ -39,7 +41,6 @@ function App() {
       <Route path="/provider-documents" element={<ProviderDocuments />} />
       <Route path="/provider-pending" element={<ProviderPending />} />
       <Route path="/provider-success" element={<ProviderSuccess />} />
-
       <Route path="/contact-us" element={<ContactUs />} />
      <Route
   path="/terms"
@@ -67,6 +68,8 @@ function App() {
     </>
   }
 />
+
+<Route path="/customer" element={<CustomerHome />} />
     </Routes>
   );
 }
