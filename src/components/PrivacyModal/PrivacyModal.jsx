@@ -1,108 +1,75 @@
 import "./PrivacyModal.css";
 
-function PrivacyModal() {
+function PrivacyModal({ onClose }) {
+    return (
+        <div className="privacy-overlay">
 
-  return (
+            <div className="privacy-modal">
 
-    <div className="privacy-overlay">
+                <button className="close-btn" onClick={onClose}>
+                    ✕
+                </button>
 
-      <div className="privacy-modal">
+               
+                <h2>سياسة الخصوصية</h2>
 
-    
+                
+                <div className="privacy-content">
 
-        <button className="close-btn">
+                   
+                    <div className="privacy-item">
+                        <div className="privacy-title">
+                            <span className="icon">📄</span>
+                            <h3>البيانات التي نجمعها</h3>
+                        </div>
+                        <p>
+                            نجمع المعلومات الضرورية فقط لتقديم خدماتنا بأمان وفعالية،
+                            ونحرص على أن تكون هذه المعلومات متوافقة مع سياسات الاستخدام،
+                            وتحسين تجربة المستخدم.
+                        </p>
+                    </div>
 
-          ✕
+                  
+                    <div className="privacy-item">
+                        <div className="privacy-title">
+                            <span className="icon">🔒</span>
+                            <h3>أمن المعلومات</h3>
+                        </div>
+                        <p>
+                            نستخدم بروتوكولات تشفير متقدمة (AES-256) لحماية بياناتك من
+                            الوصول غير المصرح به. خصوصيتك هي أولويتنا القصوى.
+                        </p>
+                    </div>
 
-        </button>
+                    
+                    <div className="privacy-item">
+                        <div className="privacy-title">
+                            <span className="icon">⚙️</span>
+                            <h3>كيفية الاستخدام</h3>
+                        </div>
+                        <p>
+                            نستخدم بياناتك لتحسين جودة الموقع الإلكتروني، وتطوير الخدمات،
+                            وتسهيل عمليات الفوترة والمتابعة.
+                        </p>
+                    </div>
 
-       
+                    <div className="privacy-item">
+                        <div className="privacy-title">
+                            <span className="icon">⚖️</span>
+                            <h3>حقوقك القانونية</h3>
+                        </div>
+                        <p>لك الحق الكامل في طلب نسخة من بياناتك أو طلب تعديلها أو حذف الحساب بشكل نهائي في أي وقت </p>
+                    </div>
 
-        <h2>
+                </div>
 
-          سياسة الخصوصية
+                <button className="accept-btn">
+                    تواصل معنا
+                </button>
 
-        </h2>
-
-
-        <div className="privacy-content">
-
-          <h3>
-
-            1. المعلومات التي نقوم بجمعها
-
-          </h3>
-
-          <p>
-
-            نقوم بجمع البيانات اللازمة لتقديم خدمات منصة وصل وتحسين تجربة المستخدم.
-
-          </p>
-
-          <h3>
-
-            2. كيفية استخدام البيانات
-
-          </h3>
-
-          <p>
-
-            يتم استخدام المعلومات لإدارة الاشتراكات وتحسين الخدمات والتواصل مع المستخدمين.
-
-          </p>
-
-          <h3>
-
-            3. حماية البيانات
-
-          </h3>
-
-          <p>
-
-            نلتزم بتطبيق إجراءات أمنية مناسبة لحماية بياناتك من الوصول غير المصرح به.
-
-          </p>
-
-          <h3>
-
-            4. مشاركة المعلومات
-
-          </h3>
-
-          <p>
-
-            لا يتم مشاركة بيانات المستخدم مع أي جهة خارجية إلا في الحالات التي يفرضها القانون.
-
-          </p>
-
-          <h3>
-
-            5. حقوق المستخدم
-
-          </h3>
-
-          <p>
-
-            يمكنك طلب تعديل أو حذف بياناتك الشخصية وفقاً لسياسة المنصة.
-
-          </p>
-
+            </div>
         </div>
-
-
-        <button className="accept-btn">
-
-          تم
-
-        </button>
-
-      </div>
-
-    </div>
-
-  );
-
+    );
 }
 
 export default PrivacyModal;
-

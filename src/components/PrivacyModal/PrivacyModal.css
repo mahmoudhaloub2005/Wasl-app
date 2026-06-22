@@ -1,104 +1,95 @@
-
-.privacy-overlay{
-
-    position:fixed;
-
-    inset:0;
-
-    background:rgba(0,0,0,.35);
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    z-index:999;
-
+.privacy-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
 }
 
-.privacy-modal{
-
-    width:800px;
-
-    background:white;
-
-    border-radius:18px;
-
-    padding:35px;
-
-    position:relative;
-
+/* المودال */
+.privacy-modal {
+    width: 750px;
+    background: #fff;
+    border-radius: 18px;
+    padding: 25px 30px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    direction: rtl;
 }
 
-.close-btn{
-
-    position:absolute;
-
-    left:20px;
-
-    top:20px;
-
-    background:none;
-
-    border:none;
-
-    cursor:pointer;
-
-    font-size:22px;
-
+/* زر الإغلاق */
+.close-btn {
+    position: absolute;
+    left: 20px;
+    top: 18px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #333;
 }
 
-.privacy-modal h2{
-
-    color:#00288E;
-
-    margin-bottom:30px;
-
-    text-align:right;
-
+/* العنوان */
+.privacy-modal h2 {
+    text-align: right;
+    color: #0A2A7A;
+    font-size: 22px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 12px;
 }
 
-.privacy-content{
-
-    max-height:450px;
-
-    overflow-y:auto;
-
+/* المحتوى */
+.privacy-content {
+    max-height: 380px;
+    overflow-y: auto;
+    padding-left: 5px;
 }
 
-.privacy-content h3{
-
-    color:#00288E;
-
-    margin-top:25px;
-
+/* كل قسم */
+.privacy-item {
+    margin-bottom: 18px;
 }
 
-.privacy-content p{
-
-    line-height:1.9;
-
-    color:#555;
-
+/* العنوان مع الأيقونة */
+.privacy-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
 }
 
-.accept-btn{
+.privacy-title h3 {
+    font-size: 15px;
+    color: #0A2A7A;
+}
 
-    margin-top:30px;
+/* الأيقونة */
+.icon {
+    font-size: 16px;
+    color: #0A2A7A;
+}
 
-    width:150px;
+/* النص */
+.privacy-item p {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.8;
+}
 
-    height:45px;
-
-    border:none;
-
-    border-radius:10px;
-
-    background:#00288E;
-
-    color:white;
-
-    cursor:pointer;
-
+/* الزر */
+.accept-btn {
+    margin-top: 20px;
+    width: 160px;
+    height: 42px;
+    border: none;
+    border-radius: 10px;
+    background: #0A2A7A;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    display: block;
+    margin-right: auto;
 }
