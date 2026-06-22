@@ -1,0 +1,44 @@
+.dashboard-navbar{
+    width: 90%;
+    margin: 30px auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo{
+    font-size: 40px;
+    font-weight: 700;
+    color: #00288E;
+}
+
+.nav-links{
+    display: flex;
+    gap: 40px;
+}
+
+.nav-links a{
+    text-decoration: none;
+    color: #444653;
+    font-size: 16px;
+    transition: .3s;
+}
+
+.nav-links a:hover{
+    color: #00288E;
+}
+
+.nav-icons{
+    display: flex;
+    gap: 15px;
+}
+
+.icon-btn{
+    width: 42px;
+    height: 42px;
+    border: 1px solid #E4E8EF;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+    font-size: 18px;
+}

@@ -1,0 +1,37 @@
+.bills-card{
+    background: #fff;
+    border: 1px solid #E4E8EF;
+    border-radius: 16px;
+    padding: 20px;
+}
+
+.bills-card h3{
+    color: #00288E;
+    margin-bottom: 15px;
+}
+
+.bill-item{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.bill-item p{
+    color: #444;
+}
+
+.bill-item span{
+    color: #00288E;
+    font-weight: 600;
+}
+
+.bills-card button{
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    background: #00288E;
+    color: white;
+    cursor: pointer;
+}

@@ -10,24 +10,24 @@ import Footer from "../components/Footer/Footer";
 function HomePage() {
   return (
     <>
-<DashboardNavbar />
+      <DashboardNavbar />
 
-<WelcomeInfo />
+      <WelcomeInfo />
 
-<div className="dashboard-top">
-    <Stats />
-    <GeneratorInfo />
-</div>
+      <div className="dashboard-top">
+        <Stats />
+        <GeneratorInfo />
+      </div>
 
-<div className="dashboard-middle">
-    <BillsInfo />
-    <LatestNotifications />
-</div>
+      <div className="dashboard-middle">
+        <BillsInfo />
+        <LatestNotifications />
+      </div>
 
-<SuggestedGenerators />
+      <SuggestedGenerators />
 
-<Footer />
-</>
+      <Footer />
+    </>
   );
 }
 

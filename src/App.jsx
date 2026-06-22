@@ -19,6 +19,7 @@ import PrivacyModal from "./pages/PrivacyModal";
 import ServiceModal from "./pages/ServiceModal";
 import ProviderModal from "./pages/ProviderModal";
 import SupportPage from "./pages/Support";
+import HomePage from "./pages/HomePage";
 
 function App() {
   return (
@@ -45,9 +46,11 @@ function App() {
       <ServiceModal />
       <ProviderModal />
       <SupportPage />
+      <HomePage />
+
     </>
   );
 }
 
 export default App;
-
+HomePage

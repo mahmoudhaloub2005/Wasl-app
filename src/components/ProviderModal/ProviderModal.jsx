@@ -16,10 +16,10 @@ function ProviderModal() {
 
         <div className="provider-image-section">
 
-         
+
           <div className="provider-placeholder">
 
-           <img
+            <img
               src={providerImage}
               alt="Provider"
             />
