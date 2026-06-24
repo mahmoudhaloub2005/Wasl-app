@@ -1,0 +1,146 @@
+
+.generator-card{
+
+    background:white;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+
+}
+
+.generator-image{
+
+    position:relative;
+
+}
+
+.generator-image img{
+
+    width:100%;
+
+    height:220px;
+
+    object-fit:cover;
+
+}
+
+.status{
+
+    position:absolute;
+
+    top:15px;
+
+    left:15px;
+
+    padding:8px 14px;
+
+    border-radius:8px;
+
+    color:white;
+
+    font-size:13px;
+
+}
+
+.working{
+
+    background:#10B981;
+
+}
+
+.maintenance{
+
+    background:#F59E0B;
+
+}
+
+.generator-content{
+
+    padding:20px;
+
+    direction:rtl;
+
+}
+
+.generator-content h2{
+
+    color:#0B1C30;
+
+    margin-bottom:8px;
+
+}
+
+.generator-content p{
+
+    color:#666;
+
+    margin-bottom:20px;
+
+}
+
+.generator-info{
+
+    background:#F3F7FF;
+
+    border-radius:12px;
+
+    padding:15px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+}
+
+.generator-info span{
+
+    color:#666;
+
+    font-size:13px;
+
+}
+
+.generator-info h4{
+
+    color:#00288E;
+
+    margin-top:8px;
+
+}
+
+.generator-footer{
+
+    margin-top:20px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+.generator-footer button{
+
+    background:#00288E;
+
+    color:white;
+
+    border:none;
+
+    border-radius:10px;
+
+    padding:12px 24px;
+
+    cursor:pointer;
+
+}
+
+.stars{
+
+    color:#FEA619;
+
+}
