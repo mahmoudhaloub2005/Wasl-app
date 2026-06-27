@@ -1,0 +1,24 @@
+
+.journey{
+  width:90%;
+  margin:30px auto;
+  background:white;
+  padding:25px;
+  border-radius:20px;
+  box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+.journey-steps{
+  display:flex;
+  justify-content:space-between;
+  margin-top:30px;
+}
+
+.step{
+  text-align:center;
+}
+
+.step.active{
+  color:#00288E;
+  font-weight:bold;
+}

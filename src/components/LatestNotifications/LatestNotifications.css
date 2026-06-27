@@ -1,0 +1,20 @@
+.notifications-card{
+    background: #fff;
+    border: 1px solid #E4E8EF;
+    border-radius: 16px;
+    padding: 20px;
+}
+
+.notifications-card h3{
+    color: #00288E;
+    margin-bottom: 15px;
+}
+
+.notifications-card ul{
+    padding-right: 18px;
+}
+
+.notifications-card li{
+    margin-bottom: 10px;
+    color: #444;
+}

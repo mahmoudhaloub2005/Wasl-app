@@ -1,0 +1,33 @@
+.suggested{
+    width: 100%;
+    margin-top: 20px;
+}
+
+.suggested h3{
+    color: #00288E;
+    margin-bottom: 15px;
+}
+
+.suggested-grid{
+    display: flex;
+    gap: 15px;
+}
+
+.suggested-card{
+    flex: 1;
+    background: #fff;
+    border: 1px solid #E4E8EF;
+    border-radius: 16px;
+    padding: 15px;
+    text-align: center;
+}
+
+.suggested-card button{
+    margin-top: 10px;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    background: #00288E;
+    color: white;
+    cursor: pointer;
+}

@@ -1,2 +1,36 @@
+.faq {
+    width: 70%;
+    margin: 80px auto;
+}
 
-.faq { width: 70%; margin: 80px auto; } .faq h2 { text-align: center; color: #00288E; font-size: 36px; margin-bottom: 40px; } .faq-card { background: #F7F9FD; border-right: 5px solid #00288E; border-radius: 10px; padding: 20px; margin-bottom: 18px; cursor: pointer; transition: .3s; } .faq-card:hover{ transform: translateY(-2px); } .faq-card h3{ color:#00288E; font-size:18px; } .faq-card p{ margin-top:15px; color:#555; line-height:1.8; } 
+.faq h2 {
+    text-align: center;
+    color: #00288E;
+    font-size: 36px;
+    margin-bottom: 40px;
+}
+
+.faq-card {
+    background: #F7F9FD;
+    border-right: 5px solid #00288E;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 18px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.faq-card:hover {
+    transform: translateY(-2px);
+}
+
+.faq-card h3 {
+    color: #00288E;
+    font-size: 18px;
+}
+
+.faq-card p {
+    margin-top: 15px;
+    color: #555;
+    line-height: 1.8;
+}

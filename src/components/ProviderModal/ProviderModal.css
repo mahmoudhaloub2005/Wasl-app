@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap");
 
 .provider-modal-overlay {
@@ -204,4 +205,208 @@
     top: 18px;
     left: 18px;
   }
+=======
+.provider-overlay{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.35);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:999;
+
+}
+
+.provider-modal{
+
+    width:950px;
+
+    background:white;
+
+    border-radius:22px;
+
+    padding:35px;
+
+    display:flex;
+
+    gap:45px;
+
+    position:relative;
+
+}
+
+.close-button{
+
+    position:absolute;
+
+    top:20px;
+
+    left:20px;
+
+    border:none;
+
+    background:none;
+
+    font-size:28px;
+
+    cursor:pointer;
+
+}
+
+.provider-image-section{
+
+    flex:1;
+
+    text-align:center;
+
+}
+
+.provider-placeholder{
+
+    width:100%;
+
+    height:320px;
+
+    border-radius:18px;
+
+    border:2px dashed #00288E;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    transition:.3s;
+
+}
+
+.provider-placeholder:hover{
+
+    background:rgba(0,40,142,.08);
+
+}
+
+.provider-image-section img{
+
+    width:100%;
+
+    border-radius:18px;
+
+    transition:.3s;
+
+}
+
+.provider-image-section img:hover{
+
+    filter:brightness(.75);
+
+    box-shadow:0 0 20px rgba(0,40,142,.35);
+
+}
+
+.provider-image-section p{
+
+    margin-top:18px;
+
+    color:#444653;
+
+    font-size:14px;
+
+}
+
+.provider-info{
+
+    flex:1;
+
+    direction:rtl;
+
+}
+
+.provider-label{
+
+    background:#00288E;
+
+    color:white;
+
+    padding:8px 18px;
+
+    border-radius:20px;
+
+    font-size:14px;
+
+}
+
+.provider-info h2{
+
+    margin-top:25px;
+
+    color:#00288E;
+
+    font-size:38px;
+
+    line-height:1.5;
+
+}
+
+.provider-description{
+
+    margin-top:20px;
+
+    color:#444653;
+
+    line-height:2;
+
+}
+
+.provider-feature{
+
+    margin-top:18px;
+
+    color:#0B1C30;
+
+    font-size:17px;
+
+}
+
+.provider-btn{width:240px;
+
+    height:55px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#FEA619;
+
+    color:#00288E;
+
+    font-size:17px;
+
+    cursor:pointer;
+
+}
+
+.provider-btn:hover{
+
+    transform:translateY(-2px);
+
+}
+
+.trial-text{
+
+    margin-top:18px;
+
+    color:#777;
+
+    font-size:14px;
+
+>>>>>>> origin/main
 }

@@ -1,0 +1,42 @@
+.stats{
+    width: 25%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.stat-card{
+    background: #fff;
+    border: 1px solid #E4E8EF;
+    border-radius: 16px;
+    padding: 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat-icon{
+    width: 40px;
+    height: 40px;
+    background: #F7F8FC;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.stat-info{
+    text-align: right;
+}
+
+.stat-info p{
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.stat-info span{
+    color: #00288E;
+    font-size: 20px;
+    font-weight: 700;
+}

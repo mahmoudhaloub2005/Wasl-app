@@ -1,0 +1,59 @@
+.generator-card{
+    width: 100%;
+    background: #fff;
+    border: 1px solid #E4E8EF;
+    border-radius: 16px;
+    padding: 25px;
+}
+
+.generator-card h3{
+    color: #00288E;
+    margin-bottom: 15px;
+}
+
+.generator-status{
+    margin-bottom: 20px;
+    color: #444;
+}
+
+.generator-status span{
+    color: #0aa84f;
+    font-weight: 700;
+}
+
+.generator-details{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.generator-details p{
+    font-size: 13px;
+    color: #777;
+}
+
+.generator-details span{
+    font-weight: 600;
+    color: #00288E;
+}
+
+.generator-actions{
+    display: flex;
+    gap: 10px;
+}
+
+.generator-actions button{
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    background: #00288E;
+    color: white;
+}
+
+.generator-actions .secondary{
+    background: #F5F7FC;
+    color: #00288E;
+}
