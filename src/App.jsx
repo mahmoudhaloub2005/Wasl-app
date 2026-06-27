@@ -10,6 +10,7 @@ import OtpPage from "./pages/OtpPage";
 import NewPassword from "./pages/NewPassword";
 import ResetSuccess from "./pages/ResetSuccess";
 
+import ProviderSignup from "./pages/ProviderSignup";
 import ProviderRegister from "./pages/ProviderRegister";
 import ProviderGeneratorInfo from "./pages/ProviderGeneratorInfo";
 import ProviderDocuments from "./pages/ProviderDocuments";
@@ -22,53 +23,62 @@ import TermsModal from "./pages/TermsModal";
 import ProviderModal from "./components/ProviderModal/ProviderModal";
 import PrivacyModal from "./components/PrivacyModal/PrivacyModal";
 
-import CustomerHome from "./pages/Customer/CustomerHome/CustomerHome";
-
 function App() {
   return (
     <Routes>
-      {/* الصفحة الرئيسية */}
+      {/* WELCOME / الصفحة الرئيسية */}
       <Route path="/" element={<Home />} />
+      <Route path="/home" element={<Home />} />
 
-      {/* اللوجين لحالها */}
+      {/* LOGIN SCREEN */}
       <Route path="/login" element={<Login />} />
 
-      {/* صفحة تجربة: اللوجين وتحتها الكاستمر */}
-      <Route
-        path="/preview"
-        element={
-          <>
-            <Login />
-            <CustomerHome />
-          </>
-        }
-      />
-
-      {/* صفحة الكاستمر لحالها */}
-      <Route path="/customer" element={<CustomerHome />} />
-
-      {/* صفحات عامة */}
-      <Route path="/choose-account" element={<ChooseAccount />} />
-      <Route path="/login-info" element={<Logininf />} />
-
-      {/* استرجاع كلمة المرور */}
+      {/* REMEMBER PASSWORD */}
       <Route path="/forgot-password" element={<ForgotPassword />} />
+
+      {/* OTP VERIFICATION */}
       <Route path="/otp" element={<OtpPage />} />
+
+      {/* NEW PASSWORD */}
       <Route path="/new-password" element={<NewPassword />} />
+
+      {/* PASSWORD CHANGED */}
       <Route path="/reset-success" element={<ResetSuccess />} />
 
-      {/* صفحات المزود */}
-      <Route path="/provider-register" element={<ProviderRegister />} />
-      <Route path="/provider-generator-info" element={<ProviderGeneratorInfo />} />
-      <Route path="/provider-documents" element={<ProviderDocuments />} />
-      <Route path="/provider-pending" element={<ProviderPending />} />
-      <Route path="/provider-success" element={<ProviderSuccess />} />
-      <Route path="/provider-modal" element={<ProviderModal />} />
+      {/* SIGN UP - CHOOSE ACCOUNT */}
+      <Route path="/choose-account" element={<ChooseAccount />} />
 
-      {/* صفحات إضافية */}
+      {/* SIGNUP AS CUSTOMER */}
+      <Route path="/login-info" element={<Logininf />} />
+
+      {/* SIGNUP AS PROVIDER */}
+      <Route path="/provider-signup" element={<ProviderSignup />} />
+
+      {/* PROVIDER REGISTER */}
+      <Route path="/provider-register" element={<ProviderRegister />} />
+
+      {/* PROVIDER GENERATOR INFO */}
+      <Route
+        path="/provider-generator-info"
+        element={<ProviderGeneratorInfo />}
+      />
+
+      {/* PROVIDER DOCUMENTS */}
+      <Route path="/provider-documents" element={<ProviderDocuments />} />
+
+      {/* ACCOUNT PENDING */}
+      <Route path="/provider-pending" element={<ProviderPending />} />
+
+      {/* ACCOUNT CREATED */}
+      <Route path="/provider-success" element={<ProviderSuccess />} />
+
+      {/* CONTACT US */}
       <Route path="/contact-us" element={<ContactUs />} />
+
+      {/* OVERLAYS */}
       <Route path="/terms" element={<TermsModal />} />
       <Route path="/privacy" element={<PrivacyModal />} />
+      <Route path="/provider-modal" element={<ProviderModal />} />
 
       {/* أي رابط غلط يرجع للرئيسية */}
       <Route path="*" element={<Navigate to="/" replace />} />

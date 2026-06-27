@@ -1,38 +1,35 @@
-
-
-import "./GeneratorHero.css";
-import generatorImage from "../../assets/images/generator-cover.jpg";
+﻿import "./GeneratorHero.css";
 
 function GeneratorHero() {
   return (
-    <section className="generator-hero">
+    <section className="generator-hero" dir="rtl">
+      <div className="generator-hero-content">
+        <span className="generator-hero-badge">مولدات موثوقة</span>
 
-      <div className="generator-image">
-        <img src={generatorImage} alt="Generator" />
+        <h1>ابحث عن مزود الكهرباء المناسب لك</h1>
+
+        <p>
+          اختر المولد الأقرب لمنطقتك، وتعرّف على تفاصيل الاشتراك والخدمات المتاحة بسهولة.
+        </p>
       </div>
 
-      <div className="subscription-card">
-
-        <h2>مولد الرشيد الذكي</h2>
-
-        <p>دير البلح - شارع السوق</p>
-
-        <div className="info-box">
-          <span>السعر لكل أمبير</span>
-          <h3>₪18,500</h3>
+      <div className="generator-hero-image">
+        <div
+          style={{
+            width: "100%",
+            minHeight: "280px",
+            borderRadius: "24px",
+            background: "linear-gradient(135deg, #00288E, #0b6bd3)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "white",
+            fontSize: "48px",
+          }}
+        >
+          ⚡
         </div>
-
-        <div className="info-box">
-          <span>القدرة المتاحة</span>
-          <h3>450 أمبير</h3>
-        </div>
-
-        <button>
-          اشترك الآن
-        </button>
-
       </div>
-
     </section>
   );
 }

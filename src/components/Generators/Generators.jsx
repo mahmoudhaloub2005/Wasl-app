@@ -1,78 +1,77 @@
-import DashboardNavbar from "../DashboardNavbar/DashboardNavbar";
-import FilterSection from "../FilterSection/FilterSection";
-import GeneratorCard from "../GeneratorCard/GeneratorCard";
-import Footer from "../Footer/Footer";
+// import CustomerNavbar from "../Customer/CustomerNavbar/CustomerNavbar";import FilterSection from "../FilterSection/FilterSection";
+// import GeneratorCard from "../GeneratorCard/GeneratorCard";
+// import Footer from "../Footer/Footer";
 
-import generator1 from "../../assets/images/generator1.jpg";
-import generator2 from "../../assets/images/generator2.jpg";
-import generator3 from "../../assets/images/generator3.jpg";
+// import generator1 from "../../assets/images/generator1.jpg";
+// import generator2 from "../../assets/images/generator2.jpg";
+// import generator3 from "../../assets/images/generator3.jpg";
 
-import "./Generators.css";
+// import "./Generators.css";
 
-function Generators() {
-  return (
-    <>
-      <DashboardNavbar />
+// function Generators() {
+//   return (
+//     <>
+//       <CustomerNavbar /> 
 
-      <section className="generators-page">
+//       <section className="generators-page">
 
-        <div className="page-header">
+//         <div className="page-header">
 
-          <div>
+//           <div>
 
-            <h1>المولدات</h1>
+//             <h1>المولدات</h1>
 
-            <p>
-              استعرض المولدات المتوفرة في منطقتك وقارن الأسعار والخدمات.
-            </p>
+//             <p>
+//               استعرض المولدات المتوفرة في منطقتك وقارن الأسعار والخدمات.
+//             </p>
 
-          </div>
+//           </div>
 
-          <button className="compare-btn">
-            قارن
-          </button>
+//           <button className="compare-btn">
+//             قارن
+//           </button>
 
-        </div>
+//         </div>
 
-        <FilterSection />
+//         <FilterSection />
 
-        <div className="generators-grid">
+//         <div className="generators-grid">
 
-          <GeneratorCard
-            image={generator1}
-            name="مولد الوافدين"
-            location="دير البلح"
-            price="₪18,500"
-            capacity="450 أمبير"
-            status="تحت الصيانة"
-          />
+//           <GeneratorCard
+//             image={generator1}
+//             name="مولد الوافدين"
+//             location="دير البلح"
+//             price="₪18,500"
+//             capacity="450 أمبير"
+//             status="تحت الصيانة"
+//           />
 
-          <GeneratorCard
-            image={generator2}
-            name="مولد الرشيد الذكي"
-            location="دير البلح"
-            price="₪18,500"
-            capacity="450 أمبير"
-            status="يعمل الآن"
-          />
+//           <GeneratorCard
+//             image={generator2}
+//             name="مولد الرشيد الذكي"
+//             location="دير البلح"
+//             price="₪18,500"
+//             capacity="450 أمبير"
+//             status="يعمل الآن"
+//           />
 
-          <GeneratorCard
-            image={generator3}
-            name="مولد النور"
-            location="دير البلح"
-            price="₪25,000"
-            capacity="450 أمبير"
-            status="يعمل الآن"
-          />
+//           <GeneratorCard
+//             image={generator3}
+//             name="مولد النور"
+//             location="دير البلح"
+//             price="₪25,000"
+//             capacity="450 أمبير"
+//             status="يعمل الآن"
+//           />
 
-        </div>
+//         </div>
 
-      </section>
+//       </section>
 
-      <Footer />
-    </>
-  );
-}
+//       <Footer />
+//     </>
+//   );
+// }
 
-export default Generators;
+// export default Generators;
 

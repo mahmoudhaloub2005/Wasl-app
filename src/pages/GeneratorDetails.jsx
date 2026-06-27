@@ -1,31 +1,33 @@
+﻿// import CustomerNavbar from "../components/Customer/CustomerNavbar/CustomerNavbar";
+// import Footer from "../components/Footer/Footer";
 
-import DashboardNavbar from "../components/DashboardNavbar/DashboardNavbar";
-import Footer from "../components/Footer/Footer";
+// import PowerSummary from "../components/PowerSummary/PowerSummary";
+// import SubscriptionInfo from "../components/SubscriptionInfo/SubscriptionInfo";
+// import SubscriptionJourney from "../components/SubscriptionJourney/SubscriptionJourney";
+// import BillsInfo from "../components/BillsInfo/BillsInfo";
+// import LatestNotifications from "../components/LatestNotifications/LatestNotifications";
+// import FAQ from "../components/FAQ/FAQ";
 
-import GeneratorHero from "../components/GeneratorHero/GeneratorHero";
-import ProviderInfo from "../components/ProviderInfo/ProviderInfo";
-import ServiceDescription from "../components/ServiceDescription/ServiceDescription";
-import SubscriptionTerms from "../components/SubscriptionTerms/SubscriptionTerms";
-import ReviewsSection from "../components/ReviewsSection/ReviewsSection";
+// function Subscription() {
+//   return (
+//     <>
+//       <CustomerNavbar />
 
-function GeneratorDetails() {
-  return (
-    <>
-      <DashboardNavbar />
+//       <PowerSummary />
 
-      <GeneratorHero />
+//       <SubscriptionInfo />
 
-      <ProviderInfo />
+//       <SubscriptionJourney />
 
-      <ServiceDescription />
+//       <BillsInfo />
 
-      <SubscriptionTerms />
+//       <LatestNotifications />
 
-      <ReviewsSection />
+//       <FAQ />
 
-      <Footer />
-    </>
-  );
-}
+//       <Footer />
+//     </>
+//   );
+// }
 
-export default GeneratorDetails;
+// export default Subscription;

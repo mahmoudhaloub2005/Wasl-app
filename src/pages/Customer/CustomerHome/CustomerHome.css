@@ -1,23 +1,10 @@
 .customer-home-page {
-  width: 100%;
   min-height: 100vh;
-  background-color: #f8f9ff;
+  background-color: #f7f8fd;
   font-family: "Noto Sans Arabic", sans-serif;
-  direction: rtl;
 }
 
 .customer-home-container {
-  width: 100%;
-  max-width: 946px;
+  width: 946px;
   margin: 0 auto;
-  padding: 32px 0 40px;
-}
-
-.customer-overview-section {
-  width: 100%;
-  margin-top: 28px;
-  display: grid;
-  grid-template-columns: 2.08fr 1fr;
-  gap: 24px;
-  align-items: stretch;
 }
