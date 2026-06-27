@@ -21,11 +21,14 @@ import ProviderModal from "./pages/ProviderModal";
 import SupportPage from "./pages/Support";
 import HomePage from "./pages/HomePage";
 
+import Generator from "./pages/Generator";
+import GeneratorDetails from "./pages/GeneratorDetails";
+import Subscription from "./pages/Subscription";
+
 function App() {
   return (
     <>
-     
-      <Home />
+    <Home />
       <Login />
       <ChooseAccount />
       <Logininf />
@@ -48,9 +51,13 @@ function App() {
       <SupportPage />
       <HomePage />
 
+      <Generator />
+      <GeneratorDetails/>
+      <Subscription />
+
     </>
   );
 }
 
 export default App;
-HomePage
+

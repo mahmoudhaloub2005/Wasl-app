@@ -1,0 +1,16 @@
+
+.power-summary{
+  width:90%;
+  margin:40px auto;
+}
+
+.summary-card{
+  background:#00288E;
+  color:white;
+  padding:30px;
+  border-radius:20px;
+}
+
+.summary-item{
+  margin-top:20px;
+}

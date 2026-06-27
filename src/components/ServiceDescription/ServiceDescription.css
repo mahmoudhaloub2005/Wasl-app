@@ -1,0 +1,15 @@
+
+.description-section{
+  width:90%;
+  margin:30px auto;
+  background:white;
+  padding:25px;
+  border-radius:20px;
+  box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+.description-section p{
+  margin-top:15px;
+  line-height:2;
+  color:#555;
+}
