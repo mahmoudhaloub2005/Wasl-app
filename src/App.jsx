@@ -1,7 +1,7 @@
 ﻿import { Routes, Route, Navigate } from "react-router-dom";
 
 // Public pages
-import Home from "./pages/public/Home";
+import Welcome from "./pages/public/Welcome";
 import ContactUs from "./pages/public/ContactUs";
 import Logininfo from "./pages/Logininfo";
 
@@ -30,7 +30,7 @@ function App() {
   return (
     <Routes>
       {/* Home */}
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<Welcome />} />
 
       {/* Public */}
       <Route path="/contact-us" element={<ContactUs />} />
