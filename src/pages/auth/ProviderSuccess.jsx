@@ -1,15 +1,15 @@
 import Navbar from "../../components/layout/Navbar/Navbar";
-import ProviderSuccess from "../../components/provider/ProviderSuccess/ProviderSuccess";
+import ProviderSuccessBox from "../../components/auth/provider/ProviderSuccess/ProviderSuccess";
 import Footer from "../../components/layout/Footer/Footer";
 
-function ProviderSucces() {
+function ProviderSuccessPage() {
   return (
     <>
       <Navbar />
-      <ProviderSuccess />
+      <ProviderSuccessBox />
       <Footer />
     </>
   );
 }
 
-export default ProviderSucces;
+export default ProviderSuccessPage;

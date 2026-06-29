@@ -1,15 +1,15 @@
 import Navbar from "../../components/layout/Navbar/Navbar";
-import ProviderRegister from "../../components/provider/ProviderRegister/ProviderRegister";
+import ProviderRegisterForm from "../../components/auth/provider/ProviderRegister/ProviderRegister";
 import Footer from "../../components/layout/Footer/Footer";
 
-function ProviderRegisters() {
+function ProviderRegisterPage() {
   return (
     <>
       <Navbar />
-      <ProviderRegister />
+      <ProviderRegisterForm />
       <Footer />
     </>
   );
 }
 
-export default ProviderRegisters;
+export default ProviderRegisterPage;

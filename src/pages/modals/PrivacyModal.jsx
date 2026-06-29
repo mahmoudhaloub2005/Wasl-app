@@ -1,15 +1,15 @@
 import Navbar from "../../components/layout/Navbar/Navbar";
-import ProviderModalContent from "../../components/modals/ProviderModal/ProviderModal";
+import PrivacyModalContent from "../../components/modals/PrivacyModal/PrivacyModal";
 import Footer from "../../components/layout/Footer/Footer";
 
-function ProviderModalPage() {
+function PrivacyModalPage() {
   return (
     <>
       <Navbar />
-      <ProviderModalContent />
+      <PrivacyModalContent />
       <Footer />
     </>
   );
 }
 
-export default ProviderModalPage;
+export default PrivacyModalPage;

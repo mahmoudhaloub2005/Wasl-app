@@ -1,15 +1,15 @@
 import Navbar from "../../components/layout/Navbar/Navbar";
-import ProviderInfo from "../../components/ProviderInfo/ProviderInfo";
+import ProviderInfoBox from "../../components/auth/provider/ProviderInfo/ProviderInfo";
 import Footer from "../../components/layout/Footer/Footer";
 
-function ProviderInfos() {
+function ProviderInfoPage() {
   return (
     <>
       <Navbar />
-      <ProviderInfo />
+      <ProviderInfoBox />
       <Footer />
     </>
   );
 }
 
-export default ProviderInfos;
+export default ProviderInfoPage;

@@ -1,23 +1,13 @@
-// import DashboardNavbar from "../components/DashboardNavbar/DashboardNavbar";
-import WelcomeInfo from "../../customer/WelcomeInfo/WelcomeInfo";
-// import Statss from "../components/Statss/Statss";
-// import GeneratorInfo from "../components/GeneratorInfo/GeneratorInfo";
-// import BillsInfo from "../components/BillsInfo/BillsInfo";
-import LatestNotifications from "../../customer/LatestNotifications/LatestNotifications";
-import SuggestedGenerators from "../../customer/SuggestedGenerators/SuggestedGenerators";
+import WelcomeSection from "../../components/Customer/WelcomeSection/WelcomeSection";
+import BillsInfo from "../../components/customer/BillsInfo/BillsInfo";
+import LatestNotifications from "../../components/Customer/LatestNotifications/LatestNotifications";
+import SuggestedGenerators from "../../components/Customer/SuggestedGenerators/SuggestedGenerators";
 import Footer from "../../components/layout/Footer/Footer";
 
 function HomePage() {
   return (
     <>
-      {/* <DashboardNavbar /> */}
-
-      <WelcomeInfo />
-
-      <div className="dashboard-top">
-        {/* <Stats /> */}
-        {/* <GeneratorInfo /> */}
-      </div>
+      <WelcomeSection />
 
       <div className="dashboard-middle">
         <BillsInfo />

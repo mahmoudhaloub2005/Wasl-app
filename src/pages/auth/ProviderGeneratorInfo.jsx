@@ -1,15 +1,15 @@
 import Navbar from "../../components/layout/Navbar/Navbar";
-import ProviderGeneratorInfo from "../../components/provider/ProviderGeneratorInfo/ProviderGeneratorInfo";
+import ProviderGeneratorInfoBox from "../../components/auth/provider/ProviderGeneratorInfo/ProviderGeneratorInfo";
 import Footer from "../../components/layout/Footer/Footer";
 
-function ProviderGeneratorInfos() {
+function ProviderGeneratorInfoPage() {
   return (
     <>
       <Navbar />
-      <ProviderGeneratorInfo />
+      <ProviderGeneratorInfoBox />
       <Footer />
     </>
   );
 }
 
-export default ProviderGeneratorInfos;
+export default ProviderGeneratorInfoPage;

@@ -6,7 +6,7 @@ function ResetSucces() {
   return (
     <>
       <Navbar />
-      <ResetSuccess />
+    <ResetSuccess />
       <Footer />
     </>
   );

@@ -1,244 +1,171 @@
 .privacy-overlay {
-<<<<<<< HEAD
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  background: rgba(35, 48, 64, 0.45);
+  inset: 0;
+  background: rgba(31, 41, 55, 0.45);
+  z-index: 9999;
+
   display: flex;
   justify-content: center;
-  align-items: center;
-  z-index: 999;
+  align-items: flex-start;
+
+  padding-top: 52px;
   font-family: "Noto Sans Arabic", sans-serif;
+  direction: rtl;
 }
 
 .privacy-modal {
-  width: 672px;
-  max-height: 86vh;
+  width: 800px;
+  max-width: 90%;
+  max-height: 84vh;
+
   background: #ffffff;
-  border-radius: 10px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
+
+  display: flex;
+  flex-direction: column;
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
 }
 
+/* Header */
 .privacy-header {
-  height: 96px;
-  padding: 0 32px;
-  border-bottom: 1px solid #d9dee8;
+  height: 80px;
+  border-bottom: 1px solid #cfd6e3;
+
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+
+  padding: 0 42px;
+  position: relative;
 }
 
+.privacy-header h1,
 .privacy-header h2 {
   margin: 0;
-  font-size: 22px;
+  color: #00288e;
+  font-size: 28px;
   font-weight: 800;
-  color: #003b95;
 }
 
 .privacy-close {
-  width: 36px;
-  height: 36px;
+  position: absolute;
+  left: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+
   border: none;
   background: transparent;
-  font-size: 34px;
-  font-weight: 300;
-  color: #252b36;
+  color: #374151;
+  font-size: 28px;
   cursor: pointer;
-}
 
-.privacy-close:hover {
-  color: #003b95;
-}
-
-.privacy-body {
-  padding: 30px 34px 24px;
-  max-height: calc(86vh - 210px);
-  overflow-y: auto;
-}
-
-.privacy-section {
-  margin-bottom: 32px;
-}
-
-.privacy-section-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-.privacy-section-title h3 {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 800;
-  color: #003b95;
-}
-
-.privacy-icon {
-  font-size: 21px;
-  color: #003b95;
-  flex-shrink: 0;
-}
-
-.privacy-section p {
-  margin: 0;
-  font-size: 15px;
-  line-height: 1.9;
-  color: #414756;
-}
-
-.privacy-footer {
-  height: 136px;
-  background: #eef5ff;
-  border-top: 1px solid #d9e3f1;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 0 30px;
-}
-
-.privacy-contact-btn {
-  width: 207px;
-  height: 72px;
-  border: none;
-  border-radius: 8px;
-  background: #003b95;
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: 500;
-  font-family: inherit;
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
 }
 
-.privacy-contact-btn:hover {
-  background: #002f78;
-}
-
-.mail-icon {
-  font-size: 22px;
-}
-
-@media (max-width: 760px) {
-  .privacy-modal {
-    width: calc(100% - 32px);
-  }
-
-  .privacy-header {
-    padding: 0 22px;
-  }
-
-  .privacy-body {
-    padding: 24px 22px;
-  }
-
-  .privacy-footer {
-    justify-content: center;
-    padding: 0 20px;
-  }
-
-  .privacy-contact-btn {
-    width: 100%;
-  }
-=======
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.35);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-}
-
-/* المودال */
-.privacy-modal {
-    width: 750px;
-    background: #fff;
-    border-radius: 18px;
-    padding: 25px 30px;
-    position: relative;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    direction: rtl;
-}
-
-/* زر الإغلاق */
-.close-btn {
-    position: absolute;
-    left: 20px;
-    top: 18px;
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    color: #333;
-}
-
-/* العنوان */
-.privacy-modal h2 {
-    text-align: right;
-    color: #0A2A7A;
-    font-size: 22px;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 12px;
-}
-
-/* المحتوى */
+/* Body */
 .privacy-content {
-    max-height: 380px;
-    overflow-y: auto;
-    padding-left: 5px;
+  padding: 55px 46px 35px;
+  overflow-y: auto;
+  flex: 1;
 }
 
-/* كل قسم */
 .privacy-item {
-    margin-bottom: 18px;
+  margin-bottom: 38px;
 }
 
-/* العنوان مع الأيقونة */
 .privacy-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 6px;
+  margin: 0 0 18px;
+}
+
+.privacy-title span {
+  display: none;
 }
 
 .privacy-title h3 {
-    font-size: 15px;
-    color: #0A2A7A;
+  margin: 0;
+  color: #00288e;
+  font-size: 25px;
+  font-weight: 800;
+  text-align: right;
 }
 
-/* الأيقونة */
-.icon {
-    font-size: 16px;
-    color: #0A2A7A;
-}
-
-/* النص */
 .privacy-item p {
-    font-size: 13px;
-    color: #555;
-    line-height: 1.8;
+  margin: 0;
+  color: #374151;
+  font-size: 16px;
+  line-height: 2;
+  text-align: right;
 }
 
-/* الزر */
-.accept-btn {
-    margin-top: 20px;
-    width: 160px;
-    height: 42px;
-    border: none;
-    border-radius: 10px;
-    background: #0A2A7A;
-    color: white;
-    cursor: pointer;
+/* Footer */
+.privacy-footer {
+  min-height: 96px;
+  border-top: 1px solid #cfd6e3;
+  padding: 22px 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  direction: ltr;
+}
+
+.privacy-contact-btn,
+.privacy-footer button {
+  width: 172px;
+  height: 52px;
+
+  border: none;
+  border-radius: 7px;
+  background: #00288e;
+  color: #ffffff;
+
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: "Noto Sans Arabic", sans-serif;
+
+  transition: 0.3s;
+}
+
+.privacy-contact-btn:hover,
+.privacy-footer button:hover {
+  background: #001f70;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .privacy-overlay {
+    padding-top: 25px;
+  }
+
+  .privacy-modal {
+    max-height: 90vh;
+  }
+
+  .privacy-header {
+    height: 70px;
+    padding: 0 24px;
+  }
+
+  .privacy-header h1,
+  .privacy-header h2 {
+    font-size: 23px;
+  }
+
+  .privacy-content {
+    padding: 35px 24px 25px;
+  }
+
+  .privacy-title h3 {
+    font-size: 21px;
+  }
+
+  .privacy-item p {
     font-size: 14px;
-    display: block;
-    margin-right: auto;
->>>>>>> origin/main
+  }
 }

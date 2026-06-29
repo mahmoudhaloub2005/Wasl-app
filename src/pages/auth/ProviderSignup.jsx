@@ -1,15 +1,15 @@
 import Navbar from "../../components/layout/Navbar/Navbar";
-import ProviderSignup from "../../components/provider/ProviderSignup/ProviderSignup";
+import ProviderSignupForm from "../../components/auth/provider/ProviderSignup/ProviderSignup";
 import Footer from "../../components/layout/Footer/Footer";
 
-function Provider() {
+function ProviderSignupPage() {
   return (
     <>
       <Navbar />
-      <ProviderSignup />
+      <ProviderSignupForm />
       <Footer />
     </>
   );
 }
 
-export default Provider;
+export default ProviderSignupPage;

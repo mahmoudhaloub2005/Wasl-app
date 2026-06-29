@@ -1,9 +1,10 @@
-import Navbar from "../../components/Navbar/Navbar";
-import Hero from "../../components/Hero/Hero";
-import Stats from "../../components/Stats/Stats";
-import Features from "../../components/Features/Features";
-import CTA from "../../components/CTA/CTA."
-import Footer from "../../components/Footer/Footer"
+import Navbar from "../../components/layout/Navbar/Navbar";
+import Hero from "../../components/home/Hero/Hero";
+import Stats from "../../components/home/Stats/Stats";
+import Features from "../../components/home/Features/Features";
+import CTA from "../../components/home/CTA/CTA.";
+import Footer from "../../components/layout/Footer/Footer";
+
 function Home() {
   return (
     <>
@@ -11,10 +12,8 @@ function Home() {
       <Hero />
       <Stats />
       <Features />
-      <CTA/>
-       <Footer/>
-
-
+      <CTA />
+      <Footer />
     </>
   );
 }

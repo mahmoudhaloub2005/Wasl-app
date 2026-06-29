@@ -1,8 +1,8 @@
-import Navbar from "../components/Navbar/Navbar";
-import Logininfo from "../components/Logininfo/Logininfo";
-import Footer from "../components/Footer/Footer";
+import Navbar from "../components/layout/Navbar/Navbar";
+import Logininfo from "../components/auth/Logininfo/Logininfo";
+import Footer from "../components/layout/Footer/Footer";
 
-function Logininf() {
+function LogininfoPage() {
   return (
     <>
       <Navbar />
@@ -12,4 +12,4 @@ function Logininf() {
   );
 }
 
-export default Logininf;
+export default LogininfoPage;

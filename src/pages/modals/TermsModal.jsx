@@ -1,15 +1,15 @@
 import Navbar from "../../components/layout/Navbar/Navbar";
-import TermsModal from "../../components/modals/TermsModal/TermsModal";
+import TermsModalContent from "../../components/modals/TermsModal/TermsModal";
 import Footer from "../../components/layout/Footer/Footer";
 
-function TermsModals() {
+function TermsModalPage() {
   return (
     <>
       <Navbar />
-      <TermsModal />
+      <TermsModalContent />
       <Footer />
     </>
   );
 }
 
-export default TermsModals;
+export default TermsModalPage;

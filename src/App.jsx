@@ -1,8 +1,14 @@
 ﻿import { Routes, Route, Navigate } from "react-router-dom";
 
 // Public pages
-import HomePage from "./pages/public/HomePage";
+import Home from "./pages/public/Home";
 import ContactUs from "./pages/public/ContactUs";
+import Logininfo from "./pages/Logininfo";
+
+// Modals pages
+import PrivacyModal from "./pages/modals/PrivacyModal";
+import ProviderModal from "./pages/modals/ProviderModal";
+import TermsModal from "./pages/modals/TermsModal";
 
 // Auth pages
 import Login from "./pages/auth/Login";
@@ -17,25 +23,23 @@ import ProviderRegister from "./pages/auth/ProviderRegister";
 import ProviderSignup from "./pages/auth/ProviderSignup";
 import ProviderDocuments from "./pages/auth/ProviderDocuments";
 import ProviderGeneratorInfo from "./pages/auth/ProviderGeneratorInfo";
-import ProviderInfo from "./pages/auth/ProviderInfo";
 import ProviderPending from "./pages/auth/ProviderPending";
 import ProviderSuccess from "./pages/auth/ProviderSuccess";
-
-// Customer pages
-import Generator from "./pages/Customer/Generator";
-import GeneratorDetails from "./pages/Customer/GeneratorDetails";
-import Subscription from "./pages/Customer/Subscription";
-
-// Temporary page
-import Logininfo from "./pages/Logininfo";
 
 function App() {
   return (
     <Routes>
+      {/* Home */}
+      <Route path="/" element={<Home />} />
+
       {/* Public */}
-      <Route path="/" element={<HomePage />} />
-      <Route path="/home" element={<HomePage />} />
       <Route path="/contact-us" element={<ContactUs />} />
+      <Route path="/login-info" element={<Logininfo />} />
+
+      {/* Modals */}
+      <Route path="/privacy" element={<PrivacyModal />} />
+      <Route path="/provider-modal" element={<ProviderModal />} />
+      <Route path="/terms" element={<TermsModal />} />
 
       {/* Auth */}
       <Route path="/login" element={<Login />} />
@@ -45,24 +49,22 @@ function App() {
       <Route path="/new-password" element={<NewPassword />} />
       <Route path="/reset-success" element={<ResetSuccess />} />
 
-      {/* Provider signup flow */}
+      {/* Provider Flow */}
       <Route path="/provider-register" element={<ProviderRegister />} />
       <Route path="/provider-signup" element={<ProviderSignup />} />
       <Route path="/provider-documents" element={<ProviderDocuments />} />
-      <Route path="/provider-generator-info" element={<ProviderGeneratorInfo />} />
-      <Route path="/provider-info" element={<ProviderInfo />} />
+      <Route
+        path="/provider-generator-info"
+        element={<ProviderGeneratorInfo />}
+      />
       <Route path="/provider-pending" element={<ProviderPending />} />
       <Route path="/provider-success" element={<ProviderSuccess />} />
 
-      {/* Customer */}
-      <Route path="/generators" element={<Generator />} />
-      <Route path="/generator-details" element={<GeneratorDetails />} />
-      <Route path="/subscription" element={<Subscription />} />
+      {/* Redirects */}
+      <Route path="/home" element={<Navigate to="/" replace />} />
+      <Route path="/register" element={<Navigate to="/choose-account" replace />} />
 
-      {/* مؤقتًا لأن Logininfo لسه داخل pages */}
-      <Route path="/login-info" element={<Logininfo />} />
-
-      {/* أي رابط غلط يرجع للهوم */}
+      {/* أي رابط غلط يرجع للرئيسية */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

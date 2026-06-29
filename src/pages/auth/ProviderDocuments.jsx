@@ -1,15 +1,15 @@
 import Navbar from "../../components/layout/Navbar/Navbar";
-import ProviderDocuments from "../../components/provider/ProviderDocuments/ProviderDocuments";
+import ProviderDocumentsForm from "../../components/auth/provider/ProviderDocuments/ProviderDocuments";
 import Footer from "../../components/layout/Footer/Footer";
 
-function ProviderDocument() {
+function ProviderDocumentsPage() {
   return (
     <>
       <Navbar />
-      <ProviderDocuments />
+      <ProviderDocumentsForm />
       <Footer />
     </>
   );
 }
 
-export default ProviderDocument;
+export default ProviderDocumentsPage;

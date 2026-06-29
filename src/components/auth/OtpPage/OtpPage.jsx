@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./OtpPage.css";
-import imag from "../../assets/icons/image.png";
-
+import imag from "../../../assets/icons/image.png";
 export default function OtpPage() {
   const navigate = useNavigate();
   const location = useLocation();
