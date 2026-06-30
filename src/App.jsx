@@ -34,8 +34,7 @@ function App() {
 
       {/* Public */}
       <Route path="/contact-us" element={<ContactUs />} />
-      <Route path="/login-info" element={<Logininfo />} />
-
+      <Route path="/register" element={<Logininfo />} />      
       {/* Modals */}
       <Route path="/privacy" element={<PrivacyModal />} />
       <Route path="/provider-modal" element={<ProviderModal />} />
@@ -66,7 +65,12 @@ function App() {
 
       {/* أي رابط غلط يرجع للرئيسية */}
       <Route path="*" element={<Navigate to="/" replace />} />
+
+
+
     </Routes>
+    
+    
   );
 }
 

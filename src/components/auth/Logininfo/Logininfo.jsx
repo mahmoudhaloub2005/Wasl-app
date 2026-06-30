@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import "./Logininfo.css";
 import images from "../../../assets/images/images.png";
+
 function Logininfo() {
   const [formData, setFormData] = useState({
     fullName: "",
@@ -14,6 +15,7 @@ function Logininfo() {
 
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -27,7 +29,7 @@ function Logininfo() {
     setSuccessMessage("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (
@@ -54,19 +56,75 @@ function Logininfo() {
       return;
     }
 
+    const nameParts = formData.fullName.trim().split(" ");
+    const firstName = nameParts[0];
+    const lastName = nameParts.slice(1).join(" ");
+
+    if (!firstName || !lastName) {
+      setError("يرجى كتابة الاسم الكامل من كلمتين على الأقل");
+      setSuccessMessage("");
+      return;
+    }
+
+    setLoading(true);
     setError("");
-    setSuccessMessage("تم إنشاء الحساب بنجاح");
+    setSuccessMessage("");
 
-    console.log("بيانات التسجيل:", formData);
+    try {
+      const response = await fetch(
+        "https://wasel-api-production-0719.up.railway.app/api/register/customer",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            first_name: firstName,
+            last_name: lastName,
+            email: formData.email,
+            password: formData.password,
+            password_confirmation: formData.confirmPassword,
+            phone: formData.phone,
+          }),
+        }
+      );
 
-    setFormData({
-      fullName: "",
-      email: "",
-      phone: "",
-      password: "",
-      confirmPassword: "",
-      terms: false,
-    });
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.log("Backend Error:", data);
+
+        if (data.errors) {
+          const firstError = Object.values(data.errors)[0][0];
+          setError(firstError);
+        } else {
+          setError(data.message || "حدث خطأ أثناء إنشاء الحساب");
+        }
+
+        return;
+      }
+
+      console.log("Register Success:", data);
+
+      setSuccessMessage("تم إنشاء الحساب بنجاح");
+      setError("");
+
+      setFormData({
+        fullName: "",
+        email: "",
+        phone: "",
+        password: "",
+        confirmPassword: "",
+        terms: false,
+      });
+    } catch (err) {
+      console.error("Network Error:", err);
+      setError("مشكلة اتصال بالسيرفر، حاول مرة أخرى");
+      setSuccessMessage("");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -167,8 +225,8 @@ function Logininfo() {
           </p>
         )}
 
-        <button type="submit" className="signups-btn">
-          إنشاء حسابي
+        <button type="submit" className="signups-btn" disabled={loading}>
+          {loading ? "جاري إنشاء الحساب..." : "إنشاء حسابي"}
         </button>
 
         <p className="login-link">
