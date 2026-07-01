@@ -1,0 +1,104 @@
+
+.modal-overlay{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.35);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:999;
+
+}
+
+.modal{
+
+    width:800px;
+
+    background:white;
+
+    border-radius:15px;
+
+    padding:35px;
+
+    position:relative;
+
+}
+
+.close-btn{
+
+    position:absolute;
+
+    left:20px;
+
+    top:20px;
+
+    border:none;
+
+    background:none;
+
+    cursor:pointer;
+
+    font-size:22px;
+
+}
+
+.modal h2{
+
+    text-align:right;
+
+    color:#00288E;
+
+    margin-bottom:30px;
+
+}
+
+.modal-content{
+
+    max-height:450px;
+
+    overflow:auto;
+
+}
+
+.modal-content h3{
+
+    color:#00288E;
+
+    margin-top:25px;
+
+}
+
+.modal-content p{
+
+    line-height:1.9;
+
+    color:#555;
+
+}
+
+.agree-btn{
+
+    margin-top:30px;
+
+    width:170px;
+
+    height:45px;
+
+    border:none;
+
+    border-radius:8px;
+
+    background:#00288E;
+
+    color:white;
+
+    cursor:pointer;
+
+}

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import "./Logininfo.css";
-import images from "../../assets/images/images.png";
+import images from "../assets/images/images.png";
 
 function Logininfo() {
   const [formData, setFormData] = useState({

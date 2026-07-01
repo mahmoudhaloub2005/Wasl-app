@@ -1,5 +1,5 @@
 import Navbar from "../../components/layout/Navbar/Navbar";
-import ProviderSuccess from "../../components/provider/ProviderSuccess/ProviderSuccess";
+import ProviderSuccess from "../../components/auth/provider/ProviderSuccess/ProviderSuccess";
 import Footer from "../../components/layout/Footer/Footer";
 
 function ProviderSucces() {

@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Login.css";
-import images from "../../assets/images/images.png";
-
+import imag from "../../../assets/icons/image.png";
 function Login() {
   const navigate = useNavigate();
 
@@ -49,7 +48,7 @@ function Login() {
       <div className="login-container">
         <div className="login-info">
           <div className="icon-box">
-            <img src={images} alt="images" />
+            <img src={imag} alt="logo" />
           </div>
 
           <h2>وصل - مستقبل الطاقة المحلية</h2>
