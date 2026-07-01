@@ -1,0 +1,225 @@
+.contact-page {
+  min-height: 100vh;
+  background: #f8f9ff;
+  direction: rtl;
+  font-family: "Noto Sans Arabic", sans-serif;
+  padding: 45px 0 90px;
+}
+
+/* العنوان */
+.contact-header {
+  text-align: center;
+  margin-bottom: 55px;
+}
+
+.contact-header h1 {
+  color: #00288e;
+  font-size: 48px;
+  font-weight: 800;
+  margin: 0 0 18px;
+}
+
+.contact-header p {
+  width: 720px;
+  max-width: 90%;
+  margin: auto;
+  color: #444653;
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+/* كارد الفورم */
+.contact-card {
+  width: 720px;
+  max-width: 90%;
+  margin: 0 auto 70px;
+  background: #ffffff;
+  border: 1px solid #c8cfdf;
+  border-radius: 14px;
+  padding: 52px 50px 64px;
+  box-sizing: border-box;
+}
+
+.contact-card h2 {
+  color: #00288e;
+  font-size: 28px;
+  font-weight: 800;
+  margin: 0 0 38px;
+  text-align: right;
+}
+
+.contact-row {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 22px;
+}
+
+.contact-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-group.full {
+  margin-bottom: 22px;
+}
+
+.contact-group label {
+  color: #111827;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.contact-group input,
+.contact-group select,
+.contact-group textarea {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: #edf4ff;
+  border-radius: 8px;
+  color: #111827;
+  font-size: 16px;
+  padding: 0 20px;
+  box-sizing: border-box;
+  font-family: "Noto Sans Arabic", sans-serif;
+}
+
+.contact-group input,
+.contact-group select {
+  height: 82px;
+}
+
+.contact-group textarea {
+  height: 145px;
+  resize: none;
+  padding-top: 24px;
+}
+
+.contact-group input::placeholder,
+.contact-group textarea::placeholder {
+  color: #6b7280;
+}
+
+.contact-group select {
+  appearance: none;
+  cursor: pointer;
+}
+
+.contact-btn1 {
+  width: 100%;
+  height: 68px;
+  border: none;
+  border-radius: 8px;
+  background: #00288e;
+  color: white;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  font-family: "Noto Sans Arabic", sans-serif;
+  transition: 0.3s;
+}
+
+.contact-btn1:hover {
+  background: #001f70;
+  transform: translateY(-2px);
+}
+
+.contact-btn svg {
+  font-size: 22px;
+}
+
+.contact-success {
+  color: #16a34a;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  margin: 0 0 16px;
+}
+
+/* FAQ */
+.faq-section {
+  width: 625px;
+  max-width: 90%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.faq-section h2 {
+  color: #00288e;
+  font-size: 30px;
+  font-weight: 800;
+  margin-bottom: 32px;
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.faq-card {
+  background: #edf4ff;
+  border-radius: 8px;
+  border-right: 5px solid #00288e;
+  padding: 22px 28px;
+  text-align: right;
+}
+
+.faq-card h3 {
+  color: #00288e;
+  font-size: 17px;
+  font-weight: 800;
+  margin: 0 0 12px;
+}
+
+.faq-card p {
+  color: #444653;
+  font-size: 16px;
+  line-height: 1.8;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .contact-page {
+    padding: 35px 0 70px;
+  }
+
+  .contact-header h1 {
+    font-size: 34px;
+  }
+
+  .contact-header p {
+    font-size: 15px;
+  }
+
+  .contact-card {
+    padding: 35px 24px 45px;
+  }
+
+  .contact-row {
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .contact-group input,
+  .contact-group select {
+    height: 60px;
+  }
+
+  .contact-group textarea {
+    height: 130px;
+  }
+
+  .faq-section h2 {
+    font-size: 24px;
+  }
+}

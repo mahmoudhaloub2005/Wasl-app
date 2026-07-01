@@ -1,0 +1,10 @@
+.customer-home-page {
+  min-height: 100vh;
+  background-color: #f7f8fd;
+  font-family: "Noto Sans Arabic", sans-serif;
+}
+
+.customer-home-container {
+  width: 946px;
+  margin: 0 auto;
+}

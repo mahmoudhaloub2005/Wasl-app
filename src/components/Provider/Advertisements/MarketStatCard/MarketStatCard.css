@@ -1,0 +1,32 @@
+
+.market-card{
+
+flex:1;
+
+background:white;
+
+padding:25px;
+
+border-radius:18px;
+
+box-shadow:0 5px 15px rgba(0,0,0,.06);
+
+text-align:center;
+
+}
+
+.market-card h3{
+
+color:#0D47A1;
+
+font-size:32px;
+
+margin-bottom:10px;
+
+}
+
+.market-card p{
+
+color:#777;
+
+}
