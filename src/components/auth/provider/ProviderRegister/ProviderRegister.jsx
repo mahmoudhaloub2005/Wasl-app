@@ -133,7 +133,7 @@ const ProviderRegister = () => {
           </div>
 
           <div className="input-group">
-            <label>اسم المنشأة</label>
+            <label> اسم الشركة</label>
 
             <div className="input">
               <input
@@ -141,7 +141,7 @@ const ProviderRegister = () => {
                 name="facilityName"
                 value={formData.facilityName}
                 onChange={handleChange}
-                placeholder="اسم المنشأة"
+                placeholder="اسم الشركة "
               />
               <FiUser />
             </div>

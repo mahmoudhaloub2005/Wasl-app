@@ -4,6 +4,7 @@ import { FaCheckCircle } from "react-icons/fa";
 import "./ResetSuccess.css";
 
 import imag from "../../../assets/icons/image.png";
+
 function ResetSuccess() {
   const navigate = useNavigate();
   const [showSupportMessage, setShowSupportMessage] = useState(false);
@@ -12,9 +13,13 @@ function ResetSuccess() {
     navigate("/login");
   };
 
-  const handleSupport = () => {
-    setShowSupportMessage(true);
-  };
+ const handleSupport = () => {
+  setShowSupportMessage(true);
+
+  setTimeout(() => {
+    navigate("/contact-us");
+  }, 1500);
+};
 
   return (
     <section className="reset-page">

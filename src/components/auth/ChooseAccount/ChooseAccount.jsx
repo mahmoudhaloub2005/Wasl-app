@@ -4,6 +4,7 @@ import "./ChooseAccount.css";
 
 import homeIcon from "../../../assets/icons/image1.svg";
 import generatorIcon from "../../../assets/icons/image2.svg";
+
 function ChooseAccount() {
   const navigate = useNavigate();
   const [selected, setSelected] = useState(null);
@@ -19,7 +20,7 @@ function ChooseAccount() {
     }
 
     if (selected === "user") {
-      navigate("/login-info");
+      navigate("/register");
       return;
     }
 
@@ -50,7 +51,8 @@ function ChooseAccount() {
             <h3>مواطن / مشترك</h3>
 
             <p>
-              اشترك في خدمات المولدات، تابع استهلاكك اليومي، وقم بسداد فواتيرك بسهولة.
+              اشترك في خدمات المولدات، تابع استهلاكك اليومي، وقم بسداد فواتيرك
+              بسهولة.
             </p>
           </div>
 

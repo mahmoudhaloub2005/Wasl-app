@@ -34,7 +34,10 @@ function App() {
 
       {/* Public */}
       <Route path="/contact-us" element={<ContactUs />} />
-      <Route path="/register" element={<Logininfo />} />      
+
+      {/* Customer Register */}
+      <Route path="/register" element={<Logininfo />} />
+
       {/* Modals */}
       <Route path="/privacy" element={<PrivacyModal />} />
       <Route path="/provider-modal" element={<ProviderModal />} />
@@ -61,16 +64,10 @@ function App() {
 
       {/* Redirects */}
       <Route path="/home" element={<Navigate to="/" replace />} />
-      <Route path="/register" element={<Navigate to="/choose-account" replace />} />
 
-      {/* أي رابط غلط يرجع للرئيسية */}
+      {/* Any wrong link returns to home */}
       <Route path="*" element={<Navigate to="/" replace />} />
-
-
-
     </Routes>
-    
-    
   );
 }
 
