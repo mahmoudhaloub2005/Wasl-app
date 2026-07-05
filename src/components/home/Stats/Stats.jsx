@@ -28,9 +28,13 @@ function Stats() {
   const stats = useStats();
 
   return (
-    <section className="stats-section" aria-label="إحصائيات منصة وصل">
+    <section
+      id="stats-section"
+      className="stats-section home-stats-section"
+      aria-label="إحصائيات منصة وصل"
+    >
       {stats.map((item, index) => (
-        <div className="stat-card" key={index}>
+        <div className="home-stat-card" key={index}>
           <h3>{item.number}</h3>
           <p>{item.title}</p>
         </div>
