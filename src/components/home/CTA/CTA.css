@@ -63,3 +63,49 @@ body {
   transform: translateY(-2px);
   transition: 0.3s;
 }
+
+@media (max-width: 768px) {
+  .cta {
+    width: calc(100% - 32px);
+    margin: 56px auto;
+  }
+
+  .cta-box {
+    border-radius: 16px;
+    padding: 42px 18px;
+  }
+
+  .cta-box h2 {
+    font-size: 30px;
+    line-height: 1.4;
+  }
+
+  .cta-box p {
+    font-size: 15px;
+    line-height: 1.8;
+  }
+}
+
+@media (max-width: 520px) {
+  .cta {
+    margin: 42px auto;
+  }
+
+  .cta-box {
+    padding: 34px 16px;
+  }
+
+  .cta-box h2 {
+    font-size: 24px;
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+  }
+
+  .signup-btn,
+  .contact-btn {
+    width: 100%;
+    min-height: 48px;
+  }
+}

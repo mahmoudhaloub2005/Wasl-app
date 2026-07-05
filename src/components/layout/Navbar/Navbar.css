@@ -226,3 +226,30 @@ body {
   padding: 0;
   cursor: pointer;
 }
+
+@media (max-width: 520px) {
+  .navbar {
+    width: calc(100% - 24px);
+    margin: 16px auto 8px;
+    padding: 14px 12px;
+    gap: 14px;
+    border-radius: 18px;
+  }
+
+  .links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 14px;
+    text-align: center;
+  }
+
+  .links li {
+    width: 100%;
+    font-size: 13px;
+    padding-bottom: 6px;
+  }
+
+  .btn {
+    max-width: none;
+  }
+}

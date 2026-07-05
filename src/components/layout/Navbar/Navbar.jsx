@@ -64,7 +64,7 @@ function Navbar() {
         type="button"
         onClick={handleLogoClick}
       >
-        <img src={logo} alt="logo" />
+        <img src={logo} alt="وصل" />
         <h2>وصل</h2>
       </button>
 
