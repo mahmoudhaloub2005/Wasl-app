@@ -3,7 +3,6 @@ import { NavLink, useNavigate } from "react-router-dom";
 import "./CustomerNavbar.css";
 
 import logo from "/src/assets/customer/icons/logo.svg";
-import profile from "/src/assets/customer/icons/profile.svg";
 import notification from "/src/assets/customer/icons/notification.svg";
 import settings from "/src/assets/customer/icons/settings.svg";
 
@@ -12,19 +11,19 @@ const PROFILE_AVATAR_KEY = "wasel_profile_avatar";
 function CustomerNavbar() {
   const navigate = useNavigate();
   const [profileAvatar, setProfileAvatar] = useState(
-    () => localStorage.getItem(PROFILE_AVATAR_KEY) || profile
+    () => localStorage.getItem(PROFILE_AVATAR_KEY) || ""
   );
 
   useEffect(() => {
     function handleAvatarChange(event) {
       setProfileAvatar(
-        event.detail || localStorage.getItem(PROFILE_AVATAR_KEY) || profile
+        event.detail || localStorage.getItem(PROFILE_AVATAR_KEY) || ""
       );
     }
 
     function handleStorageChange(event) {
       if (event.key === PROFILE_AVATAR_KEY) {
-        setProfileAvatar(event.newValue || profile);
+        setProfileAvatar(event.newValue || "");
       }
     }
 
@@ -107,7 +106,11 @@ function CustomerNavbar() {
             onClick={goToProfile}
             title="الملف الشخصي"
           >
-            <img src={profileAvatar} alt="الملف الشخصي" />
+            {profileAvatar ? (
+              <img src={profileAvatar} alt="الملف الشخصي" />
+            ) : (
+              <span className="customer-profile-letter">م</span>
+            )}
           </button>
 
           <button
