@@ -3,7 +3,6 @@ import { IoCloudUploadOutline } from "react-icons/io5";
 
 function SendPaymentProof({
   defaultAmount = "",
-  maxAmount = 200,
   onSubmitPaymentProof,
 }) {
   const [amount, setAmount] = useState(String(defaultAmount));
@@ -61,11 +60,6 @@ function SendPaymentProof({
       return;
     }
 
-    if (numericAmount > Number(maxAmount)) {
-      setErrorMessage(`لا يمكن دفع مبلغ أكبر من ${maxAmount}.`);
-      return;
-    }
-
     if (!selectedFile) {
       setErrorMessage("يرجى رفع صورة الإيصال قبل الإرسال.");
       return;
@@ -89,14 +83,22 @@ function SendPaymentProof({
       <div className="payment-input-row">
         <label>مبلغ الدفعة</label>
 
-      <input
-  className="payment-amount-input"
-  type="text"
-  inputMode="numeric"
-  value={amount}
-  onChange={handleAmountChange}
-  placeholder="اكتب المبلغ"
-/>
+        <div>
+          <input
+            className="payment-amount-input"
+            type="text"
+            inputMode="numeric"
+            value={amount}
+            onChange={handleAmountChange}
+            placeholder="اكتب المبلغ"
+          />
+
+          {errorMessage && (
+            <p className="payment-proof-error payment-proof-error-inline">
+              {errorMessage}
+            </p>
+          )}
+        </div>
       </div>
 
       <label className="upload-proof-box">
@@ -114,8 +116,6 @@ function SendPaymentProof({
 
         <span>حتى 5 ميجابايت PNG, JPG</span>
       </label>
-
-      {errorMessage && <p className="payment-proof-error">{errorMessage}</p>}
 
       {successMessage && (
         <p className="payment-proof-success">{successMessage}</p>

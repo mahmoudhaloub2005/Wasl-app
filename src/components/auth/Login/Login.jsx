@@ -69,25 +69,38 @@ function Login() {
       const storage = formData.remember ? localStorage : sessionStorage;
 
       storage.setItem("wasel_token", token);
+      storage.setItem("wasel_is_logged_in", "true");
 
       if (user) {
         storage.setItem("wasel_user", JSON.stringify(user));
       }
 
-      storage.setItem("wasel_is_logged_in", "true");
-
       const role =
         user?.role ||
         user?.type ||
+        user?.accountType ||
         data.role ||
-        data.data?.role;
+        data.type ||
+        data.data?.role ||
+        data.data?.type ||
+        "customer";
 
-      if (role === "provider") {
+      const normalizedRole = String(role).toLowerCase();
+
+      storage.setItem("wasel_user_role", normalizedRole);
+
+      if (normalizedRole === "provider") {
         navigate("/provider/home");
-      } else if (role === "admin") {
+      } else if (normalizedRole === "admin") {
         navigate("/admin");
+      } else if (
+        normalizedRole === "customer" ||
+        normalizedRole === "client" ||
+        normalizedRole === "user"
+      ) {
+        navigate("/customer");
       } else {
-        navigate("/");
+        navigate("/customer");
       }
     } catch (error) {
       console.error("Login Error:", error);
@@ -123,10 +136,10 @@ function Login() {
           <h4>مرحباً بك مجدداً</h4>
 
           <p className="subtitle">
-            قم بتسجيل الدخول للوصول إلى حساب المواطن الخاص بك
+            قم بتسجيل الدخول للوصول إلى الحساب الخاص بك
           </p>
 
-          <label>البريد الإلكتروني</label>
+          <label htmlFor="email">البريد الإلكتروني</label>
 
           <div className="input-wrapper">
             <FiUser className="field-icon right-icon" />
@@ -144,7 +157,7 @@ function Login() {
             />
           </div>
 
-          <label>كلمة المرور</label>
+          <label htmlFor="password">كلمة المرور</label>
 
           <div className="input-wrapper">
             <FiLock className="field-icon right-icon" />
@@ -181,6 +194,7 @@ function Login() {
               checked={formData.remember}
               onChange={handleChange}
             />
+
             <span>تذكرني على هذا الجهاز</span>
           </div>
 

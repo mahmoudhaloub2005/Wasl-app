@@ -63,13 +63,13 @@ const payments = [
   {
     id: 1,
     title: "تحويل بنكي - بنك فلسطين",
-    date: "5 يونيو 2026 • 09:15 ص",
+    date: "26 يونيو 2026، 09:15 ص",
     amount: "+100",
   },
   {
     id: 2,
     title: "دفع نقدي - الوكيل",
-    date: "20 مايو 2026 • 11:45 ص",
+    date: "20 يونيو 2026، 11:45 ص",
     amount: "+100",
   },
 ];
@@ -86,7 +86,9 @@ function CustomerBills() {
             <PaymentsHistory payments={payments} />
           </div>
 
-<SendPaymentProof amount="200" />        </div>
+          <SendPaymentProof defaultAmount="
+          اكتب المبلغ" />
+        </div>
       </div>
     </main>
   );

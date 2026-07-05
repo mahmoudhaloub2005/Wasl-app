@@ -1,6 +1,11 @@
-import { IoCloseCircleOutline } from "react-icons/io5";
+import { IoCloseCircleOutline, IoCreateOutline } from "react-icons/io5";
 
-function SubscriptionMainCard({ subscription }) {
+function SubscriptionMainCard({
+  subscription,
+  isCancelled,
+  onEditSubscription,
+  onCancelSubscription,
+}) {
   return (
     <section className="subscription-main-card">
       <div className="subscription-price-box">
@@ -9,7 +14,14 @@ function SubscriptionMainCard({ subscription }) {
       </div>
 
       <div className="subscription-main-header">
-<span className="customer-subscription-status">{subscription.status}</span>
+        <span
+          className={`customer-subscription-status ${
+            isCancelled ? "cancelled" : ""
+          }`}
+        >
+          {subscription.status}
+        </span>
+
         <div>
           <h1>{subscription.generatorName}</h1>
           <p>{subscription.description}</p>
@@ -35,10 +47,27 @@ function SubscriptionMainCard({ subscription }) {
         </div>
       </div>
 
-      <button className="cancel-subscription-button" type="button">
-        <IoCloseCircleOutline />
-        إلغاء الاشتراك
-      </button>
+      <div className="subscription-actions">
+        <button
+          className="edit-subscription-button"
+          type="button"
+          onClick={onEditSubscription}
+          disabled={isCancelled}
+        >
+          <IoCreateOutline />
+          تعديل الاشتراك
+        </button>
+
+        <button
+          className="cancel-subscription-button"
+          type="button"
+          onClick={onCancelSubscription}
+          disabled={isCancelled}
+        >
+          <IoCloseCircleOutline />
+          {isCancelled ? "تم إلغاء الاشتراك" : "إلغاء الاشتراك"}
+        </button>
+      </div>
     </section>
   );
 }

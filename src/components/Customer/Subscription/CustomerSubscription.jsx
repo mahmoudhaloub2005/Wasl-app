@@ -1,35 +1,52 @@
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import "./CustomerSubscription.css";
 
 import { getGeneratorById } from "../../../data/generatorsStorage";
 
-import SubscriptionMainCard from "./SubscriptionMainCard";
-import SubscriptionSideCards from "./SubscriptionSideCards";
-import SubscriptionProgress from "./SubscriptionProgress";
+import EditSubscriptionModal from "./EditSubscriptionModal";
 import SubscriptionBanner from "./SubscriptionBanner";
+import SubscriptionMainCard from "./SubscriptionMainCard";
+import SubscriptionProgress from "./SubscriptionProgress";
+import SubscriptionSideCards from "./SubscriptionSideCards";
+
+const amperePrices = {
+  3: 50,
+  5: 75,
+  10: 140,
+  15: 200,
+};
 
 function CustomerSubscription() {
   const { generatorId } = useParams();
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isCancelOpen, setIsCancelOpen] = useState(false);
+  const [isCancelled, setIsCancelled] = useState(false);
+  const [subscriptionMessage, setSubscriptionMessage] = useState("");
+  const [ampereValue, setAmpereValue] = useState(5);
+  const [paymentPlan, setPaymentPlan] = useState("monthly");
 
   const generator = generatorId ? getGeneratorById(generatorId) : null;
+  const currentPrice = amperePrices[ampereValue] || amperePrices[5];
 
   const subscription = {
     generatorId: generator?.id || generatorId || null,
-    generatorName: generator?.name || "مولد النور",
+    generatorName: generator?.name || "مولدات الحي المركزية",
     description: generator?.shortDescription || "مزود طاقة موثوق لمنطقتكم",
-    status: "Active • نشط",
-    ampere: "5 أمبير",
+    status: isCancelled ? "اشتراك ملغى" : "اشتراك نشط",
+    ampere: `${ampereValue} أمبير`,
+    ampereValue,
+    paymentPlan,
+    paymentPlanText: paymentPlan === "monthly" ? "شهري" : "أسبوعي",
     startDate: "1 يونيو 2026",
     subscriptionNumber: "#WSL-8829",
-    pricePerAmpere: generator
-      ? `${generator.price} ${generator.currency}`
-      : "₪25",
+    pricePerAmpere: `${currentPrice} شيكل`,
   };
 
   const invoice = {
-    currentBill: "125",
-    usagePercent: 80,
-    lastPayment: "100 ₪",
+    currentBill: String(currentPrice),
+    usagePercent: Math.min(ampereValue * 10, 100),
+    lastPayment: "100 شيكل",
     paidBills: "2 فاتورة",
   };
 
@@ -48,24 +65,89 @@ function CustomerSubscription() {
     },
     {
       id: 3,
-      title: "اشتراك نشط",
-      date: "مفعل حالياً",
-      type: "active",
+      title: isCancelled ? "تم إلغاء الاشتراك" : "اشتراك نشط",
+      date: isCancelled ? "تم التحديث الآن" : "مفعل حاليا",
+      type: isCancelled ? "done" : "active",
     },
   ];
+
+  const handleConfirmEdit = ({ ampere, paymentPlan: nextPaymentPlan }) => {
+    setAmpereValue(ampere);
+    setPaymentPlan(nextPaymentPlan);
+    setIsEditOpen(false);
+    setSubscriptionMessage(
+      `تم تعديل الاشتراك إلى ${ampere} أمبير بنظام دفع ${
+        nextPaymentPlan === "monthly" ? "شهري" : "أسبوعي"
+      }.`
+    );
+  };
+
+  const handleConfirmCancel = () => {
+    setIsCancelled(true);
+    setIsCancelOpen(false);
+    setIsEditOpen(false);
+    setSubscriptionMessage("تم إلغاء الاشتراك بنجاح.");
+  };
 
   return (
     <main className="customer-subscription" dir="rtl">
       <div className="customer-subscription-container">
         <section className="subscription-top-grid">
-          <SubscriptionMainCard subscription={subscription} />
+          <SubscriptionMainCard
+            subscription={subscription}
+            isCancelled={isCancelled}
+            onEditSubscription={() => setIsEditOpen(true)}
+            onCancelSubscription={() => setIsCancelOpen(true)}
+          />
           <SubscriptionSideCards invoice={invoice} />
         </section>
+
+        {subscriptionMessage && (
+          <p className="subscription-action-message">{subscriptionMessage}</p>
+        )}
 
         <SubscriptionProgress steps={progressSteps} />
 
         <SubscriptionBanner />
       </div>
+
+      {isEditOpen && (
+        <EditSubscriptionModal
+          subscription={subscription}
+          onClose={() => setIsEditOpen(false)}
+          onConfirm={handleConfirmEdit}
+        />
+      )}
+
+      {isCancelOpen && (
+        <div className="cancel-subscription-backdrop" role="presentation">
+          <section
+            className="cancel-subscription-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="cancel-subscription-title"
+          >
+            <h2 id="cancel-subscription-title">إلغاء الاشتراك</h2>
+            <p>
+              هل أنت متأكد من إلغاء الاشتراك؟ بعد التأكيد سيتم تغيير حالة
+              الاشتراك إلى ملغى.
+            </p>
+
+            <div className="cancel-dialog-actions">
+              <button type="button" onClick={() => setIsCancelOpen(false)}>
+                تراجع
+              </button>
+              <button
+                className="danger"
+                type="button"
+                onClick={handleConfirmCancel}
+              >
+                تأكيد الإلغاء
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
     </main>
   );
 }

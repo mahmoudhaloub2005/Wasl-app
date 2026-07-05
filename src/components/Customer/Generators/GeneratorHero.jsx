@@ -1,4 +1,4 @@
-﻿function GeneratorsHeader() {
+function GeneratorsHeader({ onOpenCompare }) {
   return (
     <section className="customer-generators-header">
       <div className="customer-generators-title">
@@ -10,7 +10,7 @@
         </p>
       </div>
 
-      <button type="button" className="compare-button">
+      <button type="button" className="compare-button" onClick={onOpenCompare}>
         قارن
       </button>
     </section>

@@ -1,4 +1,3 @@
-
 import { IoCardOutline } from "react-icons/io5";
 
 function PaymentsHistory({ payments }) {

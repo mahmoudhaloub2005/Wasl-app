@@ -73,6 +73,7 @@ function Logininfo() {
     try {
       const response = await fetch(
         "https://wasel-api-production-0719.up.railway.app/api/register/customer",
+        
         {
           method: "POST",
           headers: {
