@@ -358,7 +358,7 @@
 
 .compare-generators-modal {
   width: min(760px, 100%);
-  max-height: calc(100vh - 80px);
+  height: min(760px, calc(100vh - 48px));
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 26px 70px rgba(15, 23, 42, 0.24);
@@ -369,7 +369,7 @@
 }
 
 .compare-generators-header {
-  min-height: 132px;
+  min-height: 122px;
   padding: 32px 40px 28px;
   border-bottom: 1px solid #e2e7f0;
 
@@ -382,7 +382,7 @@
 .compare-generators-header h2 {
   margin: 0;
   color: #003c9e;
-  font-size: 30px;
+  font-size: 31px;
   line-height: 1.25;
   font-weight: 900;
 }
@@ -413,9 +413,10 @@
 }
 
 .compare-generators-list {
-  padding: 34px 36px;
+  padding: 32px 42px;
   background: #ffffff;
   overflow-y: auto;
+  flex: 1;
 }
 
 .compare-loading {
@@ -432,8 +433,8 @@
 
 .compare-generator-row {
   width: 100%;
-  min-height: 112px;
-  padding: 18px 36px;
+  min-height: 128px;
+  padding: 20px 46px;
   border: 1.5px solid #c8cedd;
   border-radius: 12px;
   background: #ffffff;
@@ -442,9 +443,9 @@
   text-align: right;
 
   display: grid;
-  grid-template-columns: 34px 82px minmax(0, 1fr);
+  grid-template-columns: 34px 86px minmax(0, 1fr);
   align-items: center;
-  gap: 22px;
+  gap: 24px;
 }
 
 .compare-generator-row + .compare-generator-row {
@@ -483,8 +484,8 @@
 }
 
 .compare-generator-row img {
-  width: 82px;
-  height: 72px;
+  width: 86px;
+  height: 76px;
   border-radius: 8px;
   object-fit: cover;
   display: block;
@@ -498,7 +499,7 @@
 
 .compare-generator-info strong {
   color: #071a33;
-  font-size: 20px;
+  font-size: 21px;
   font-weight: 900;
 }
 
@@ -512,17 +513,18 @@
 .compare-generator-info b {
   margin-top: 5px;
   color: #9a5d00;
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 900;
 }
 
 .compare-generators-footer {
-  min-height: 104px;
+  min-height: 96px;
   padding: 22px 36px;
   border-top: 1px solid #e2e7f0;
   background: #fbfcff;
 
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
@@ -579,6 +581,107 @@
   cursor: not-allowed;
 }
 
+.compare-result-section {
+  width: min(1240px, calc(100% - 140px));
+  margin: 42px auto 0;
+  padding: 28px;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid #cbd5e8;
+}
+
+.compare-result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.compare-result-header h2 {
+  margin: 0;
+  color: #003c9e;
+  font-size: 28px;
+  font-weight: 900;
+}
+
+.compare-result-header p {
+  margin: 6px 0 0;
+  color: #4b5565;
+  font-size: 15px;
+}
+
+.compare-result-header button {
+  height: 44px;
+  padding: 0 18px;
+  border: 1px solid #003c9e;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #003c9e;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.compare-result-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.compare-result-card {
+  border: 1px solid #d8e3f7;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f8fbff;
+}
+
+.compare-result-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+
+.compare-result-card h3 {
+  margin: 18px 20px 4px;
+  font-size: 24px;
+  color: #071a33;
+}
+
+.compare-result-card p {
+  margin: 0 20px 18px;
+  color: #4b5565;
+}
+
+.compare-result-card dl {
+  margin: 0;
+  padding: 0 20px 20px;
+}
+
+.compare-result-card dl div {
+  min-height: 42px;
+  border-bottom: 1px solid #d8e3f7;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.compare-result-card dl div:last-child {
+  border-bottom: 0;
+}
+
+.compare-result-card dt {
+  color: #4b5565;
+}
+
+.compare-result-card dd {
+  margin: 0;
+  color: #003c9e;
+  font-weight: 900;
+}
+
 @media (max-width: 700px) {
   .compare-generators-backdrop {
     align-items: flex-start;
@@ -616,6 +719,20 @@
   .compare-cancel,
   .compare-start {
     width: 100%;
+  }
+
+  .compare-result-section {
+    width: calc(100% - 32px);
+  }
+
+  .compare-result-header,
+  .compare-result-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .compare-result-header {
+    align-items: stretch;
+    flex-direction: column;
   }
 }
 

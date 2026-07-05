@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
 import "./Features.css";
-import {
-  FaBolt,
-  FaBell,
-  FaUsers,
-  FaShieldAlt,
-} from "react-icons/fa";
+import { FaBell, FaBolt, FaShieldAlt, FaUsers } from "react-icons/fa";
 
 function Features() {
   const [activeCard, setActiveCard] = useState(() => {
@@ -31,7 +26,8 @@ function Features() {
     {
       icon: FaShieldAlt,
       title: "دفع إلكتروني آمن",
-      description: "ادفع فواتيرك بسهولة وأمان باستخدام وسائل الدفع المختلفة.",
+      description:
+        "ادفع فواتيرك بسهولة وأمان باستخدام وسائل الدفع المختلفة.",
     },
     {
       icon: FaBell,
@@ -62,7 +58,8 @@ function Features() {
           const Icon = feature.icon;
 
           return (
-            <div
+            <button
+              type="button"
               key={index}
               className={`feature-card1 ${activeCard === index ? "active" : ""}`}
               onClick={() => handleCardClick(index)}
@@ -72,7 +69,7 @@ function Features() {
               <h3>{feature.title}</h3>
 
               <p>{feature.description}</p>
-            </div>
+            </button>
           );
         })}
       </div>

@@ -1,86 +1,27 @@
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { IoCloseOutline, IoInformationCircleOutline } from "react-icons/io5";
-import defaultGeneratorImage from "../../../assets/customer/images/generator-nour.png";
-import { getGenerators } from "../../../services/generatorService";
+import { designGenerators } from "../../../data/generatorsStorage";
 
-const fallbackGenerators = [
-  {
-    id: "rafidain-1",
-    name: "Rafidain Co",
-    location: "الكرادة، قرب ساحة كهرباء",
-    price: "8ش / أمبير",
-    image: defaultGeneratorImage,
-  },
-  {
-    id: "rafidain-2",
-    name: "Rafidain Co",
-    location: "الكرادة، قرب ساحة كهرباء",
-    price: "8ش / أمبير",
-    image: defaultGeneratorImage,
-  },
-  {
-    id: "rafidain-3",
-    name: "Rafidain Co",
-    location: "الكرادة، قرب ساحة كهرباء",
-    price: "8ش / أمبير",
-    image: defaultGeneratorImage,
-  },
-  {
-    id: "rafidain-4",
-    name: "Rafidain Co",
-    location: "الكرادة، قرب ساحة كهرباء",
-    price: "8ش / أمبير",
-    image: defaultGeneratorImage,
-  },
-];
+export const compareGenerators = designGenerators.map((generator) => ({
+  id: generator.id,
+  name: generator.name,
+  location: generator.location,
+  price: generator.priceText,
+  capacity: generator.capacity,
+  status: generator.status,
+  rating: generator.rating,
+  image: generator.image,
+}));
 
 function CompareGeneratorsModal({
   initialSelectedIds = [],
   onClose,
   onStartCompare,
 }) {
-  const [generators, setGenerators] = useState(fallbackGenerators);
   const [selectedIds, setSelectedIds] = useState(initialSelectedIds.slice(0, 2));
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    async function loadGenerators() {
-      setIsLoading(true);
-
-      try {
-        const data = await getGenerators();
-        const list = Array.isArray(data)
-          ? data
-          : data.data || data.generators || data.results || [];
-
-        if (isMounted && list.length > 0) {
-          setGenerators(list.map(normalizeGenerator));
-        }
-      } catch (error) {
-        console.error("Compare generators load error:", error);
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    loadGenerators();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   const selectedCount = selectedIds.length;
   const canStartCompare = selectedCount === 2;
-
-  const visibleGenerators = useMemo(
-    () => generators.slice(0, 6),
-    [generators]
-  );
 
   const toggleGenerator = (id) => {
     setSelectedIds((currentIds) => {
@@ -122,40 +63,33 @@ function CompareGeneratorsModal({
         </header>
 
         <div className="compare-generators-list">
-          {isLoading && (
-            <div className="compare-loading">جاري تحميل المولدات...</div>
-          )}
+          {compareGenerators.map((generator) => {
+            const isSelected = selectedIds.includes(generator.id);
 
-          {!isLoading &&
-            visibleGenerators.map((generator) => {
-              const isSelected = selectedIds.includes(generator.id);
+            return (
+              <button
+                className={`compare-generator-row ${
+                  isSelected ? "selected" : ""
+                }`}
+                type="button"
+                key={generator.id}
+                onClick={() => toggleGenerator(generator.id)}
+              >
+                <span
+                  className={`compare-checkbox ${isSelected ? "checked" : ""}`}
+                  aria-hidden="true"
+                />
 
-              return (
-                <button
-                  className={`compare-generator-row ${
-                    isSelected ? "selected" : ""
-                  }`}
-                  type="button"
-                  key={generator.id}
-                  onClick={() => toggleGenerator(generator.id)}
-                >
-                  <span
-                    className={`compare-checkbox ${
-                      isSelected ? "checked" : ""
-                    }`}
-                    aria-hidden="true"
-                  />
+                <img src={generator.image} alt={generator.name} />
 
-                  <img src={generator.image} alt={generator.name} />
-
-                  <span className="compare-generator-info">
-                    <strong>{generator.name}</strong>
-                    <em>{generator.location}</em>
-                    <b>{generator.price}</b>
-                  </span>
-                </button>
-              );
-            })}
+                <span className="compare-generator-info">
+                  <strong>{generator.name}</strong>
+                  <em>{generator.location}</em>
+                  <b>{generator.price}</b>
+                </span>
+              </button>
+            );
+          })}
         </div>
 
         <footer className="compare-generators-footer">
@@ -182,30 +116,6 @@ function CompareGeneratorsModal({
       </section>
     </div>
   );
-}
-
-function normalizeGenerator(generator) {
-  const provider = generator.provider || generator.user || {};
-  const area = generator.area || generator.location || {};
-  const rawPrice = generator.price_KW ?? generator.priceKW ?? generator.price ?? 8;
-
-  return {
-    id: generator.id,
-    name:
-      generator.name ||
-      generator.type ||
-      provider.company_name ||
-      provider.name ||
-      "Rafidain Co",
-    location:
-      area.name ||
-      generator.area_name ||
-      generator.location ||
-      generator.address ||
-      "الكرادة، قرب ساحة كهرباء",
-    price: `${rawPrice}ش / أمبير`,
-    image: generator.image_url || generator.image || defaultGeneratorImage,
-  };
 }
 
 export default CompareGeneratorsModal;

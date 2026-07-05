@@ -5,23 +5,20 @@ import { getGeneratorById } from "../../../data/generatorsStorage";
 import providerUser from "../../../assets/customer/fgp/icons/provider-user.svg";
 import providerLocation from "../../../assets/customer/fgp/icons/provider-location.svg";
 import providerPhone from "../../../assets/customer/fgp/icons/provider-phone.svg";
-
 import guaranteeLightning from "../../../assets/customer/fgp/icons/guarantee-lightning.svg";
-
 import sectionDescription from "../../../assets/customer/fgp/icons/section-description.svg";
 import support24 from "../../../assets/customer/fgp/icons/support-24.svg";
 import maintenanceShield from "../../../assets/customer/fgp/icons/maintenance-shield.svg";
-
 import termsIcon from "../../../assets/customer/fgp/icons/terms-icon.svg";
 import checkCircle from "../../../assets/customer/fgp/icons/check-circle.svg";
-
 import reviewsIcon from "../../../assets/customer/fgp/icons/reviews-icon.svg";
 import reviewAvatar from "../../../assets/customer/fgp/images/review-avatar.png";
+
 function GeneratorDetailsContent() {
   const { id } = useParams();
-
+  const navigate = useNavigate();
   const generator = getGeneratorById(id);
-const navigate = useNavigate();
+
   if (!generator) {
     return (
       <main className="generator-details-content" dir="rtl">
@@ -60,13 +57,13 @@ const navigate = useNavigate();
               </div>
             </div>
 
-           <button
-  className="subscribe-button"
-  type="button"
-  onClick={() => navigate(`/customer/subscriptions/${id}`)}
->
-  اشترك الآن
-</button>
+            <button
+              className="subscribe-button"
+              type="button"
+              onClick={() => navigate(`/customer/subscriptions/${id}`)}
+            >
+              اشترك الآن
+            </button>
           </div>
 
           <div className="guarantee-card">

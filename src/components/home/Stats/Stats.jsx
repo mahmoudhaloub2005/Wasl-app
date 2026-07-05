@@ -4,11 +4,11 @@ import "./Stats.css";
 function useStats() {
   const [stats] = useState([
     {
-      number: "50k+",
+      number: "+50k",
       title: "مشترك نشط",
     },
     {
-      number: "200+",
+      number: "+200",
       title: "مزود طاقة معتمد",
     },
     {
@@ -28,7 +28,7 @@ function Stats() {
   const stats = useStats();
 
   return (
-    <section className="stats-section">
+    <section className="stats-section" aria-label="إحصائيات منصة وصل">
       {stats.map((item, index) => (
         <div className="stat-card" key={index}>
           <h3>{item.number}</h3>

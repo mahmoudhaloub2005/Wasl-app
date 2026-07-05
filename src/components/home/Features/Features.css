@@ -1,45 +1,43 @@
-body {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  list-style: none;
-  direction: rtl;
-  font-family: "Noto Sans Arabic", sans-serif;
-  background: #ffffff;
-}
-
 .features {
-  width: 90%;
+  width: min(1160px, calc(100% - 160px));
   margin: 80px auto;
   text-align: center;
+  direction: rtl;
 }
 
 .features h2 {
+  margin: 0 0 10px;
   font-size: 38px;
+  line-height: 1.35;
   color: #0b1c30;
-  margin-bottom: 10px;
 }
 
 .features-subtitle {
+  max-width: 680px;
+  margin: 0 auto 40px;
   color: #6b7280;
-  margin-bottom: 40px;
+  font-size: 16px;
+  line-height: 1.8;
 }
 
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 25px;
 }
 
 .feature-card1 {
+  width: 100%;
+  min-height: 190px;
   background: #eef5ff;
+  border: 0;
   border-radius: 16px;
   padding: 35px;
   text-align: right;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, background 0.3s ease;
+  font-family: inherit;
 }
 
 .feature-card1:hover {
@@ -48,25 +46,75 @@ body {
 
 .feature-card1 svg {
   font-size: 22px;
-  color: #00288E;
+  color: #00288e;
 }
 
 .feature-card1 h3 {
   margin: 15px 0 10px;
   color: #0b1c30;
+  font-size: 22px;
+  line-height: 1.4;
 }
 
 .feature-card1 p {
+  margin: 0;
   color: #64748b;
+  font-size: 15px;
   line-height: 1.8;
 }
 
 .feature-card1.active {
-  background:#00288E;
+  background: #00288e;
 }
 
 .feature-card1.active h3,
 .feature-card1.active p,
 .feature-card1.active svg {
-  color: white;
+  color: #ffffff;
+}
+
+@media (max-width: 1000px) {
+  .features {
+    width: min(760px, calc(100% - 48px));
+    margin: 64px auto;
+  }
+}
+
+@media (max-width: 680px) {
+  .features {
+    width: calc(100% - 32px);
+    margin: 48px auto;
+  }
+
+  .features h2 {
+    font-size: 28px;
+  }
+
+  .features-subtitle {
+    margin-bottom: 28px;
+    font-size: 14px;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .feature-card1 {
+    min-height: auto;
+    padding: 24px 20px;
+    border-radius: 12px;
+  }
+
+  .feature-card1:hover {
+    transform: none;
+  }
+
+  .feature-card1 h3 {
+    font-size: 19px;
+  }
+
+  .feature-card1 p {
+    font-size: 14px;
+  }
 }
