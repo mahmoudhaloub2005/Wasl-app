@@ -6,6 +6,7 @@ body {
   direction: rtl;
   font-family: "Noto Sans Arabic", sans-serif;
   background: #ffffff;
+  overflow-x: hidden;
 }
 
 .hero{
@@ -382,6 +383,12 @@ body {
 
 /* Mobile */
 @media (max-width: 600px) {
+  html,
+  body {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
   .hero {
     width: calc(100% - 28px);
     padding: 28px 0 20px;
@@ -424,6 +431,7 @@ body {
     padding: 16px;
     border-radius: 18px;
     margin: 0 auto 18px;
+    overflow: hidden;
   }
 
   .dashboard-header {
@@ -460,7 +468,8 @@ body {
 
   .invoice-card {
     width: 142px;
-    right: 12px;
+    right: auto;
+    left: 12px;
     top: 174px;
     padding: 12px;
   }
@@ -474,7 +483,8 @@ body {
   }
 
   .generator-card {
-    left: 12px;
+    left: auto;
+    right: 12px;
     bottom: 12px;
     padding: 10px 12px;
     gap: 8px;
