@@ -1,33 +1,16 @@
-﻿// import CustomerNavbar from "../components/Customer/CustomerNavbar/CustomerNavbar";
-// import Footer from "../components/Footer/Footer";
+﻿import CustomerNavbar from "../../components/Customer/CustomerNavbar/CustomerNavbar";
+import GeneratorDetailsContent from "../../components/Customer/GeneratorDetailsContent/GeneratorDetailsContent";
+import Footer from "../../components/layout/Footer/Footer";
+// import "./GeneratorDetails.css";
 
-// import PowerSummary from "../components/PowerSummary/PowerSummary";
-// import SubscriptionInfo from "../components/SubscriptionInfo/SubscriptionInfo";
-// import SubscriptionJourney from "../components/SubscriptionJourney/SubscriptionJourney";
-// import BillsInfo from "../components/BillsInfo/BillsInfo";
-// import LatestNotifications from "../components/LatestNotifications/LatestNotifications";
-// import FAQ from "../components/FAQ/FAQ";
+function GeneratorDetails() {
+  return (
+    <>
+      <CustomerNavbar />
+      <GeneratorDetailsContent />
+      <Footer />
+    </>
+  );
+}
 
-// function Subscription() {
-//   return (
-//     <>
-//       <CustomerNavbar />
-
-//       <PowerSummary />
-
-//       <SubscriptionInfo />
-
-//       <SubscriptionJourney />
-
-//       <BillsInfo />
-
-//       <LatestNotifications />
-
-//       <FAQ />
-
-//       <Footer />
-//     </>
-//   );
-// }
-
-// export default Subscription;
+export default GeneratorDetails;

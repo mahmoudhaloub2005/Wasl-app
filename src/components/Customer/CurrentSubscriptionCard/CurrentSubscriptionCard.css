@@ -1,0 +1,196 @@
+.current-subscription-card {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #e2e7f2;
+  border-radius: 14px;
+  padding: 32px 24px 24px;
+  box-shadow: 0 14px 32px rgba(0, 19, 74, 0.045);
+  direction: rtl;
+}
+
+/* Header: العنوان يمين، الحالة شمال */
+.subscription-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  direction: rtl;
+}
+
+.subscription-main-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  direction: rtl;
+  text-align: right;
+}
+
+.subscription-icon-box {
+  width: 48px;
+  height: 48px;
+  background: #dcecff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.subscription-icon-box img {
+  width: 27px;
+  height: 27px;
+  object-fit: contain;
+}
+
+.subscription-main-info h2 {
+  margin: 0 0 7px;
+  color: #06182f;
+  font-size: 26px;
+  font-weight: 900;
+}
+
+.subscription-main-info p {
+  margin: 0;
+  color: #6d7482;
+  font-size: 16px;
+}
+
+.subscription-status {
+  height: 36px;
+  padding: 0 18px;
+  background: #dfeee9;
+  color: #00684e;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.subscription-status span {
+  width: 12px;
+  height: 12px;
+  background: #00684e;
+  border-radius: 50%;
+}
+
+/* هنا المهم: نخلي usage شمال و price يمين زي Figma */
+.subscription-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  direction: ltr;
+}
+
+.usage-box,
+.price-box {
+  min-height: 84px;
+  background: #edf4ff;
+  border-radius: 10px;
+  padding: 18px;
+  direction: rtl;
+}
+
+.usage-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.usage-top span {
+  color: #3f4654;
+  font-size: 14px;
+}
+
+.usage-top strong {
+  color: #00328f;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.usage-progress {
+  width: 100%;
+  height: 12px;
+  background: #c4cad8;
+  border-radius: 999px;
+  overflow: hidden;
+  direction: ltr;
+}
+
+.usage-progress div {
+  width: 80%;
+  height: 100%;
+  background: #00328f;
+  border-radius: 999px;
+}
+
+.price-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.price-box span {
+  display: block;
+  color: #3f4654;
+  font-size: 14px;
+  margin-bottom: 7px;
+}
+
+.price-box strong {
+  color: #00328f;
+  font-size: 27px;
+  font-weight: 900;
+}
+
+.price-box img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+/* هنا المهم: تعديل الاشتراك شمال، عرض التفاصيل يمين */
+.subscription-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 24px;
+  direction: ltr;
+}
+
+.subscription-actions button {
+  height: 60px;
+  border-radius: 10px;
+  font-size: 19px;
+  font-weight: 800;
+  cursor: pointer;
+  font-family: inherit;
+  direction: rtl;
+}
+
+.edit-subscription-btn {
+  background: #ffffff;
+  color: #00328f;
+  border: 2px solid #00328f;
+}
+
+.view-details-btn {
+  background: #ff9f00;
+  color: #07182f;
+  border: 2px solid #ff9f00;
+}
+
+@media (max-width: 768px) {
+  .subscription-card-header {
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .subscription-details-grid,
+  .subscription-actions {
+    grid-template-columns: 1fr;
+  }
+}

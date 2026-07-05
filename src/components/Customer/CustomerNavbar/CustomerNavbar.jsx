@@ -1,4 +1,4 @@
-﻿import { NavLink } from "react-router-dom";
+﻿import { NavLink, useNavigate } from "react-router-dom";
 import "./CustomerNavbar.css";
 
 import logo from "/src/assets/customer/icons/logo.svg";
@@ -7,6 +7,12 @@ import notification from "/src/assets/customer/icons/notification.svg";
 import settings from "/src/assets/customer/icons/settings.svg";
 
 function CustomerNavbar() {
+  const navigate = useNavigate();
+
+  function goToProfile() {
+    navigate("/customer/profile");
+  }
+
   return (
     <header className="customer-navbar" dir="rtl">
       <div className="customer-navbar-container">
@@ -64,18 +70,32 @@ function CustomerNavbar() {
         </nav>
 
         <div className="customer-navbar-actions">
-          <img src={profile} alt="الملف الشخصي" className="profile-img" />
+          <button
+            type="button"
+            className="customer-profile-action"
+            onClick={goToProfile}
+            title="الملف الشخصي"
+          >
+            <img src={profile} alt="الملف الشخصي" />
+          </button>
 
-          <img src={settings} alt="الإعدادات" className="nav-action-icon" />
+          <button
+            type="button"
+            className="customer-settings-action"
+            onClick={goToProfile}
+            title="الإعدادات"
+          >
+            <img src={settings} alt="الإعدادات" />
+          </button>
 
-          <div className="notification-wrapper">
-            <img
-              src={notification}
-              alt="الإشعارات"
-              className="nav-action-icon"
-            />
-            <span className="notification-dot"></span>
-          </div>
+          <button
+            type="button"
+            className="customer-notification-action"
+            title="الإشعارات"
+          >
+            <img src={notification} alt="الإشعارات" />
+            <span></span>
+          </button>
         </div>
       </div>
     </header>

@@ -1,0 +1,45 @@
+.reviews-complaints-tabs {
+  height: 74px;
+  border-bottom: 1px solid #c7cfdf;
+
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 72px;
+}
+
+.reviews-complaints-tab {
+  height: 74px;
+  color: #6b7280;
+  text-decoration: none;
+  font-size: 24px;
+  font-weight: 800;
+  position: relative;
+
+  display: flex;
+  align-items: center;
+}
+
+.reviews-complaints-tab.active {
+  color: #003c9e;
+}
+
+.reviews-complaints-tab.active::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 124px;
+  height: 3px;
+  background: #003c9e;
+}
+
+@media (max-width: 650px) {
+  .reviews-complaints-tabs {
+    gap: 36px;
+  }
+
+  .reviews-complaints-tab {
+    font-size: 20px;
+  }
+}

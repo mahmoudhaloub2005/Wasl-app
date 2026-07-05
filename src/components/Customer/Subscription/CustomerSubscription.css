@@ -1,0 +1,433 @@
+.customer-subscription {
+  min-height: 100vh;
+  background: #f6f8ff;
+  padding: 34px 0 70px;
+  font-family: "Noto Sans Arabic", sans-serif;
+  color: #071a33;
+}
+
+.customer-subscription-container {
+  width: 1208px;
+  max-width: calc(100% - 64px);
+  margin: 0 auto;
+}
+
+.subscription-top-grid {
+  display: grid;
+  grid-template-columns: 1fr 382px;
+  gap: 32px;
+  align-items: stretch;
+}
+
+/* Main Card */
+.subscription-main-card {
+  position: relative;
+  min-height: 376px;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 32px;
+  box-shadow: 0 10px 24px rgba(0, 40, 142, 0.05);
+  border-right: 7px solid #003c9e;
+  text-align: right;
+  overflow: hidden;
+}
+
+.subscription-price-box {
+  position: absolute;
+  top: 31px;
+  left: 31px;
+  width: 112px;
+  height: 80px;
+  background: #d9eaff;
+  border-radius: 7px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.subscription-price-box span {
+  font-size: 13px;
+  color: #5d6980;
+  margin-bottom: 4px;
+}
+
+.subscription-price-box strong {
+  font-size: 24px;
+  color: #003c9e;
+  line-height: 1;
+}
+
+.subscription-main-header {
+  width: 100%;
+  padding-left: 160px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: right;
+}
+
+.customer-subscription-status {
+  min-width: 102px;
+  height: 32px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: #06e0a4;
+  color: #002b1d;
+  font-size: 13px;
+  font-weight: 600;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.subscription-main-header h1 {
+  margin: 12px 0 0;
+  font-size: 34px;
+  line-height: 1.25;
+  font-weight: 800;
+  color: #071a33;
+}
+
+.subscription-main-header p {
+  margin: 4px 0 0;
+  font-size: 16px;
+  color: #4b5565;
+}
+
+.subscription-divider {
+  width: 100%;
+  height: 1px;
+  background: #c7cfdf;
+  margin: 26px 0 28px;
+}
+
+.subscription-details-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  text-align: right;
+  gap: 24px;
+}
+
+.subscription-details-row span {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: #5d6980;
+}
+
+.subscription-details-row strong {
+  display: block;
+  font-size: 18px;
+  color: #071a33;
+  font-weight: 800;
+}
+
+.cancel-subscription-button {
+  width: 202px;
+  height: 52px;
+  margin-top: 72px;
+  margin-right: auto;
+
+  background: transparent;
+  border: 3px solid #ff1e1e;
+  color: #ff1e1e;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.cancel-subscription-button svg {
+  font-size: 22px;
+}
+
+/* Side Cards */
+.subscription-side-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.current-bill-card,
+.payment-summary-card {
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 10px 24px rgba(0, 40, 142, 0.05);
+}
+
+.current-bill-card {
+  height: 184px;
+  padding: 24px 28px;
+  border-left: 4px solid #ff9d00;
+}
+
+.current-bill-card p {
+  margin: 0;
+  font-size: 14px;
+  color: #4b5565;
+  text-align: right;
+}
+
+.bill-price {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.bill-price strong {
+  font-size: 52px;
+  font-weight: 800;
+  line-height: 1;
+  color: #071a33;
+}
+
+.bill-price span {
+  font-size: 23px;
+  font-weight: 700;
+  color: #071a33;
+}
+
+.usage-info {
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #071a33;
+}
+
+.usage-progress {
+  width: 100%;
+  height: 7px;
+  margin-top: 8px;
+  border-radius: 999px;
+  background: #e8eef5;
+  overflow: hidden;
+  direction: ltr;
+}
+
+.usage-progress div {
+  height: 100%;
+  background: #003c9e;
+  border-radius: 999px;
+}
+
+.payment-summary-card {
+  height: 165px;
+  padding: 24px;
+}
+
+.payment-summary-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.payment-summary-title svg {
+  font-size: 24px;
+  color: #003c9e;
+}
+
+.payment-summary-title h3 {
+  margin: 0;
+  font-size: 20px;
+  color: #071a33;
+}
+
+.payment-summary-row {
+  height: 41px;
+  margin-top: 17px;
+  border-bottom: 1px solid #c7cfdf;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.payment-summary-row:last-child {
+  border-bottom: 0;
+  margin-top: 0;
+}
+
+.payment-summary-row span {
+  font-size: 13px;
+  color: #4b5565;
+}
+
+.payment-summary-row strong {
+  font-size: 17px;
+  color: #071a33;
+}
+
+/* Progress */
+.subscription-progress-card {
+  margin-top: 32px;
+  background: #ffffff;
+  border-radius: 10px;
+  min-height: 248px;
+  padding: 34px 64px 30px;
+  box-shadow: 0 10px 24px rgba(0, 40, 142, 0.05);
+}
+
+.subscription-progress-card h2 {
+  margin: 0 0 46px;
+  text-align: right;
+  font-size: 26px;
+  font-weight: 800;
+  color: #071a33;
+}
+
+.subscription-progress-steps {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 88px;
+  direction: rtl;
+}
+
+.subscription-progress-item {
+  position: relative;
+  width: 190px;
+  text-align: center;
+}
+
+.progress-circle {
+  width: 34px;
+  height: 34px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: #003c9e;
+  color: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-circle svg {
+  font-size: 17px;
+}
+
+.progress-circle.active {
+  background: #08cfa4;
+  box-shadow: 0 0 0 6px rgba(8, 207, 164, 0.18);
+}
+
+.subscription-progress-item h3 {
+  margin: 0;
+  font-size: 17px;
+  color: #071a33;
+  font-weight: 800;
+}
+
+.subscription-progress-item p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #4b5565;
+}
+
+.progress-line {
+  position: absolute;
+  top: 16px;
+  left: -128px;
+  width: 154px;
+  height: 2px;
+  background: #003c9e;
+}
+
+/* Banner */
+.subscription-banner {
+  height: 256px;
+  margin-top: 32px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 12px 28px rgba(0, 40, 142, 0.16);
+}
+
+.subscription-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Responsive */
+@media (max-width: 1050px) {
+  .subscription-top-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .subscription-side-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .progress-line {
+    display: none;
+  }
+
+  .subscription-progress-steps {
+    gap: 24px;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 768px) {
+  .customer-subscription {
+    padding-top: 28px;
+  }
+
+  .customer-subscription-container {
+    max-width: calc(100% - 32px);
+  }
+
+  .subscription-main-card {
+    padding: 24px;
+  }
+
+  .subscription-price-box {
+    position: static;
+    margin-bottom: 24px;
+  }
+
+  .subscription-main-header {
+    padding-left: 0;
+  }
+
+  .subscription-details-row {
+    grid-template-columns: 1fr;
+  }
+
+  .cancel-subscription-button {
+    margin-top: 32px;
+    width: 100%;
+  }
+
+  .subscription-side-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .subscription-progress-card {
+    padding: 28px 20px;
+  }
+
+  .subscription-progress-steps {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .subscription-banner {
+    height: 190px;
+  }
+}

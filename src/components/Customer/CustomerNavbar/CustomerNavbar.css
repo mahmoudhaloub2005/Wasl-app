@@ -134,3 +134,145 @@
     height: 48px;
   }
 }
+.profile-button {
+  width: 34px;
+  height: 34px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.profile-button:hover {
+  transform: scale(1.05);
+}
+
+.profile-button:active {
+  transform: scale(0.96);
+}
+.customer-navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.profile-button,
+.settings-button,
+.notification-wrapper {
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  text-decoration: none;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-button {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.profile-img {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.profile-button:hover,
+.settings-button:hover,
+.notification-wrapper:hover {
+  transform: scale(1.05);
+}
+
+.nav-action-icon {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+
+.notification-wrapper {
+  position: relative;
+}
+
+.notification-dot {
+  position: absolute;
+  top: 1px;
+  left: 0;
+
+  width: 8px;
+  height: 8px;
+  background: #e00000;
+  border-radius: 50%;
+}
+.customer-navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.customer-profile-action,
+.customer-settings-action,
+.customer-notification-action {
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  position: relative;
+  z-index: 20;
+}
+
+.customer-profile-action {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.customer-profile-action img {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
+.customer-settings-action img,
+.customer-notification-action img {
+  width: 24px;
+  height: 24px;
+  display: block;
+  pointer-events: none;
+}
+
+.customer-profile-action:hover,
+.customer-settings-action:hover,
+.customer-notification-action:hover {
+  transform: scale(1.06);
+}
+
+.customer-notification-action span {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 8px;
+  height: 8px;
+  background: #e00000;
+  border-radius: 50%;
+}

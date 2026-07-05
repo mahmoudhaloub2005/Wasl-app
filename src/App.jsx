@@ -26,6 +26,16 @@ import ProviderGeneratorInfo from "./pages/auth/ProviderGeneratorInfo";
 import ProviderPending from "./pages/auth/ProviderPending";
 import ProviderSuccess from "./pages/auth/ProviderSuccess";
 
+
+
+import CustomerHome from "./pages/Customer/CustomerHome/CustomerHome";
+import Generators from "./pages/Customer/Generators/Generators";
+import GeneratorDetails from "./pages/Customer/GeneratorDetails";
+import CustomerSubscriptionPage from "./pages/Customer/CustomerSubscriptionPage";
+import CustomerBillsPage from "./pages/Customer/CustomerBillsPage";
+import CustomerReviewsPage from "./pages/Customer/CustomerReviewsPage";
+import CustomerComplaintsPage from "./pages/Customer/CustomerComplaintsPage";
+import Profile from "./pages/Customer/Profile";
 function App() {
   return (
     <Routes>
@@ -67,8 +77,67 @@ function App() {
 
       {/* Any wrong link returns to home */}
       <Route path="*" element={<Navigate to="/" replace />} />
+
+
+         <Route path="/" element={<Navigate to="/customer" replace />} />
+
+      <Route path="/customer" element={<CustomerHome />} />
+
+      <Route path="/customer/home" element={<CustomerHome />} />
+
+      <Route path="/customer/generators" element={<Generators />} />
+
+      <Route
+        path="/customer/generator-details/:id"
+        element={<GeneratorDetails />}
+      />
+
+      {/* الاشتراكات من النافبار */}
+      <Route
+        path="/customer/subscriptions"
+        element={<CustomerSubscriptionPage />}
+      />
+
+      {/* الاشتراك من تفاصيل مولد معيّن */}
+      <Route
+        path="/customer/subscriptions/:generatorId"
+        element={<CustomerSubscriptionPage />}
+      />
+
+      {/* احتياط لو الرابط بدون s */}
+      <Route
+        path="/customer/subscription"
+        element={<Navigate to="/customer/subscriptions" replace />}
+      />
+
+      <Route
+        path="/customer/subscription/:generatorId"
+        element={<CustomerSubscriptionPage />}
+      />
+
+      {/* الفواتير والمدفوعات */}
+      <Route path="/customer/bills" element={<CustomerBillsPage />} />
+<Route path="/customer/reviews" element={<CustomerReviewsPage />} />
+<Route path="/customer/complaints" element={<CustomerComplaintsPage />} />
+<Route path="/customer/profile" element={<Profile />} />
+      {/* لازم يكون آخر Route */}
+      <Route path="*" element={<Navigate to="/customer" replace />} />
     </Routes>
   );
 }
 
 export default App;
+
+
+// import { Routes, Route, Navigate } from "react-router-dom";
+
+
+// function App() {
+//   return (
+//     <Routes>
+   
+//     </Routes>
+//   );
+// }
+
+// export default App;
