@@ -5,7 +5,8 @@
 }
 
 .customer-navbar-container {
-  width: 946px;
+  width: 1208px;
+  max-width: calc(100% - 64px);
   height: 150px;
   margin: 0 auto;
 
@@ -306,6 +307,8 @@
 }
 
 .customer-navbar .customer-navbar-container {
+  width: 1208px;
+  max-width: calc(100% - 64px);
   direction: rtl;
 }
 
