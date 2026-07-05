@@ -1,4 +1,5 @@
-﻿import { NavLink, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import "./CustomerNavbar.css";
 
 import logo from "/src/assets/customer/icons/logo.svg";
@@ -6,8 +7,38 @@ import profile from "/src/assets/customer/icons/profile.svg";
 import notification from "/src/assets/customer/icons/notification.svg";
 import settings from "/src/assets/customer/icons/settings.svg";
 
+const PROFILE_AVATAR_KEY = "wasel_profile_avatar";
+
 function CustomerNavbar() {
   const navigate = useNavigate();
+  const [profileAvatar, setProfileAvatar] = useState(
+    () => localStorage.getItem(PROFILE_AVATAR_KEY) || profile
+  );
+
+  useEffect(() => {
+    function handleAvatarChange(event) {
+      setProfileAvatar(
+        event.detail || localStorage.getItem(PROFILE_AVATAR_KEY) || profile
+      );
+    }
+
+    function handleStorageChange(event) {
+      if (event.key === PROFILE_AVATAR_KEY) {
+        setProfileAvatar(event.newValue || profile);
+      }
+    }
+
+    window.addEventListener("wasel-profile-avatar-change", handleAvatarChange);
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener(
+        "wasel-profile-avatar-change",
+        handleAvatarChange
+      );
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
 
   function goToProfile() {
     navigate("/customer/profile");
@@ -76,7 +107,7 @@ function CustomerNavbar() {
             onClick={goToProfile}
             title="الملف الشخصي"
           >
-            <img src={profile} alt="الملف الشخصي" />
+            <img src={profileAvatar} alt="الملف الشخصي" />
           </button>
 
           <button

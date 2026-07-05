@@ -1074,3 +1074,441 @@
     margin-bottom: 14px;
   }
 }
+
+/* New subscription request modal */
+.new-subscription-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2300;
+  padding: 48px 20px;
+  background: rgba(51, 65, 85, 0.46);
+  overflow-y: auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.new-subscription-modal {
+  width: min(1068px, 100%);
+  min-height: 728px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 28px 80px rgba(15, 23, 42, 0.24);
+  overflow: hidden;
+
+  display: grid;
+  grid-template-columns: 390px minmax(0, 1fr);
+  grid-template-areas: "summary content";
+}
+
+.new-subscription-summary {
+  grid-area: summary;
+  position: relative;
+  padding: 42px 40px 38px;
+  background: #eef4ff;
+  border-right: 1px solid #cfd6e4;
+  min-height: 728px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.new-subscription-summary h3 {
+  margin: 0 0 34px;
+  color: #003c9e;
+  font-size: 20px;
+  font-weight: 800;
+  text-align: right;
+}
+
+.new-summary-list {
+  margin: 0;
+}
+
+.new-summary-list div {
+  min-height: 74px;
+  border-bottom: 1px solid #c7cfdf;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.new-summary-list dt,
+.new-summary-list dd {
+  margin: 0;
+}
+
+.new-summary-list dt {
+  color: #3f4654;
+  font-size: 17px;
+  font-weight: 600;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.new-summary-list dt svg {
+  color: #7b8495;
+  font-size: 17px;
+}
+
+.new-summary-list dd {
+  color: #071a33;
+  font-size: 20px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.new-summary-total {
+  margin-top: 56px;
+  padding: 27px 24px;
+  border-radius: 12px;
+  background: #dbe6fb;
+  color: #003c9e;
+  text-align: right;
+}
+
+.new-summary-total span {
+  display: block;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.new-summary-total strong {
+  display: block;
+  margin-top: 10px;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.new-summary-total small {
+  display: block;
+  margin-top: 10px;
+  color: #4b5565;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.new-subscription-confirm {
+  width: 100%;
+  height: 62px;
+  margin-top: auto;
+  border: 0;
+  border-radius: 10px;
+  background: #ff9d00;
+  color: #003c9e;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 22px;
+  font-weight: 800;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.new-subscription-confirm:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(255, 157, 0, 0.22);
+}
+
+.new-subscription-content {
+  grid-area: content;
+  position: relative;
+  padding: 42px 48px 44px;
+  background: #ffffff;
+}
+
+.new-subscription-close {
+  position: absolute;
+  top: 38px;
+  left: 30px;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.new-subscription-close svg {
+  font-size: 30px;
+}
+
+.new-subscription-content h2 {
+  margin: 0 0 50px;
+  color: #003c9e;
+  font-size: 20px;
+  font-weight: 800;
+  text-align: right;
+}
+
+.new-subscription-section-title {
+  margin: 0 0 30px;
+  color: #003c9e;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.new-subscription-section-title svg {
+  font-size: 26px;
+}
+
+.new-subscription-section-title h3 {
+  margin: 0;
+  color: #071a33;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.ampere-request-card {
+  padding: 34px 30px 30px;
+  border-radius: 12px;
+  background: #edf4ff;
+}
+
+.ampere-request-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.ampere-request-head span {
+  color: #4b5565;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.ampere-request-head strong {
+  color: #003c9e;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.ampere-slider {
+  width: 100%;
+  height: 8px;
+  margin: 32px 0 32px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.ampere-slider::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 999px;
+  background: #cfe1fb;
+}
+
+.ampere-slider::-webkit-slider-thumb {
+  width: 0;
+  height: 0;
+  -webkit-appearance: none;
+}
+
+.ampere-slider::-moz-range-track {
+  height: 8px;
+  border-radius: 999px;
+  background: #cfe1fb;
+}
+
+.ampere-slider::-moz-range-thumb {
+  width: 0;
+  height: 0;
+  border: 0;
+}
+
+.ampere-tip-card {
+  position: relative;
+  min-height: 100px;
+  padding: 20px 24px;
+  border: 1px solid #bdc7d8;
+  border-radius: 9px;
+  background: #ffffff;
+  box-shadow: 0 2px 0 rgba(0, 60, 158, 0.03);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.ampere-tip-card strong {
+  display: block;
+  color: #071a33;
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.ampere-tip-card p {
+  margin: 4px 0 0;
+  color: #4b5565;
+  font-size: 17px;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.ampere-tip-card > span {
+  position: absolute;
+  right: -42px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ff9d00;
+  font-size: 36px;
+  line-height: 1;
+}
+
+.ampere-tip-card > span svg {
+  display: block;
+}
+
+.payment-options-title {
+  margin-top: 56px;
+}
+
+.new-payment-plans {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.new-payment-plan {
+  min-height: 150px;
+  padding: 28px 28px 24px;
+  border: 2px solid #d8e7ff;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #071a33;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: center;
+}
+
+.new-payment-plan.selected {
+  border-color: #003c9e;
+  background: #f7f9ff;
+}
+
+.new-payment-plan strong {
+  display: block;
+  font-size: 23px;
+  font-weight: 800;
+}
+
+.new-payment-plan span {
+  display: block;
+  margin-top: 14px;
+  color: #4b5565;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.new-subscription-note {
+  margin: 30px 0 0;
+  padding: 18px 22px;
+  border: 1px solid #d8e7ff;
+  border-radius: 11px;
+  background: #f7faff;
+  color: #4b5565;
+  font-size: 16px;
+  line-height: 1.9;
+  text-align: right;
+}
+
+@media (max-width: 900px) {
+  .new-subscription-backdrop {
+    align-items: flex-start;
+    padding: 18px;
+  }
+
+  .new-subscription-modal {
+    min-height: auto;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "content"
+      "summary";
+  }
+
+  .new-subscription-content {
+    order: 1;
+    padding: 32px 22px;
+  }
+
+  .new-subscription-summary {
+    order: 2;
+    min-height: auto;
+    padding: 28px 22px;
+    border-right: 0;
+    border-top: 1px solid #cfd6e4;
+  }
+
+  .new-subscription-confirm {
+    margin-top: 28px;
+  }
+
+  .new-subscription-close {
+    top: 24px;
+    left: 18px;
+  }
+}
+
+@media (max-width: 560px) {
+  .new-subscription-backdrop {
+    padding: 10px;
+  }
+
+  .new-subscription-modal {
+    border-radius: 12px;
+  }
+
+  .new-subscription-content h2 {
+    margin-bottom: 34px;
+    padding-left: 42px;
+    font-size: 21px;
+  }
+
+  .ampere-request-card {
+    padding: 24px 18px;
+  }
+
+  .ampere-request-head,
+  .ampere-tip-card,
+  .new-summary-list div {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .ampere-tip-card strong {
+    font-size: 18px;
+  }
+
+  .ampere-tip-card p,
+  .new-payment-plan span {
+    font-size: 14px;
+  }
+
+  .new-payment-plans {
+    grid-template-columns: 1fr;
+  }
+
+  .new-payment-plan {
+    min-height: auto;
+    padding: 22px;
+  }
+
+  .new-subscription-note {
+    font-size: 14px;
+  }
+}

@@ -248,6 +248,7 @@
   height: 34px;
   border-radius: 50%;
   object-fit: cover;
+  object-position: top center;
   display: block;
   pointer-events: none;
 }

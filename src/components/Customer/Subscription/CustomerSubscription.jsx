@@ -5,6 +5,7 @@ import "./CustomerSubscription.css";
 import { getGeneratorById } from "../../../data/generatorsStorage";
 
 import EditSubscriptionModal from "./EditSubscriptionModal";
+import NewSubscriptionModal from "./NewSubscriptionModal";
 import SubscriptionBanner from "./SubscriptionBanner";
 import SubscriptionMainCard from "./SubscriptionMainCard";
 import SubscriptionProgress from "./SubscriptionProgress";
@@ -17,16 +18,46 @@ const amperePrices = {
   15: 200,
 };
 
+const formatTodayLabel = () =>
+  new Intl.DateTimeFormat("ar", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date());
+
+const formatTodayNumeric = () =>
+  new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(new Date());
+
+const createSubscriptionNumber = () =>
+  `#WSL-${Date.now().toString().slice(-4)}`;
+
 function CustomerSubscription() {
   const { generatorId } = useParams();
+  const generator = generatorId ? getGeneratorById(generatorId) : null;
+
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isCancelOpen, setIsCancelOpen] = useState(false);
   const [isCancelled, setIsCancelled] = useState(false);
   const [subscriptionMessage, setSubscriptionMessage] = useState("");
   const [ampereValue, setAmpereValue] = useState(5);
   const [paymentPlan, setPaymentPlan] = useState("monthly");
+  const [subscriptionStartDate, setSubscriptionStartDate] = useState(
+    formatTodayLabel
+  );
+  const [subscriptionProgressDate, setSubscriptionProgressDate] = useState(
+    formatTodayNumeric
+  );
+  const [subscriptionNumber, setSubscriptionNumber] = useState(
+    createSubscriptionNumber
+  );
+  const [isNewSubscriptionOpen, setIsNewSubscriptionOpen] = useState(
+    Boolean(generatorId)
+  );
 
-  const generator = generatorId ? getGeneratorById(generatorId) : null;
   const currentPrice = amperePrices[ampereValue] || amperePrices[5];
 
   const subscription = {
@@ -37,9 +68,9 @@ function CustomerSubscription() {
     ampere: `${ampereValue} أمبير`,
     ampereValue,
     paymentPlan,
-    paymentPlanText: paymentPlan === "monthly" ? "شهري" : "أسبوعي",
-    startDate: "1 يونيو 2026",
-    subscriptionNumber: "#WSL-8829",
+    paymentPlanText: paymentPlan === "monthly" ? "شهري" : "كل أسبوعين",
+    startDate: subscriptionStartDate,
+    subscriptionNumber,
     pricePerAmpere: `${currentPrice} شيكل`,
   };
 
@@ -54,7 +85,7 @@ function CustomerSubscription() {
     {
       id: 1,
       title: "تم تقديم الطلب",
-      date: "15/05/2026",
+      date: subscriptionProgressDate,
       type: "done",
     },
     {
@@ -66,7 +97,7 @@ function CustomerSubscription() {
     {
       id: 3,
       title: isCancelled ? "تم إلغاء الاشتراك" : "اشتراك نشط",
-      date: isCancelled ? "تم التحديث الآن" : "مفعل حاليا",
+      date: isCancelled ? "تم التحديث الآن" : "مفعل حالياً",
       type: isCancelled ? "done" : "active",
     },
   ];
@@ -77,7 +108,7 @@ function CustomerSubscription() {
     setIsEditOpen(false);
     setSubscriptionMessage(
       `تم تعديل الاشتراك إلى ${ampere} أمبير بنظام دفع ${
-        nextPaymentPlan === "monthly" ? "شهري" : "أسبوعي"
+        nextPaymentPlan === "monthly" ? "شهري" : "كل أسبوعين"
       }.`
     );
   };
@@ -87,6 +118,26 @@ function CustomerSubscription() {
     setIsCancelOpen(false);
     setIsEditOpen(false);
     setSubscriptionMessage("تم إلغاء الاشتراك بنجاح.");
+  };
+
+  const handleConfirmNewSubscription = ({
+    ampere,
+    paymentPlan: nextPaymentPlan,
+    monthlyCost,
+  }) => {
+    const todayLabel = formatTodayLabel();
+    const todayNumeric = formatTodayNumeric();
+
+    setAmpereValue(ampere);
+    setPaymentPlan(nextPaymentPlan);
+    setSubscriptionStartDate(todayLabel);
+    setSubscriptionProgressDate(todayNumeric);
+    setSubscriptionNumber(createSubscriptionNumber());
+    setIsCancelled(false);
+    setIsNewSubscriptionOpen(false);
+    setSubscriptionMessage(
+      `تم إرسال طلب الاشتراك بتاريخ ${todayLabel}. لا يوجد دفع الآن، والتكلفة الشهرية المتوقعة ${monthlyCost} شيكل بعد التفعيل.`
+    );
   };
 
   return (
@@ -116,6 +167,14 @@ function CustomerSubscription() {
           subscription={subscription}
           onClose={() => setIsEditOpen(false)}
           onConfirm={handleConfirmEdit}
+        />
+      )}
+
+      {isNewSubscriptionOpen && (
+        <NewSubscriptionModal
+          generator={generator}
+          onClose={() => setIsNewSubscriptionOpen(false)}
+          onConfirm={handleConfirmNewSubscription}
         />
       )}
 

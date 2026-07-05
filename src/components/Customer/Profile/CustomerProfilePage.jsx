@@ -1,23 +1,25 @@
 import { useRef, useState } from "react";
 import {
-  FiLogOut,
-  FiEdit2,
-  FiUser,
-  FiShield,
-  FiLock,
-  FiChevronLeft,
   FiCalendar,
   FiCheck,
+  FiChevronLeft,
+  FiEdit2,
+  FiLock,
+  FiLogOut,
+  FiShield,
+  FiUser,
 } from "react-icons/fi";
 
+import defaultAvatar from "../../../assets/images/User.jpg";
 import "./CustomerProfilePage.css";
 
+const PROFILE_AVATAR_KEY = "wasel_profile_avatar";
+
 const initialProfile = {
-  fullName: "محمود ",
+  fullName: "محمود",
   email: "m.@gmail.com",
   phone: "+972 59 1234 123",
-  address: " دير البلح",
-  area: "الوسطى دير البلح",
+  address: "دير البلح",
   memberSince: "يناير 2023",
 };
 
@@ -26,20 +28,23 @@ function CustomerProfilePage() {
 
   const [profile, setProfile] = useState(initialProfile);
   const [savedProfile, setSavedProfile] = useState(initialProfile);
+  const [avatarImage, setAvatarImage] = useState(
+    () => localStorage.getItem(PROFILE_AVATAR_KEY) || defaultAvatar
+  );
 
   const [smsEnabled, setSmsEnabled] = useState(false);
   const [appNotifications, setAppNotifications] = useState(true);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(true);
   const [language, setLanguage] = useState("ar");
-
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
-  const [avatarImage, setAvatarImage] = useState("");
 
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
+
+  const areaLabel = profile.address.trim() || "غير محدد";
 
   function handleProfileChange(event) {
     const { name, value } = event.target;
@@ -78,8 +83,21 @@ function CustomerProfilePage() {
 
     if (!file) return;
 
-    const imageUrl = URL.createObjectURL(file);
-    setAvatarImage(imageUrl);
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const imageDataUrl = reader.result;
+
+      localStorage.setItem(PROFILE_AVATAR_KEY, imageDataUrl);
+      setAvatarImage(imageDataUrl);
+      window.dispatchEvent(
+        new CustomEvent("wasel-profile-avatar-change", {
+          detail: imageDataUrl,
+        })
+      );
+    };
+
+    reader.readAsDataURL(file);
   }
 
   function handlePasswordChange(event) {
@@ -111,7 +129,6 @@ function CustomerProfilePage() {
       newPassword: "",
       confirmPassword: "",
     });
-
     setPasswordModalOpen(false);
   }
 
@@ -125,15 +142,12 @@ function CustomerProfilePage() {
         <section className="profile-user-card">
           <div className="profile-user-info">
             <div className="profile-avatar-box">
-              {avatarImage ? (
-                <img src={avatarImage} alt="الصورة الشخصية" />
-              ) : (
-                <div className="avatar-placeholder">م</div>
-              )}
+              <img src={avatarImage} alt="الصورة الشخصية" />
 
               <button
                 className="edit-avatar-button"
                 type="button"
+                aria-label="تغيير الصورة الشخصية"
                 onClick={handleAvatarClick}
               >
                 <FiEdit2 />
@@ -158,7 +172,7 @@ function CustomerProfilePage() {
                   حساب مفعل
                 </span>
 
-                <span className="area-badge">المنطقة: {profile.area}</span>
+                <span className="area-badge">المنطقة: {areaLabel}</span>
               </div>
             </div>
           </div>
@@ -260,7 +274,7 @@ function CustomerProfilePage() {
                 value={language}
                 onChange={(event) => setLanguage(event.target.value)}
               >
-                <option value="ar">العربية (العالم العربي)</option>
+                <option value="ar">العربية</option>
                 <option value="en">English</option>
               </select>
             </label>
@@ -269,13 +283,11 @@ function CustomerProfilePage() {
 
             <label className="checkbox-setting">
               <span>رسائل SMS</span>
-
               <input
                 type="checkbox"
                 checked={smsEnabled}
                 onChange={() => setSmsEnabled(!smsEnabled)}
               />
-
               <i>
                 <FiCheck />
               </i>
@@ -283,13 +295,11 @@ function CustomerProfilePage() {
 
             <label className="checkbox-setting">
               <span>إشعارات التطبيق</span>
-
               <input
                 type="checkbox"
                 checked={appNotifications}
                 onChange={() => setAppNotifications(!appNotifications)}
               />
-
               <i>
                 <FiCheck />
               </i>
