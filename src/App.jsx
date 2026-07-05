@@ -12,6 +12,7 @@ import TermsModal from "./pages/modals/TermsModal";
 
 // Auth pages
 import Login from "./pages/auth/Login";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 import ChooseAccount from "./pages/auth/ChooseAccount";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import OtpPage from "./pages/auth/OtpPage";
@@ -81,27 +82,60 @@ function App() {
 
          <Route path="/" element={<Navigate to="/customer" replace />} />
 
-      <Route path="/customer" element={<CustomerHome />} />
+      <Route
+        path="/customer"
+        element={
+          <ProtectedRoute allowedRoles={["customer", "client", "user"]}>
+            <CustomerHome />
+          </ProtectedRoute>
+        }
+      />
 
-      <Route path="/customer/home" element={<CustomerHome />} />
+      <Route
+        path="/customer/home"
+        element={
+          <ProtectedRoute allowedRoles={["customer", "client", "user"]}>
+            <CustomerHome />
+          </ProtectedRoute>
+        }
+      />
 
-      <Route path="/customer/generators" element={<Generators />} />
+      <Route
+        path="/customer/generators"
+        element={
+          <ProtectedRoute allowedRoles={["customer", "client", "user"]}>
+            <Generators />
+          </ProtectedRoute>
+        }
+      />
 
       <Route
         path="/customer/generator-details/:id"
-        element={<GeneratorDetails />}
+        element={
+          <ProtectedRoute allowedRoles={["customer", "client", "user"]}>
+            <GeneratorDetails />
+          </ProtectedRoute>
+        }
       />
 
       {/* الاشتراكات من النافبار */}
       <Route
         path="/customer/subscriptions"
-        element={<CustomerSubscriptionPage />}
+        element={
+          <ProtectedRoute allowedRoles={["customer", "client", "user"]}>
+            <CustomerSubscriptionPage />
+          </ProtectedRoute>
+        }
       />
 
       {/* الاشتراك من تفاصيل مولد معيّن */}
       <Route
         path="/customer/subscriptions/:generatorId"
-        element={<CustomerSubscriptionPage />}
+        element={
+          <ProtectedRoute allowedRoles={["customer", "client", "user"]}>
+            <CustomerSubscriptionPage />
+          </ProtectedRoute>
+        }
       />
 
       {/* احتياط لو الرابط بدون s */}
@@ -112,14 +146,46 @@ function App() {
 
       <Route
         path="/customer/subscription/:generatorId"
-        element={<CustomerSubscriptionPage />}
+        element={
+          <ProtectedRoute allowedRoles={["customer", "client", "user"]}>
+            <CustomerSubscriptionPage />
+          </ProtectedRoute>
+        }
       />
 
       {/* الفواتير والمدفوعات */}
-      <Route path="/customer/bills" element={<CustomerBillsPage />} />
-<Route path="/customer/reviews" element={<CustomerReviewsPage />} />
-<Route path="/customer/complaints" element={<CustomerComplaintsPage />} />
-<Route path="/customer/profile" element={<Profile />} />
+      <Route
+        path="/customer/bills"
+        element={
+          <ProtectedRoute allowedRoles={["customer", "client", "user"]}>
+            <CustomerBillsPage />
+          </ProtectedRoute>
+        }
+      />
+<Route
+        path="/customer/reviews"
+        element={
+          <ProtectedRoute allowedRoles={["customer", "client", "user"]}>
+            <CustomerReviewsPage />
+          </ProtectedRoute>
+        }
+      />
+<Route
+        path="/customer/complaints"
+        element={
+          <ProtectedRoute allowedRoles={["customer", "client", "user"]}>
+            <CustomerComplaintsPage />
+          </ProtectedRoute>
+        }
+      />
+<Route
+        path="/customer/profile"
+        element={
+          <ProtectedRoute allowedRoles={["customer", "client", "user"]}>
+            <Profile />
+          </ProtectedRoute>
+        }
+      />
       {/* لازم يكون آخر Route */}
       <Route path="*" element={<Navigate to="/customer" replace />} />
     </Routes>

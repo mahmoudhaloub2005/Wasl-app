@@ -1,4 +1,5 @@
 import axios from "axios";
+import { clearAuthStorage, getStoredToken } from "../utils/authStorage";
 
 const api = axios.create({
   baseURL:
@@ -11,9 +12,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token =
-    localStorage.getItem("wasel_token") ||
-    sessionStorage.getItem("wasel_token");
+  const token = getStoredToken();
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -26,14 +25,11 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem("wasel_token");
-      localStorage.removeItem("wasel_is_logged_in");
-      localStorage.removeItem("wasel_user");
-      localStorage.removeItem("wasel_user_role");
-      sessionStorage.removeItem("wasel_token");
-      sessionStorage.removeItem("wasel_is_logged_in");
-      sessionStorage.removeItem("wasel_user");
-      sessionStorage.removeItem("wasel_user_role");
+      clearAuthStorage();
+
+      if (window.location.pathname !== "/login") {
+        window.location.replace("/login");
+      }
     }
 
     return Promise.reject(error);
