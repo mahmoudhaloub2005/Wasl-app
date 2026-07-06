@@ -59,6 +59,8 @@ body {
   cursor: pointer;
   transition: 0.3s;
   border: 2px solid transparent;
+  font-family: "Noto Sans Arabic", sans-serif;
+  text-align: center;
 }
 
 .card:hover {
@@ -137,10 +139,22 @@ body {
   color: #444653;
 }
 
-.login-link span {
+.login-link button {
+  border: 0;
+  background: transparent;
   color: #003399;
   font-weight: bold;
   cursor: pointer;
+  font-family: "Noto Sans Arabic", sans-serif;
+  font-size: inherit;
+  padding: 0;
+}
+
+.choose-error {
+  margin: -18px 0 16px;
+  color: #c11717;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 /* ================= Responsive ================= */

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./ProviderRegister.css";
 import {
   FiUser,
@@ -10,14 +10,14 @@ import {
   FiEyeOff,
 } from "react-icons/fi";
 
-function useProviderRegister(navigate) {
+function useProviderRegister(navigate, initialData = {}) {
   const [formData, setFormData] = useState({
-    fullName: "",
-    facilityName: "",
-    email: "",
-    phone: "",
-    password: "",
-    terms: false,
+    fullName: initialData.fullName || "",
+    facilityName: initialData.facilityName || "",
+    email: initialData.email || "",
+    phone: initialData.phone || "",
+    password: initialData.password || "",
+    terms: initialData.terms || false,
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -76,6 +76,7 @@ function useProviderRegister(navigate) {
 
 const ProviderRegister = () => {
   const navigate = useNavigate();
+  const initialData = useLocation().state?.providerData || {};
 
   const {
     formData,
@@ -84,7 +85,7 @@ const ProviderRegister = () => {
     setShowPassword,
     handleChange,
     handleSubmit,
-  } = useProviderRegister(navigate);
+  } = useProviderRegister(navigate, initialData);
 
   return (
     <div className="provider-page">

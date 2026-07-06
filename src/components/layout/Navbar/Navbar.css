@@ -114,9 +114,12 @@ body {
   background: #0b3ab6;
 }
 
-/* ========================= */
-/* Tablet */
-/* ========================= */
+.logo-clickable {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
 
 @media (max-width: 992px) {
   .navbar {
@@ -147,10 +150,6 @@ body {
     font-size: 15px;
   }
 }
-
-/* ========================= */
-/* Mobile */
-/* ========================= */
 
 @media (max-width: 768px) {
   .navbar {
@@ -189,13 +188,13 @@ body {
   }
 }
 
-/* ========================= */
-/* Small Mobile */
-/* ========================= */
-
-@media (max-width: 480px) {
+@media (max-width: 520px) {
   .navbar {
-    padding: 15px;
+    width: calc(100% - 24px);
+    margin: 16px auto 8px;
+    padding: 14px 12px;
+    gap: 14px;
+    border-radius: 18px;
   }
 
   .logo img {
@@ -205,35 +204,6 @@ body {
 
   .logo h2 {
     font-size: 20px;
-  }
-
-  .links {
-    gap: 12px;
-  }
-
-  .links li {
-    font-size: 14px;
-  }
-
-  .btn {
-    font-size: 14px;
-    height: 42px;
-  }
-}
-.logo-clickable {
-  border: none;
-  background: transparent;
-  padding: 0;
-  cursor: pointer;
-}
-
-@media (max-width: 520px) {
-  .navbar {
-    width: calc(100% - 24px);
-    margin: 16px auto 8px;
-    padding: 14px 12px;
-    gap: 14px;
-    border-radius: 18px;
   }
 
   .links {
@@ -251,5 +221,7 @@ body {
 
   .btn {
     max-width: none;
+    font-size: 14px;
+    height: 42px;
   }
 }

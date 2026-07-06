@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { registerProvider } from "../../../../services/authService";
 import "./ProviderDocuments.css";
 import {
   FiCheck,
@@ -11,7 +12,46 @@ import {
   FiArrowLeft,
 } from "react-icons/fi";
 
-function useProviderDocuments(navigate) {
+function splitFullName(fullName = "") {
+  const nameParts = fullName.trim().split(/\s+/);
+  return {
+    firstName: nameParts[0] || "",
+    lastName: nameParts.slice(1).join(" ") || nameParts[0] || "",
+  };
+}
+
+function buildProviderRegistrationForm(providerData, generatorData, files) {
+  const formData = new FormData();
+  const { firstName, lastName } = splitFullName(providerData.fullName);
+
+  formData.append("first_name", firstName);
+  formData.append("last_name", lastName);
+  formData.append("email", providerData.email);
+  formData.append("password", providerData.password);
+  formData.append("password_confirmation", providerData.password);
+  formData.append("phone", providerData.phone);
+  formData.append("company_name", providerData.facilityName);
+  formData.append("generator_type", generatorData.generatorType);
+  formData.append("generator_powerKW", generatorData.capacity);
+  formData.append("generator_gps", generatorData.location);
+  formData.append("generator_price", generatorData.price);
+
+  if (files.ownershipFile) formData.append("proofs[]", files.ownershipFile);
+  if (files.idFile) formData.append("proofs[]", files.idFile);
+  if (files.licenseFile) formData.append("proofs[]", files.licenseFile);
+
+  return formData;
+}
+
+function getApiErrorMessage(error, fallback) {
+  const firstError = error.response?.data?.errors
+    ? Object.values(error.response.data.errors)[0]?.[0]
+    : null;
+
+  return firstError || error.response?.data?.message || error.message || fallback;
+}
+
+function useProviderDocuments(navigate, providerData, generatorData) {
   const [files, setFiles] = useState({
     idFile: null,
     ownershipFile: null,
@@ -20,6 +60,7 @@ function useProviderDocuments(navigate) {
 
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const handleFileChange = (fileType, file) => {
     setFiles((prevFiles) => ({
@@ -33,7 +74,15 @@ function useProviderDocuments(navigate) {
 
   const canSubmit = files.idFile && files.ownershipFile;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (submitting) return;
+
+    if (!providerData || !generatorData) {
+      setMessage("بيانات التسجيل غير مكتملة، يرجى الرجوع وإكمال الخطوات السابقة");
+      setMessageType("error");
+      return;
+    }
+
     if (!canSubmit) {
       setMessage("يرجى رفع صورة الهوية وإثبات الملكية قبل تقديم الطلب");
       setMessageType("error");
@@ -46,22 +95,49 @@ function useProviderDocuments(navigate) {
 
     setMessage("");
     setMessageType("");
+    setSubmitting(true);
 
-    navigate("/provider-pending", {
-      state: {
-        files,
-      },
-    });
+    try {
+      const requestData = buildProviderRegistrationForm(
+        providerData,
+        generatorData,
+        files
+      );
+
+      await registerProvider(requestData);
+
+      navigate("/provider-pending", {
+        state: {
+          files,
+          providerData,
+          generatorData,
+        },
+      });
+    } catch (error) {
+      console.error("Provider register error:", error);
+      setMessage(
+        getApiErrorMessage(error, "تعذر إرسال طلب تسجيل المزود، حاول مرة أخرى")
+      );
+      setMessageType("error");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleBack = () => {
-    navigate("/provider-generator-info");
+    navigate("/provider-generator-info", {
+      state: {
+        providerData,
+        generatorData,
+      },
+    });
   };
 
   return {
     files,
     message,
     messageType,
+    submitting,
     handleFileChange,
     handleSubmit,
     handleBack,
@@ -70,15 +146,19 @@ function useProviderDocuments(navigate) {
 
 function ProviderDocuments() {
   const navigate = useNavigate();
+  const locationState = useLocation().state || {};
+  const providerData = locationState.providerData || null;
+  const generatorData = locationState.generatorData || null;
 
   const {
     files,
     message,
     messageType,
+    submitting,
     handleFileChange,
     handleSubmit,
     handleBack,
-  } = useProviderDocuments(navigate);
+  } = useProviderDocuments(navigate, providerData, generatorData);
 
   return (
     <main className="provider-documents-page">
@@ -248,6 +328,10 @@ function ProviderDocuments() {
           </p>
         )}
 
+        {submitting && (
+          <p className="success-message">جاري تقديم الطلب...</p>
+        )}
+
         <div className="documents-divider"></div>
 
         <div className="documents-actions">
@@ -255,6 +339,7 @@ function ProviderDocuments() {
             type="button"
             className="submit-document-btn"
             onClick={handleSubmit}
+            disabled={submitting}
           >
             تقديم الطلب
           </button>

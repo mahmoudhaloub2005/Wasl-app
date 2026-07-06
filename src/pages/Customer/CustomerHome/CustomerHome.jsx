@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import CustomerNavbar from "../../../components/Customer/CustomerNavbar/CustomerNavbar";
@@ -7,13 +8,45 @@ import CustomerNotificationsPanel from "../../../components/Customer/CustomerNot
 import CustomerMiniStats from "../../../components/Customer/CustomerMiniStats/CustomerMiniStats";
 import OffersSection from "../../../components/Customer/OffersSection/OffersSection";
 import Footer from "../../../components/layout/Footer/Footer";
+import {
+  getMyNotifications,
+  markNotificationAsRead,
+} from "../../../services/notificationService";
+import { getUserDisplayName } from "../../../utils/authStorage";
 
 import "./CustomerHome.css";
 
 function CustomerHome() {
   const navigate = useNavigate();
-
   const currentGeneratorId = "nour";
+  const userName = getUserDisplayName();
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadNotifications() {
+      try {
+        const data = await getMyNotifications();
+
+        if (isMounted) {
+          setNotifications(data);
+        }
+      } catch (error) {
+        console.error("Failed to load notifications:", error);
+
+        if (isMounted) {
+          setNotifications([]);
+        }
+      }
+    }
+
+    loadNotifications();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleEditSubscription = () => {
     navigate(`/customer/subscriptions/${currentGeneratorId}`);
@@ -27,12 +60,34 @@ function CustomerHome() {
     console.log("فتح صفحة كافة التنبيهات");
   };
 
+  const handleMarkNotificationAsRead = async (notification) => {
+    if (!notification?.id || notification.isRead) return;
+
+    setNotifications((currentNotifications) =>
+      currentNotifications.map((item) =>
+        item.id === notification.id ? { ...item, isRead: true } : item
+      )
+    );
+
+    try {
+      await markNotificationAsRead(notification.id);
+    } catch (error) {
+      console.error("Failed to mark notification as read:", error);
+
+      setNotifications((currentNotifications) =>
+        currentNotifications.map((item) =>
+          item.id === notification.id ? { ...item, isRead: false } : item
+        )
+      );
+    }
+  };
+
   const handleViewAllOffers = () => {
-    console.log("فتح صفحة كافة العروض");
+    navigate("/customer/offers/2");
   };
 
   const handleViewOfferDetails = (offerId) => {
-    console.log("عرض تفاصيل العرض:", offerId);
+    navigate(`/customer/offers/${offerId}`);
   };
 
   return (
@@ -40,12 +95,13 @@ function CustomerHome() {
       <CustomerNavbar />
 
       <main className="customer-home-container">
-        <WelcomeSection userName="محمود" />
+        <WelcomeSection userName={userName} />
 
         <div className="customer-dashboard-layout">
           <aside className="customer-dashboard-left">
             <CustomerNotificationsPanel
-              notifications={[]}
+              notifications={notifications}
+              onMarkAsRead={handleMarkNotificationAsRead}
               onShowAllNotifications={handleShowAllNotifications}
             />
 

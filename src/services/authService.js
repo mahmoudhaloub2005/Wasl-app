@@ -9,6 +9,16 @@ export async function loginUser(email, password) {
   return response.data;
 }
 
+export async function registerCustomer(data) {
+  const response = await api.post("/register/customer", data);
+  return response.data;
+}
+
+export async function registerProvider(data) {
+  const response = await api.post("/register/provider", data);
+  return response.data;
+}
+
 export async function getCurrentUser() {
   const response = await api.get("/user");
   return response.data;

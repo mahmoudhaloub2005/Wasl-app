@@ -1,12 +1,15 @@
+import { NavLink, useLocation } from "react-router-dom";
 import "./Footer.css";
 import logo from "../../../assets/icons/image.png";
-import { NavLink } from "react-router-dom";
 
 function Footer() {
+  const location = useLocation();
+  const returnPath = `${location.pathname}${location.search}`;
+  const modalState = { from: returnPath };
+
   return (
     <footer className="footer">
       <div className="footer-container">
-
         <p className="copyright">
           © 2026 Wassl Digital Platform. All rights reserved.
         </p>
@@ -15,6 +18,7 @@ function Footer() {
           <li>
             <NavLink
               to="/terms"
+              state={modalState}
               className={({ isActive }) =>
                 isActive ? "active-footer-link" : ""
               }
@@ -26,6 +30,7 @@ function Footer() {
           <li>
             <NavLink
               to="/privacy"
+              state={modalState}
               className={({ isActive }) =>
                 isActive ? "active-footer-link" : ""
               }
@@ -37,6 +42,7 @@ function Footer() {
           <li>
             <NavLink
               to="/provider-modal"
+              state={modalState}
               className={({ isActive }) =>
                 isActive ? "active-footer-link" : ""
               }
@@ -61,7 +67,6 @@ function Footer() {
           <img src={logo} alt="وصل" />
           <span>وصل</span>
         </div>
-
       </div>
     </footer>
   );

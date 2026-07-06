@@ -93,6 +93,38 @@
   cursor: pointer;
 }
 
+.avatar-actions-menu {
+  position: absolute;
+  left: -8px;
+  bottom: -82px;
+  z-index: 30;
+  width: 138px;
+  padding: 8px;
+  border: 1px solid #d7e1ee;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 14px 28px rgba(0, 40, 142, 0.14);
+}
+
+.avatar-actions-menu button {
+  width: 100%;
+  height: 36px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #10263c;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  text-align: right;
+}
+
+.avatar-actions-menu button:hover {
+  background: #eef4ff;
+  color: #003c98;
+}
+
 .profile-user-details h1 {
   margin: 0 0 12px;
   font-size: 28px;

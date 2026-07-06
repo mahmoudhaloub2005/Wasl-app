@@ -1,42 +1,86 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { IoChevronDownOutline, IoCloudUploadOutline } from "react-icons/io5";
 import "./CustomerComplaints.css";
 
 import ReviewsComplaintsTabs from "../ReviewsComplaintsTabs/ReviewsComplaintsTabs";
-import { IoChevronDownOutline, IoCloudUploadOutline } from "react-icons/io5";
+import CustomerActionSuccessModal from "../Shared/CustomerActionSuccessModal";
+import { createComplaint } from "../../../services/complaintService";
+import { getGenerators } from "../../../services/generatorService";
+import { getApiErrorMessage } from "../../../utils/apiError";
+
+const fallbackComplaints = [
+  {
+    id: 1,
+    title: "تأخر في تحديث الفاتورة الشهرية",
+    details:
+      "لقد قمت بسداد المبلغ ولكن لا يزال يظهر في لوحة التحكم أنني لم أسدد...",
+    date: "12 أكتوبر 2023",
+    status: "pending",
+    statusText: "قيد المراجعة",
+  },
+  {
+    id: 2,
+    title: "انقطاع مفاجئ للخدمة لمدة 4 ساعات",
+    details:
+      "انقطعت الكهرباء عن الحي بالكامل ولم يتم الرد على الهواتف الأرضية...",
+    date: "05 أكتوبر 2023",
+    status: "resolved",
+    statusText: "تم الحل",
+  },
+  {
+    id: 3,
+    title: "طلب زيادة قدرة الأمبير مجانا",
+    details:
+      "أرغب في زيادة الاشتراك من 5 أمبير إلى 10 أمبير بدون دفع رسوم إضافية...",
+    date: "28 سبتمبر 2023",
+    status: "rejected",
+    statusText: "مرفوضة",
+  },
+];
+
+function buildProviderOptions(generators = []) {
+  const providersMap = new Map();
+
+  generators.forEach((generator) => {
+    const providerId = generator.provider?.id;
+
+    if (!providerId) {
+      return;
+    }
+
+    const key = String(providerId);
+
+    if (!providersMap.has(key)) {
+      const displayName =
+        generator.name || generator.provider?.name || `مزود الخدمة ${providersMap.size + 1}`;
+
+      providersMap.set(key, {
+        id: key,
+        name: displayName,
+      });
+    }
+  });
+
+  return Array.from(providersMap.values());
+}
 
 function CustomerComplaints() {
+  const navigate = useNavigate();
+  const [targetId, setTargetId] = useState("");
+  const [providerOptions, setProviderOptions] = useState([]);
   const [title, setTitle] = useState("");
   const [details, setDetails] = useState("");
   const [attachmentName, setAttachmentName] = useState("");
+  const [attachmentFile, setAttachmentFile] = useState(null);
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-
-  const [complaints, setComplaints] = useState([
-    {
-      id: 1,
-      title: "تأخر في تحديث الفاتورة الشهرية",
-      details: "لقد قمت بسداد المبلغ ولكن لا يزال يظهر في لوحة التحكم أنني لم أسدد...",
-      date: "12 أكتوبر 2023",
-      status: "pending",
-      statusText: "قيد المراجعة",
-    },
-    {
-      id: 2,
-      title: "انقطاع مفاجئ للخدمة لمدة 4 ساعات",
-      details: "انقطعت الكهرباء عن الحي بالكامل ولم يتم الرد على الهواتف الأرضية...",
-      date: "05 أكتوبر 2023",
-      status: "resolved",
-      statusText: "تم الحل",
-    },
-    {
-      id: 3,
-      title: "طلب زيادة قدرة الأمبير مجاناً",
-      details: "أرغب في زيادة الاشتراك من 5 أمبير إلى 10 أمبير بدون دفع رسوم إضافية...",
-      date: "28 سبتمبر 2023",
-      status: "rejected",
-      statusText: "مرفوضة",
-    },
-  ]);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [pageMessage, setPageMessage] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [complaints, setComplaints] = useState(fallbackComplaints);
+  const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const filterOptions = [
     { value: "all", label: "الكل" },
@@ -44,6 +88,44 @@ function CustomerComplaints() {
     { value: "resolved", label: "تم الحل" },
     { value: "rejected", label: "مرفوضة" },
   ];
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadComplaintProviders() {
+      try {
+        setLoading(true);
+        setPageMessage("");
+
+        const generators = await getGenerators();
+
+        if (isMounted) {
+          const providers = buildProviderOptions(generators);
+          setProviderOptions(providers);
+          setTargetId((currentTargetId) =>
+            currentTargetId || providers[0]?.id || ""
+          );
+        }
+      } catch (error) {
+        console.error("Failed to load provider options:", error);
+
+        if (isMounted) {
+          setPageMessage("تعذر تحميل قائمة المزودين من الخادم، حاول مرة أخرى.");
+          setProviderOptions([]);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadComplaintProviders();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const selectedFilterLabel =
     filterOptions.find((option) => option.value === selectedFilter)?.label ||
@@ -57,48 +139,51 @@ function CustomerComplaints() {
     return complaints.filter((complaint) => complaint.status === selectedFilter);
   }, [complaints, selectedFilter]);
 
-  const getTodayDate = () => {
-    return new Date().toLocaleDateString("ar", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
-  };
-
   const handleAttachmentChange = (event) => {
     const file = event.target.files[0];
-
-    if (!file) {
-      setAttachmentName("");
-      return;
-    }
-
-    setAttachmentName(file.name);
+    setAttachmentFile(file || null);
+    setAttachmentName(file ? file.name : "");
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (!title.trim() || !details.trim()) {
-      alert("يرجى تعبئة عنوان الشكوى ووصف الشكوى بالتفصيل.");
+      setErrorMessage("يرجى تعبئة عنوان الشكوى ووصف الشكوى بالتفصيل.");
       return;
     }
 
-    const newComplaint = {
-      id: Date.now(),
-      title,
-      details,
-      date: getTodayDate(),
-      status: "pending",
-      statusText: "قيد المراجعة",
-    };
+    if (!targetId) {
+      setErrorMessage("يرجى اختيار المزود قبل إرسال الشكوى.");
+      return;
+    }
 
-    setComplaints((prevComplaints) => [newComplaint, ...prevComplaints]);
+    try {
+      setIsSubmitting(true);
+      setErrorMessage("");
 
-    setTitle("");
-    setDetails("");
-    setAttachmentName("");
-    setSelectedFilter("all");
+      const complaint = await createComplaint({
+        title,
+        details,
+        file: attachmentFile,
+        targetId,
+      });
+
+      setComplaints((prevComplaints) => [complaint, ...prevComplaints]);
+      setTitle("");
+      setDetails("");
+      setAttachmentName("");
+      setAttachmentFile(null);
+      setSelectedFilter("all");
+      setShowSuccessModal(true);
+    } catch (error) {
+      console.error("Failed to submit complaint:", error);
+      setErrorMessage(
+        getApiErrorMessage(error, "تعذر إرسال الشكوى للخادم. حاول مرة أخرى.")
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -106,18 +191,52 @@ function CustomerComplaints() {
       <div className="customer-complaints-container">
         <ReviewsComplaintsTabs />
 
+        {loading && (
+          <p className="subscription-action-message">جاري تحميل الشكاوى...</p>
+        )}
+
+        {pageMessage && (
+          <p className="subscription-action-message">{pageMessage}</p>
+        )}
+
         <div className="complaints-content-grid">
           <aside className="new-complaint-card">
             <h2>تقديم شكوى جديدة</h2>
 
             <form onSubmit={handleSubmit}>
               <div className="complaint-form-group">
+                <label htmlFor="complaintProvider">اختر المزود</label>
+                <select
+                  id="complaintProvider"
+                  value={targetId}
+                  onChange={(event) => {
+                    setTargetId(event.target.value);
+                    setErrorMessage("");
+                  }}
+                  disabled={!providerOptions.length}
+                >
+                  {!providerOptions.length && (
+                    <option value="">لا يوجد مزودون متاحون</option>
+                  )}
+
+                  {providerOptions.map((provider) => (
+                    <option value={provider.id} key={provider.id}>
+                      {provider.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="complaint-form-group">
                 <label htmlFor="complaintTitle">عنوان الشكوى</label>
                 <input
                   id="complaintTitle"
                   type="text"
                   value={title}
-                  onChange={(event) => setTitle(event.target.value)}
+                  onChange={(event) => {
+                    setTitle(event.target.value);
+                    setErrorMessage("");
+                  }}
                   placeholder="مثال: انقطاع التيار الكهربائي المتكرر"
                 />
               </div>
@@ -127,7 +246,10 @@ function CustomerComplaints() {
                 <textarea
                   id="complaintDetails"
                   value={details}
-                  onChange={(event) => setDetails(event.target.value)}
+                  onChange={(event) => {
+                    setDetails(event.target.value);
+                    setErrorMessage("");
+                  }}
                   placeholder="اشرح المشكلة التي واجهتها..."
                 />
               </div>
@@ -149,8 +271,16 @@ function CustomerComplaints() {
                 </label>
               </div>
 
-              <button type="submit" className="send-complaint-button">
-                إرسال الشكوى
+              {errorMessage && (
+                <p className="complaint-form-error">{errorMessage}</p>
+              )}
+
+              <button
+                type="submit"
+                className="send-complaint-button"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "جاري إرسال الشكوى..." : "إرسال الشكوى"}
               </button>
             </form>
           </aside>
@@ -207,7 +337,6 @@ function CustomerComplaints() {
                   >
                     <div className="complaint-history-top">
                       <span className="complaint-date">{complaint.date}</span>
-
                       <span className={`complaint-status ${complaint.status}`}>
                         {complaint.statusText}
                       </span>
@@ -220,18 +349,27 @@ function CustomerComplaints() {
               ) : (
                 <article className="complaint-history-card pending">
                   <div className="complaint-history-top">
-                    <span className="complaint-date">—</span>
+                    <span className="complaint-date">-</span>
                     <span className="complaint-status pending">لا يوجد</span>
                   </div>
 
                   <h3>لا توجد شكاوى مطابقة</h3>
-                  <p>جرّب تغيير الفلتر لعرض نتائج أخرى.</p>
+                  <p>جرب تغيير الفلتر لعرض نتائج أخرى.</p>
                 </article>
               )}
             </div>
           </section>
         </div>
       </div>
+
+      {showSuccessModal && (
+        <CustomerActionSuccessModal
+          title="تم إرسال الشكوى بنجاح"
+          description="تم استلام الشكوى بنجاح، وسيتم مراجعتها من قبل مزود الخدمة في أقرب وقت."
+          onClose={() => setShowSuccessModal(false)}
+          onSupport={() => navigate("/contact-us")}
+        />
+      )}
     </main>
   );
 }

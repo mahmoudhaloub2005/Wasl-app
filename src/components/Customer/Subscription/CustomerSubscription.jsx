@@ -1,8 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "./CustomerSubscription.css";
 
 import { getGeneratorById } from "../../../data/generatorsStorage";
+import {
+  createSubscription,
+  deleteSubscription,
+  getMySubscriptions,
+  getSubscriptionDetails,
+  updateSubscription,
+} from "../../../services/subscriptionService";
+import { getApiErrorMessage } from "../../../utils/apiError";
 
 import EditSubscriptionModal from "./EditSubscriptionModal";
 import NewSubscriptionModal from "./NewSubscriptionModal";
@@ -57,10 +65,56 @@ function CustomerSubscription() {
   const [isNewSubscriptionOpen, setIsNewSubscriptionOpen] = useState(
     Boolean(generatorId)
   );
+  const [remoteSubscription, setRemoteSubscription] = useState(null);
+  const [isLoadingSubscription, setIsLoadingSubscription] = useState(true);
 
   const currentPrice = amperePrices[ampereValue] || amperePrices[5];
 
-  const subscription = {
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadSubscriptions() {
+      try {
+        setIsLoadingSubscription(true);
+
+        const subscriptions = await getMySubscriptions();
+        const activeSubscription =
+          subscriptions.find((item) => !item.isCancelled) || subscriptions[0];
+        const subscriptionDetails = activeSubscription?.id
+          ? await getSubscriptionDetails(activeSubscription.id)
+          : activeSubscription;
+
+        if (isMounted && subscriptionDetails) {
+          setRemoteSubscription(subscriptionDetails);
+          setAmpereValue(subscriptionDetails.ampereValue || 5);
+          setPaymentPlan(subscriptionDetails.paymentPlan || "monthly");
+          setSubscriptionStartDate(subscriptionDetails.startDate);
+          setSubscriptionNumber(subscriptionDetails.subscriptionNumber);
+          setIsCancelled(Boolean(subscriptionDetails.isCancelled));
+        }
+      } catch (error) {
+        console.error("Failed to load subscriptions:", error);
+
+        if (isMounted) {
+          setSubscriptionMessage(
+            "تعذر تحميل الاشتراكات من الخادم، يتم عرض البيانات المتاحة حاليا."
+          );
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoadingSubscription(false);
+        }
+      }
+    }
+
+    loadSubscriptions();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const subscription = remoteSubscription || {
     generatorId: generator?.id || generatorId || null,
     generatorName: generator?.name || "مولدات الحي المركزية",
     description: generator?.shortDescription || "مزود طاقة موثوق لمنطقتكم",
@@ -74,7 +128,7 @@ function CustomerSubscription() {
     pricePerAmpere: `${currentPrice} شيكل`,
   };
 
-  const invoice = {
+  const invoice = remoteSubscription?.invoice || {
     currentBill: String(currentPrice),
     usagePercent: Math.min(ampereValue * 10, 100),
     lastPayment: "100 شيكل",
@@ -102,25 +156,61 @@ function CustomerSubscription() {
     },
   ];
 
-  const handleConfirmEdit = ({ ampere, paymentPlan: nextPaymentPlan }) => {
-    setAmpereValue(ampere);
-    setPaymentPlan(nextPaymentPlan);
-    setIsEditOpen(false);
-    setSubscriptionMessage(
-      `تم تعديل الاشتراك إلى ${ampere} أمبير بنظام دفع ${
-        nextPaymentPlan === "monthly" ? "شهري" : "كل أسبوعين"
-      }.`
-    );
+  const handleConfirmEdit = async ({ ampere, paymentPlan: nextPaymentPlan }) => {
+    try {
+      if (remoteSubscription?.id) {
+        const updatedSubscription = await updateSubscription(remoteSubscription.id, {
+          ampere,
+          payment_plan: nextPaymentPlan,
+        });
+
+        setRemoteSubscription(updatedSubscription);
+      }
+
+      setAmpereValue(ampere);
+      setPaymentPlan(nextPaymentPlan);
+      setIsEditOpen(false);
+      setSubscriptionMessage(
+        `تم تعديل الاشتراك إلى ${ampere} أمبير بنظام دفع ${
+          nextPaymentPlan === "monthly" ? "شهري" : "كل أسبوعين"
+        }.`
+      );
+    } catch (error) {
+      console.error("Failed to update subscription:", error);
+      setSubscriptionMessage(
+        getApiErrorMessage(error, "تعذر تعديل الاشتراك على الخادم. حاول مرة أخرى.")
+      );
+    }
   };
 
-  const handleConfirmCancel = () => {
-    setIsCancelled(true);
-    setIsCancelOpen(false);
-    setIsEditOpen(false);
-    setSubscriptionMessage("تم إلغاء الاشتراك بنجاح.");
+  const handleConfirmCancel = async () => {
+    try {
+      if (remoteSubscription?.id) {
+        await deleteSubscription(remoteSubscription.id);
+      }
+
+      setRemoteSubscription((currentSubscription) =>
+        currentSubscription
+          ? {
+              ...currentSubscription,
+              status: "اشتراك ملغى",
+              isCancelled: true,
+            }
+          : currentSubscription
+      );
+      setIsCancelled(true);
+      setIsCancelOpen(false);
+      setIsEditOpen(false);
+      setSubscriptionMessage("تم إلغاء الاشتراك بنجاح.");
+    } catch (error) {
+      console.error("Failed to cancel subscription:", error);
+      setSubscriptionMessage(
+        getApiErrorMessage(error, "تعذر إلغاء الاشتراك على الخادم. حاول مرة أخرى.")
+      );
+    }
   };
 
-  const handleConfirmNewSubscription = ({
+  const handleConfirmNewSubscription = async ({
     ampere,
     paymentPlan: nextPaymentPlan,
     monthlyCost,
@@ -128,21 +218,42 @@ function CustomerSubscription() {
     const todayLabel = formatTodayLabel();
     const todayNumeric = formatTodayNumeric();
 
-    setAmpereValue(ampere);
-    setPaymentPlan(nextPaymentPlan);
-    setSubscriptionStartDate(todayLabel);
-    setSubscriptionProgressDate(todayNumeric);
-    setSubscriptionNumber(createSubscriptionNumber());
-    setIsCancelled(false);
-    setIsNewSubscriptionOpen(false);
-    setSubscriptionMessage(
-      `تم إرسال طلب الاشتراك بتاريخ ${todayLabel}. لا يوجد دفع الآن، والتكلفة الشهرية المتوقعة ${monthlyCost} شيكل بعد التفعيل.`
-    );
+    try {
+      await createSubscription({
+        generator_id: generator?.id || generatorId || null,
+        ampere,
+        payment_plan: nextPaymentPlan,
+        monthly_cost: monthlyCost,
+      });
+
+      setAmpereValue(ampere);
+      setPaymentPlan(nextPaymentPlan);
+      setSubscriptionStartDate(todayLabel);
+      setSubscriptionProgressDate(todayNumeric);
+      setSubscriptionNumber(createSubscriptionNumber());
+      setRemoteSubscription(null);
+      setIsCancelled(false);
+      setIsNewSubscriptionOpen(false);
+      setSubscriptionMessage(
+        `تم إرسال طلب الاشتراك بتاريخ ${todayLabel}. لا يوجد دفع الآن، والتكلفة الشهرية المتوقعة ${monthlyCost} شيكل بعد التفعيل.`
+      );
+    } catch (error) {
+      console.error("Failed to create subscription:", error);
+      setSubscriptionMessage(
+        getApiErrorMessage(error, "تعذر إرسال طلب الاشتراك للخادم. حاول مرة أخرى.")
+      );
+    }
   };
 
   return (
     <main className="customer-subscription" dir="rtl">
       <div className="customer-subscription-container">
+        {isLoadingSubscription && (
+          <p className="subscription-action-message">
+            جاري تحميل الاشتراكات...
+          </p>
+        )}
+
         <section className="subscription-top-grid">
           <SubscriptionMainCard
             subscription={subscription}

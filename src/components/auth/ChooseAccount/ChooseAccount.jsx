@@ -8,14 +8,16 @@ import generatorIcon from "../../../assets/icons/image2.svg";
 function ChooseAccount() {
   const navigate = useNavigate();
   const [selected, setSelected] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSelect = (accountType) => {
     setSelected(accountType);
+    setErrorMessage("");
   };
 
   const handleNext = () => {
     if (!selected) {
-      alert("يرجى اختيار نوع الحساب أولاً");
+      setErrorMessage("يرجى اختيار نوع الحساب أولاً");
       return;
     }
 
@@ -26,12 +28,11 @@ function ChooseAccount() {
 
     if (selected === "provider") {
       navigate("/provider-register");
-      return;
     }
   };
 
   return (
-    <section className="choose-page">
+    <section className="choose-page" dir="rtl">
       <div className="choose-box">
         <h1>كيف تود استخدام وصل؟</h1>
 
@@ -40,7 +41,8 @@ function ChooseAccount() {
         </p>
 
         <div className="cards">
-          <div
+          <button
+            type="button"
             className={`card ${selected === "user" ? "active" : ""}`}
             onClick={() => handleSelect("user")}
           >
@@ -54,9 +56,10 @@ function ChooseAccount() {
               اشترك في خدمات المولدات، تابع استهلاكك اليومي، وقم بسداد فواتيرك
               بسهولة.
             </p>
-          </div>
+          </button>
 
-          <div
+          <button
+            type="button"
             className={`card ${selected === "provider" ? "active" : ""}`}
             onClick={() => handleSelect("provider")}
           >
@@ -69,8 +72,10 @@ function ChooseAccount() {
             <p>
               أدر المشتركين، تابع التحصيل المالي، وحالات الاشتراك بسهولة.
             </p>
-          </div>
+          </button>
         </div>
+
+        {errorMessage && <p className="choose-error">{errorMessage}</p>}
 
         <button
           className={`next-btn ${selected ? "active" : ""}`}
@@ -79,6 +84,13 @@ function ChooseAccount() {
         >
           المتابعة للتسجيل
         </button>
+
+        <p className="login-link">
+          لديك حساب بالفعل؟{" "}
+          <button type="button" onClick={() => navigate("/login")}>
+            تسجيل الدخول
+          </button>
+        </p>
       </div>
     </section>
   );

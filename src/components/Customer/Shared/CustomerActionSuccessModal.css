@@ -1,0 +1,146 @@
+.customer-success-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  min-height: 100vh;
+  padding: 24px;
+  background: rgba(82, 94, 108, 0.58);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.customer-success-modal {
+  position: relative;
+  width: 520px;
+  max-width: 100%;
+  min-height: 498px;
+  padding: 74px 42px 34px;
+  border-radius: 14px;
+  background: #f8f9fb;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.22);
+  text-align: center;
+  font-family: "Noto Sans Arabic", sans-serif;
+  color: #071a33;
+}
+
+.customer-success-close {
+  position: absolute;
+  top: 37px;
+  left: 38px;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  background: transparent;
+  color: #3f4654;
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.customer-success-close svg {
+  font-size: 32px;
+}
+
+.customer-success-icon {
+  width: 132px;
+  height: 132px;
+  margin: 0 auto 38px;
+  border-radius: 50%;
+  background: #d6f8eb;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.customer-success-icon span {
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  background: #47dca3;
+  color: #ffffff;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.customer-success-icon svg {
+  font-size: 48px;
+}
+
+.customer-success-modal h2 {
+  margin: 0;
+  color: #071a33;
+  font-size: 40px;
+  line-height: 1.25;
+  font-weight: 900;
+}
+
+.customer-success-modal p {
+  width: 390px;
+  max-width: 100%;
+  margin: 14px auto 0;
+  color: #4a5362;
+  font-size: 18px;
+  line-height: 1.75;
+  font-weight: 600;
+}
+
+.customer-success-divider {
+  width: 88px;
+  height: 5px;
+  margin: 36px auto 30px;
+  border-radius: 999px;
+  background: #dde2eb;
+}
+
+.customer-success-support {
+  border: 0;
+  background: transparent;
+  color: #4a5362;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.customer-success-support strong {
+  color: #003c9e;
+  font-weight: 900;
+}
+
+@media (max-width: 560px) {
+  .customer-success-modal {
+    min-height: auto;
+    padding: 62px 22px 30px;
+  }
+
+  .customer-success-close {
+    top: 24px;
+    left: 24px;
+  }
+
+  .customer-success-icon {
+    width: 112px;
+    height: 112px;
+    margin-bottom: 28px;
+  }
+
+  .customer-success-icon span {
+    width: 64px;
+    height: 64px;
+  }
+
+  .customer-success-modal h2 {
+    font-size: 30px;
+  }
+
+  .customer-success-modal p {
+    font-size: 16px;
+  }
+}

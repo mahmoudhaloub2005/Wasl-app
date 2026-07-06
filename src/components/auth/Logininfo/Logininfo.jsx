@@ -1,9 +1,44 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { loginUser, registerCustomer } from "../../../services/authService";
 import "./Logininfo.css";
 import images from "../../../assets/images/images.png";
 
+function getAuthPayload(data) {
+  const token =
+    data?.token ||
+    data?.access_token ||
+    data?.data?.token ||
+    data?.data?.access_token ||
+    data?.user?.token;
+
+  const user =
+    data?.user ||
+    data?.data?.user ||
+    data?.customer ||
+    data?.data?.customer ||
+    data?.data ||
+    null;
+
+  return { token, user };
+}
+
+function saveCustomerSession({ token, user }) {
+  if (!token) return false;
+
+  localStorage.setItem("wasel_token", token);
+  localStorage.setItem("wasel_is_logged_in", "true");
+  localStorage.setItem("wasel_user_role", "customer");
+
+  if (user) {
+    localStorage.setItem("wasel_user", JSON.stringify(user));
+  }
+
+  return true;
+}
+
 function Logininfo() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -17,20 +52,29 @@ function Logininfo() {
   const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+  const handleChange = (event) => {
+    const { name, value, type, checked } = event.target;
 
-    setFormData({
-      ...formData,
+    setFormData((prevData) => ({
+      ...prevData,
       [name]: type === "checkbox" ? checked : value,
-    });
+    }));
 
     setError("");
     setSuccessMessage("");
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const loginAfterRegister = async () => {
+    const loginData = await loginUser(formData.email, formData.password);
+    const authPayload = getAuthPayload(loginData);
+
+    if (!saveCustomerSession(authPayload)) {
+      throw new Error("لم يصل التوكن من الخادم بعد تسجيل الدخول");
+    }
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
     if (
       !formData.fullName ||
@@ -40,29 +84,25 @@ function Logininfo() {
       !formData.confirmPassword
     ) {
       setError("يرجى تعبئة جميع الحقول المطلوبة");
-      setSuccessMessage("");
       return;
     }
 
     if (!formData.terms) {
       setError("يجب الموافقة على الشروط والأحكام");
-      setSuccessMessage("");
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
       setError("كلمة المرور غير متطابقة");
-      setSuccessMessage("");
       return;
     }
 
-    const nameParts = formData.fullName.trim().split(" ");
+    const nameParts = formData.fullName.trim().split(/\s+/);
     const firstName = nameParts[0];
     const lastName = nameParts.slice(1).join(" ");
 
     if (!firstName || !lastName) {
       setError("يرجى كتابة الاسم الكامل من كلمتين على الأقل");
-      setSuccessMessage("");
       return;
     }
 
@@ -71,58 +111,50 @@ function Logininfo() {
     setSuccessMessage("");
 
     try {
-      const response = await fetch(
-        "https://wasel-api-production-0719.up.railway.app/api/register/customer",
-        
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({
-            first_name: firstName,
-            last_name: lastName,
-            email: formData.email,
-            password: formData.password,
-            password_confirmation: formData.confirmPassword,
-            phone: formData.phone,
-          }),
-        }
-      );
+      const data = await registerCustomer({
+        first_name: firstName,
+        last_name: lastName,
+        email: formData.email,
+        password: formData.password,
+        password_confirmation: formData.confirmPassword,
+        phone: formData.phone,
+      });
 
-      const data = await response.json();
+      if (data?.errors) {
+        const firstError = data.errors
+          ? Object.values(data.errors)[0]?.[0]
+          : null;
 
-      if (!response.ok) {
-        console.log("Backend Error:", data);
-
-        if (data.errors) {
-          const firstError = Object.values(data.errors)[0][0];
-          setError(firstError);
-        } else {
-          setError(data.message || "حدث خطأ أثناء إنشاء الحساب");
-        }
-
+        setError(firstError || data.message || "حدث خطأ أثناء إنشاء الحساب");
         return;
       }
 
-      console.log("Register Success:", data);
+      const authPayload = getAuthPayload(data);
+      const hasRegisterToken = saveCustomerSession(authPayload);
 
-      setSuccessMessage("تم إنشاء الحساب بنجاح");
-      setError("");
+      if (!hasRegisterToken) {
+        await loginAfterRegister();
+      }
 
-      setFormData({
-        fullName: "",
-        email: "",
-        phone: "",
-        password: "",
-        confirmPassword: "",
-        terms: false,
-      });
+      setSuccessMessage(
+        "تم إنشاء الحساب بنجاح، سيتم تحويلك خلال لحظات إلى صفحة العميل."
+      );
+
+      window.setTimeout(() => {
+        navigate("/customer", { replace: true });
+      }, 2000);
     } catch (err) {
-      console.error("Network Error:", err);
-      setError("مشكلة اتصال بالسيرفر، حاول مرة أخرى");
-      setSuccessMessage("");
+      console.error("Register Error:", err);
+      const firstError = err.response?.data?.errors
+        ? Object.values(err.response.data.errors)[0]?.[0]
+        : null;
+
+      setError(
+        firstError ||
+          err.response?.data?.message ||
+          err.message ||
+          "تم إنشاء الحساب لكن لم نستطع تسجيل الدخول تلقائياً، جرّب تسجيل الدخول"
+      );
     } finally {
       setLoading(false);
     }
@@ -209,16 +241,12 @@ function Logininfo() {
             أوافق على
             <Link to="/terms"> الشروط والأحكام </Link>
             و
-            <Link to="/terms"> سياسة الخصوصية </Link>
+            <Link to="/privacy"> سياسة الخصوصية </Link>
             الخاصة بمنصة وصل.
           </label>
         </div>
 
-        {error && (
-          <p className="form-status-message form-status-error">
-            {error}
-          </p>
-        )}
+        {error && <p className="form-status-message form-status-error">{error}</p>}
 
         {successMessage && (
           <p className="form-status-message form-status-success">
@@ -237,14 +265,14 @@ function Logininfo() {
 
       <div className="login-info">
         <div className="icon-box">
-          <img src={images} alt="logo" />
+          <img src={images} alt="وصل" />
         </div>
 
         <h2>وصل - مستقبل الطاقة المحلية</h2>
 
         <p>
-          منصة وصل توفر لك تحكماً كاملاً في استهلاك الطاقة
-          والربط مع المزودين وإدارة فواتيرك بسهولة.
+          منصة وصل توفر لك تحكماً كاملاً في استهلاك الطاقة والربط مع المزودين
+          وإدارة فواتيرك بسهولة.
         </p>
       </div>
     </div>

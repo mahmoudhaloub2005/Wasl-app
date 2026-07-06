@@ -1,8 +1,8 @@
-import { compareGenerators } from "./CompareGeneratorsModal";
-
-function CompareResult({ selectedIds, onChangeSelection }) {
+function CompareResult({ generators = [], selectedIds, onChangeSelection }) {
   const selectedGenerators = selectedIds
-    .map((id) => compareGenerators.find((generator) => generator.id === id))
+    .map((id) =>
+      generators.find((generator) => String(generator.id) === String(id))
+    )
     .filter(Boolean);
 
   if (selectedGenerators.length !== 2) {
@@ -33,7 +33,7 @@ function CompareResult({ selectedIds, onChangeSelection }) {
             <dl>
               <div>
                 <dt>السعر</dt>
-                <dd>{generator.price}</dd>
+                <dd>{generator.priceText}</dd>
               </div>
 
               <div>

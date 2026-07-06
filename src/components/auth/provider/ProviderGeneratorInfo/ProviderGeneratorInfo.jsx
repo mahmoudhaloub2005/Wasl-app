@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   FiMapPin,
   FiInfo,
@@ -11,13 +11,17 @@ import "./ProviderGeneratorInfo.css";
 
 function ProviderGeneratorInfo() {
   const navigate = useNavigate();
+  const locationState = useLocation().state || {};
+  const providerData = locationState.providerData || null;
+  const savedGeneratorData = locationState.generatorData || {};
 
   const [formData, setFormData] = useState({
-    generatorType: "",
-    capacity: "",
-    location: "",
-    startTime: "",
-    endTime: "",
+    generatorType: savedGeneratorData.generatorType || "",
+    capacity: savedGeneratorData.capacity || "",
+    location: savedGeneratorData.location || "",
+    price: savedGeneratorData.price || "",
+    startTime: savedGeneratorData.startTime || "",
+    endTime: savedGeneratorData.endTime || "",
   });
 
   const [message, setMessage] = useState("");
@@ -34,14 +38,20 @@ function ProviderGeneratorInfo() {
   };
 
   const handleBack = () => {
-    navigate("/provider-register");
+    navigate("/provider-register", {
+      state: {
+        providerData,
+      },
+    });
   };
 
   const handleSubmit = () => {
     if (
+      !providerData ||
       !formData.generatorType ||
       !formData.capacity ||
       !formData.location ||
+      !formData.price ||
       !formData.startTime ||
       !formData.endTime
     ) {
@@ -55,6 +65,7 @@ function ProviderGeneratorInfo() {
 
     navigate("/provider-documents", {
       state: {
+        providerData,
         generatorData: formData,
       },
     });
@@ -126,6 +137,26 @@ function ProviderGeneratorInfo() {
               />
 
               <span>KVA</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="form-row2">
+          <div className="form-group2">
+            <label>سعر الكيلو</label>
+
+            <div className="input-with-unit2">
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                name="price"
+                value={formData.price}
+                onChange={handleChange}
+                placeholder="مثال : 5.5"
+              />
+
+              <span>₪</span>
             </div>
           </div>
         </div>

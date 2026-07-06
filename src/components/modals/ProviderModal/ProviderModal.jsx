@@ -1,12 +1,14 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./ProviderModal.css";
 import providerImage from "../../../assets/images/img.svg";
 
 function ProviderModal() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const returnTo = location.state?.from || "/";
 
   const handleClose = () => {
-    navigate("/");
+    navigate(returnTo, { replace: true });
   };
 
   const handleRegisterProvider = () => {
@@ -16,11 +18,7 @@ function ProviderModal() {
   return (
     <div className="provider-overlay">
       <div className="provider-modal">
-        <button
-          type="button"
-          className="close-button"
-          onClick={handleClose}
-        >
+        <button type="button" className="close-button" onClick={handleClose}>
           ×
         </button>
 
@@ -34,14 +32,13 @@ function ProviderModal() {
           </h2>
 
           <p className="provider-description">
-            نظام متكامل لإدارة المشتركين،
-            التحصيل الآلي ومراقبة الأحمال
-            بكل سهولة.
+            نظام متكامل لإدارة المشتركين، التحصيل الآلي ومراقبة الأحمال بكل
+            سهولة.
           </p>
 
           <div className="provider-feature">
             <span className="feature-icon">✓</span>
-            <span>تحصيل مالي آلي بنسبة دقة 98٪</span>
+            <span>تحصيل مالي آلي بنسبة دقة 98%</span>
           </div>
 
           <div className="provider-feature">
@@ -62,7 +59,7 @@ function ProviderModal() {
 
         <div className="provider-image-section">
           <div className="provider-placeholder">
-            <img src={providerImage} alt="Provider" />
+            <img src={providerImage} alt="مزود طاقة" />
           </div>
 
           <p>

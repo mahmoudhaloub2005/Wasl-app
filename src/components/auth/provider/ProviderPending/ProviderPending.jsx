@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import "./ProviderPending.css";
 import { FiHelpCircle } from "react-icons/fi";
 import { BsHourglassSplit } from "react-icons/bs";
+import { logoutUser } from "../../../../services/authService";
+import { clearAuthStorage } from "../../../../utils/authStorage";
 
 function useProgressAnimation() {
   const [progress, setProgress] = useState(0);
@@ -30,6 +32,7 @@ function useProgressAnimation() {
 function ProviderPending() {
   const navigate = useNavigate();
   const progress = useProgressAnimation();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     if (progress === 100) {
@@ -45,8 +48,19 @@ function ProviderPending() {
     navigate("/contact-us");
   };
 
-  const handleLogoutClick = () => {
-    navigate("/login");
+  const handleLogoutClick = async () => {
+    if (isLoggingOut) return;
+
+    setIsLoggingOut(true);
+
+    try {
+      await logoutUser();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      clearAuthStorage();
+      navigate("/login", { replace: true });
+    }
   };
 
   return (
@@ -91,8 +105,9 @@ function ProviderPending() {
           type="button"
           className="logout-btn"
           onClick={handleLogoutClick}
+          disabled={isLoggingOut}
         >
-          تسجيل الخروج
+          {isLoggingOut ? "جاري تسجيل الخروج..." : "تسجيل الخروج"}
         </button>
       </section>
     </main>

@@ -8,10 +8,10 @@ const defaultOffers = [
     id: 1,
     title: "باقة الصيف الموفرة",
     description:
-      "وفّر في فواتيرك الصيفية مع عرضنا الجديد للمشتركين فوق 10 أمبير.",
+      "وفر في فواتيرك الصيفية مع عرضنا الجديد للمشتركين فوق 10 أمبير.",
     image: summerOffer,
     imageAlt: "باقة الصيف الموفرة",
-    badgeText: "خصم %20",
+    badgeText: "خصم 20%",
     badgeColorClass: "orange",
     isActive: true,
   },
@@ -19,7 +19,7 @@ const defaultOffers = [
     id: 2,
     title: "نظام الطاقة الشمسية",
     description:
-      "الآن يمكنك تقسيط أنظمة الطاقة الشمسية المنزلية بالتعاون مع مصرفنا.",
+      "يمكنك الآن تقسيط أنظمة الطاقة الشمسية المنزلية بالتعاون مع مزودينا.",
     image: solarOffer,
     imageAlt: "نظام الطاقة الشمسية",
     badgeText: "جديد",

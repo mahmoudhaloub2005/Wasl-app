@@ -5,11 +5,13 @@ import "./CustomerNavbar.css";
 import logo from "/src/assets/customer/icons/logo.svg";
 import notification from "/src/assets/customer/icons/notification.svg";
 import settings from "/src/assets/customer/icons/settings.svg";
+import { getUserDisplayName } from "../../../utils/authStorage";
 
 const PROFILE_AVATAR_KEY = "wasel_profile_avatar";
 
 function CustomerNavbar() {
   const navigate = useNavigate();
+  const profileLetter = getUserDisplayName().charAt(0) || "م";
   const [profileAvatar, setProfileAvatar] = useState(
     () => localStorage.getItem(PROFILE_AVATAR_KEY) || ""
   );
@@ -45,13 +47,13 @@ function CustomerNavbar() {
 
   return (
     <header className="customer-navbar" dir="rtl">
-      <div className="customer-navbar-container">
-        <div className="customer-navbar-logo">
+      <div className="customer-navbar-container navbar-fixed-layout">
+        <div className="customer-navbar-logo navbar-logo-fixed">
           <span>وصل</span>
           <img src={logo} alt="وصل" />
         </div>
 
-        <nav className="customer-navbar-links">
+        <nav className="customer-navbar-links navbar-links-fixed">
           <NavLink
             to="/customer"
             end
@@ -99,7 +101,7 @@ function CustomerNavbar() {
           </NavLink>
         </nav>
 
-        <div className="customer-navbar-actions">
+        <div className="customer-navbar-actions navbar-actions-fixed">
           <button
             type="button"
             className="customer-profile-action"
@@ -109,7 +111,7 @@ function CustomerNavbar() {
             {profileAvatar ? (
               <img src={profileAvatar} alt="الملف الشخصي" />
             ) : (
-              <span className="customer-profile-letter">م</span>
+              <span className="customer-profile-letter">{profileLetter}</span>
             )}
           </button>
 

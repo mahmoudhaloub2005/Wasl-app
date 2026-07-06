@@ -60,6 +60,7 @@
 }
 
 .complaint-form-group input,
+.complaint-form-group select,
 .complaint-form-group textarea {
   width: 100%;
   border: 0;
@@ -72,9 +73,14 @@
   text-align: right;
 }
 
-.complaint-form-group input {
+.complaint-form-group input,
+.complaint-form-group select {
   height: 66px;
   padding: 0 20px;
+}
+
+.complaint-form-group select {
+  cursor: pointer;
 }
 
 .complaint-form-group textarea {
@@ -129,6 +135,14 @@
   font-size: 19px;
   font-weight: 600;
   cursor: pointer;
+}
+
+.complaint-form-error {
+  margin: -8px 0 14px;
+  color: #c11717;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.6;
 }
 
 /* Left section */
@@ -631,6 +645,11 @@
   .complaints-content-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.send-complaint-button:disabled {
+  cursor: wait;
+  opacity: 0.7;
 }
 /* ===== small figma alignment patch - uses your real class names ===== */
 

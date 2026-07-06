@@ -1,8 +1,10 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./PrivacyModal.css";
 
 function PrivacyModal() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const returnTo = location.state?.from || "/";
 
   return (
     <div className="privacy-overlay" dir="rtl">
@@ -11,7 +13,7 @@ function PrivacyModal() {
           <button
             type="button"
             className="privacy-close"
-            onClick={() => navigate("/")}
+            onClick={() => navigate(returnTo, { replace: true })}
           >
             ×
           </button>
@@ -22,7 +24,7 @@ function PrivacyModal() {
         <div className="privacy-content">
           <div className="privacy-item">
             <div className="privacy-title">
-              <span>▣</span>
+              <span>□</span>
               <h3>البيانات التي نجمعها</h3>
             </div>
 
@@ -52,7 +54,7 @@ function PrivacyModal() {
             </div>
 
             <p>
-              نستخدم بياناتك لتحسين جودة التوزيع الكهربائي، وتوقع الأحمال
+              نستخدم بياناتك لتحسين جودة التوزيع الكهربائي، توقع الأحمال
               الزائدة، وتسهيل عمليات الفوترة الشفافة.
             </p>
           </div>

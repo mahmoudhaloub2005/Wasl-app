@@ -1,40 +1,46 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "./ForgotPassword.css";
 import { FiMail } from "react-icons/fi";
+import "./ForgotPassword.css";
 
 import imag from "../../../assets/icons/image.png";
 import icnes from "../../../assets/icons/icons2.svg";
 import icnes1 from "../../../assets/icons/icons3.svg";
+
 function ForgotPassword() {
   const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSendCode = () => {
+    const trimmedEmail = email.trim();
     setMessage("");
+    setMessageType("");
 
-    if (email.trim() === "") {
+    if (!trimmedEmail) {
       setMessage("الرجاء إدخال البريد الإلكتروني");
+      setMessageType("error");
       return;
     }
 
-    if (!email.includes("@")) {
+    if (!trimmedEmail.includes("@")) {
       setMessage("الرجاء إدخال بريد إلكتروني صحيح");
+      setMessageType("error");
       return;
     }
 
     setIsLoading(true);
 
-    setTimeout(() => {
+    window.setTimeout(() => {
       setIsLoading(false);
       setMessage("تم إرسال رمز التحقق إلى بريدك الإلكتروني");
+      setMessageType("success");
 
       navigate("/otp", {
         state: {
-          email: email,
+          email: trimmedEmail,
           flow: "reset-password",
         },
       });
@@ -53,7 +59,7 @@ function ForgotPassword() {
             أدخل بريدك الإلكتروني المسجل وسنرسل لك رابط إعادة تعيين كلمة المرور
           </p>
 
-          <label className="email-label">البريد الالكتروني</label>
+          <label className="email-label">البريد الإلكتروني</label>
 
           <div className="input-box">
             <FiMail />
@@ -62,11 +68,13 @@ function ForgotPassword() {
               type="email"
               placeholder="example@wasl.sa"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(event) => setEmail(event.target.value)}
             />
           </div>
 
-          {message && <p className="forgot-message">{message}</p>}
+          {message && (
+            <p className={`forgot-message ${messageType}`}>{message}</p>
+          )}
 
           <button
             className="send-btn"
@@ -74,11 +82,11 @@ function ForgotPassword() {
             onClick={handleSendCode}
             disabled={isLoading}
           >
-            {isLoading ? "جاري الإرسال..." : "إرسال رمز التحقق"}
+            {isLoading ? "جاري الإرسال..." : "إرسال رابط الاستعادة"}
           </button>
 
           <Link to="/login" className="back">
-            ➜ العودة لتسجيل الدخول
+            الرجوع لتسجيل الدخول
           </Link>
         </div>
       </div>
@@ -87,7 +95,6 @@ function ForgotPassword() {
         <p className="p1">
           <img className="p1" src={icnes1} alt="" />
           نظام مشفر بالكامل
-
           <img className="p1" src={icnes} alt="" />
           الدعم الفني 24/7
         </p>

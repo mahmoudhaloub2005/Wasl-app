@@ -11,6 +11,8 @@ import {
 } from "react-icons/fi";
 
 import defaultAvatar from "../../../assets/images/User.jpg";
+import { logoutUser } from "../../../services/authService";
+import { clearAuthStorage, getUserProfile } from "../../../utils/authStorage";
 import "./CustomerProfilePage.css";
 
 const PROFILE_AVATAR_KEY = "wasel_profile_avatar";
@@ -23,20 +25,32 @@ const initialProfile = {
   memberSince: "يناير 2023",
 };
 
+function getInitialProfile() {
+  const userProfile = getUserProfile();
+
+  return {
+    ...initialProfile,
+    ...userProfile,
+    fullName: userProfile.fullName || initialProfile.fullName,
+  };
+}
+
 function CustomerProfilePage() {
   const fileInputRef = useRef(null);
 
-  const [profile, setProfile] = useState(initialProfile);
-  const [savedProfile, setSavedProfile] = useState(initialProfile);
+  const [profile, setProfile] = useState(getInitialProfile);
+  const [savedProfile, setSavedProfile] = useState(getInitialProfile);
   const [avatarImage, setAvatarImage] = useState(
     () => localStorage.getItem(PROFILE_AVATAR_KEY) || defaultAvatar
   );
+  const [isAvatarMenuOpen, setIsAvatarMenuOpen] = useState(false);
 
   const [smsEnabled, setSmsEnabled] = useState(false);
   const [appNotifications, setAppNotifications] = useState(true);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(true);
   const [language, setLanguage] = useState("ar");
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
@@ -68,14 +82,39 @@ function CustomerProfilePage() {
     setTwoFactorEnabled(true);
   }
 
-  function handleLogout() {
-    localStorage.removeItem("wasel_token");
-    localStorage.removeItem("wasel_user");
-    window.location.href = "/login";
+  async function handleLogout() {
+    if (isLoggingOut) return;
+
+    setIsLoggingOut(true);
+
+    try {
+      await logoutUser();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      clearAuthStorage();
+      window.location.href = "/login";
+    }
   }
 
   function handleAvatarClick() {
+    setIsAvatarMenuOpen((prev) => !prev);
+  }
+
+  function handleBrowseAvatar() {
+    setIsAvatarMenuOpen(false);
     fileInputRef.current.click();
+  }
+
+  function handleRemoveAvatar() {
+    localStorage.removeItem(PROFILE_AVATAR_KEY);
+    setAvatarImage(defaultAvatar);
+    setIsAvatarMenuOpen(false);
+    window.dispatchEvent(
+      new CustomEvent("wasel-profile-avatar-change", {
+        detail: "",
+      })
+    );
   }
 
   function handleAvatarChange(event) {
@@ -153,6 +192,17 @@ function CustomerProfilePage() {
                 <FiEdit2 />
               </button>
 
+              {isAvatarMenuOpen && (
+                <div className="avatar-actions-menu">
+                  <button type="button" onClick={handleBrowseAvatar}>
+                    تصفح صورة
+                  </button>
+                  <button type="button" onClick={handleRemoveAvatar}>
+                    إزالة الصورة
+                  </button>
+                </div>
+              )}
+
               <input
                 ref={fileInputRef}
                 type="file"
@@ -177,9 +227,14 @@ function CustomerProfilePage() {
             </div>
           </div>
 
-          <button className="logout-button" type="button" onClick={handleLogout}>
+          <button
+            className="logout-button"
+            type="button"
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+          >
             <FiLogOut />
-            تسجيل الخروج
+            {isLoggingOut ? "جاري تسجيل الخروج..." : "تسجيل الخروج"}
           </button>
         </section>
 

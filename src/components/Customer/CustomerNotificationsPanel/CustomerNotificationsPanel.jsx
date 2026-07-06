@@ -36,23 +36,31 @@ const defaultNotifications = [
 
 function CustomerNotificationsPanel({
   notifications = defaultNotifications,
+  onMarkAsRead,
   onShowAllNotifications,
 }) {
   const hasNotifications = notifications.length > 0;
+  const unreadCount = notifications.filter(
+    (notification) => !notification.isRead
+  ).length;
 
   return (
     <section className="customer-notifications-panel" dir="rtl">
       <div className="notifications-panel-header">
         <h2>التنبيهات</h2>
-        <span className="notifications-count">{notifications.length}</span>
+        <span className="notifications-count">{unreadCount}</span>
       </div>
 
       <div className="notifications-list">
         {hasNotifications ? (
           notifications.map((notification) => (
-            <article
-              className={`notification-card ${notification.colorClass}`}
+            <button
+              type="button"
+              className={`notification-card ${notification.colorClass} ${
+                notification.isRead ? "read" : "unread"
+              }`}
               key={notification.id}
+              onClick={() => onMarkAsRead?.(notification)}
             >
               <span className="notification-side-dot"></span>
 
@@ -63,7 +71,7 @@ function CustomerNotificationsPanel({
               </div>
 
               <img src={notification.icon} alt={notification.iconAlt} />
-            </article>
+            </button>
           ))
         ) : (
           <article className="notification-card notification-gray">

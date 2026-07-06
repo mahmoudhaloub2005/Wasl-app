@@ -18,20 +18,44 @@ function ProtectedRoute({ children, allowedRoles }) {
 
     if (!token) {
       clearAuthStorage();
-      setStatus("unauthenticated");
-      return;
+      const timeoutId = window.setTimeout(() => {
+        if (isMounted) {
+          setStatus("unauthenticated");
+        }
+      }, 0);
+
+      return () => {
+        isMounted = false;
+        window.clearTimeout(timeoutId);
+      };
     }
 
     async function verifyToken() {
       try {
         const data = await getCurrentUser();
-        const user = data.user || data.data || data;
+        const user =
+          data.user ||
+          data.customer ||
+          data.provider ||
+          data.data?.user ||
+          data.data?.customer ||
+          data.data ||
+          data;
         const nextRole = String(
-          user?.role || user?.type || data.role || data.type || role || ""
+          user?.role ||
+            user?.type ||
+            data.role ||
+            data.type ||
+            getStoredUserRole() ||
+            ""
         ).toLowerCase();
 
         if (nextRole) {
           localStorage.setItem("wasel_user_role", nextRole);
+        }
+
+        if (user) {
+          localStorage.setItem("wasel_user", JSON.stringify(user));
         }
 
         if (isMounted) {

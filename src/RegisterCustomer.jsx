@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { API_URL } from "./api";
+import { registerCustomer } from "./services/authService";
 
 function RegisterCustomer() {
   const [formData, setFormData] = useState({
@@ -28,18 +28,9 @@ function RegisterCustomer() {
     setMessage("");
 
     try {
-      const response = await fetch(`${API_URL}/register/customer`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const data = await registerCustomer(formData);
 
-      const data = await response.json();
-
-      if (!response.ok) {
+      if (data?.errors) {
         console.log("Error from backend:", data);
         setMessage(data.message || "صار خطأ أثناء التسجيل");
         return;
@@ -49,6 +40,14 @@ function RegisterCustomer() {
       setMessage("تم إنشاء الحساب بنجاح");
     } catch (error) {
       console.error("Network error:", error);
+      const firstError = error.response?.data?.errors
+        ? Object.values(error.response.data.errors)[0]?.[0]
+        : null;
+
+      if (firstError || error.response?.data?.message) {
+        setMessage(firstError || error.response.data.message);
+        return;
+      }
       setMessage("مشكلة اتصال بالسيرفر");
     } finally {
       setLoading(false);

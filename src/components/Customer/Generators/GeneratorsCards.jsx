@@ -1,20 +1,25 @@
 import { useMemo } from "react";
-import { designGenerators } from "../../../data/generatorsStorage";
 import GeneratorCard from "./GeneratorCard";
 
 function GeneratorsCards({
+  generators = [],
   generatorName = "",
   area = "",
   priceRange = "all",
   selectedStatus = "all",
+  loading = false,
 }) {
   const filteredGenerators = useMemo(() => {
     const nameQuery = generatorName.trim().toLowerCase();
     const areaQuery = area.trim().toLowerCase();
 
-    return designGenerators.filter((generator) => {
-      const matchesName = generator.name.toLowerCase().includes(nameQuery);
-      const matchesArea = generator.location.toLowerCase().includes(areaQuery);
+    return generators.filter((generator) => {
+      const matchesName = String(generator.name || "")
+        .toLowerCase()
+        .includes(nameQuery);
+      const matchesArea = String(generator.location || "")
+        .toLowerCase()
+        .includes(areaQuery);
       const matchesStatus =
         selectedStatus === "all" || generator.statusType === selectedStatus;
 
@@ -30,7 +35,18 @@ function GeneratorsCards({
 
       return matchesName && matchesArea && matchesStatus && matchesPrice;
     });
-  }, [generatorName, area, priceRange, selectedStatus]);
+  }, [generators, generatorName, area, priceRange, selectedStatus]);
+
+  if (loading) {
+    return (
+      <section className="generators-cards-list">
+        <div className="empty-generators">
+          <h3>جاري تحميل المولدات...</h3>
+          <p>نحضّر قائمة المولدات المتاحة من الخادم.</p>
+        </div>
+      </section>
+    );
+  }
 
   if (filteredGenerators.length === 0) {
     return (

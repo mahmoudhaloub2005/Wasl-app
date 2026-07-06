@@ -1,7 +1,7 @@
-import "./Navbar.css";
-import logo from "../../../assets/icons/image.png";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./Navbar.css";
+import logo from "../../../assets/icons/image.png";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -72,7 +72,7 @@ function Navbar() {
         {links.map((item) => (
           <li
             key={item.label}
-            onMouseDown={(e) => e.preventDefault()}
+            onMouseDown={(event) => event.preventDefault()}
             onClick={() => handleActiveLink(item)}
             className={active === item.label ? "active" : ""}
           >

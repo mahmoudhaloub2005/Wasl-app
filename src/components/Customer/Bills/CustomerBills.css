@@ -174,6 +174,11 @@
   padding: 0 18px;
 }
 
+.payment-amount-input:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
 .upload-proof-box {
   height: 138px;
   border: 2px dashed #bfc8dd;
@@ -184,6 +189,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+.upload-proof-box.disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
 }
 
 .upload-proof-box input {
@@ -220,6 +230,11 @@
   font-size: 22px;
   font-weight: 500;
   cursor: pointer;
+}
+
+.send-proof-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 /* Table */
@@ -339,6 +354,62 @@
 
 .invoice-arrow-button svg {
   font-size: 22px;
+}
+
+.invoice-arrow-button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.invoice-details-card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 24px;
+  box-shadow: 0 10px 24px rgba(0, 40, 142, 0.04);
+}
+
+.invoice-details-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.invoice-details-title h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #071a33;
+}
+
+.invoice-details-title button {
+  border: 0;
+  background: transparent;
+  color: #003c9e;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.invoice-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.invoice-details-grid span {
+  display: block;
+  margin-bottom: 6px;
+  color: #4c5668;
+  font-size: 13px;
+}
+
+.invoice-details-grid strong {
+  display: block;
+  color: #071a33;
+  font-size: 16px;
+  word-break: break-word;
 }
 
 /* Payments history */
@@ -472,6 +543,13 @@
   color: #ff1e1e;
   font-size: 13px;
   line-height: 1.6;
+}
+
+.payment-invoice-note {
+  margin: -8px 0 18px;
+  color: #003c9e;
+  font-size: 14px;
+  font-weight: 700;
 }
 
 .payment-proof-error-inline {

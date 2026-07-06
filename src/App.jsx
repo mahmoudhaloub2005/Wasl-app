@@ -34,9 +34,12 @@ import Generators from "./pages/Customer/Generators/Generators";
 import GeneratorDetails from "./pages/Customer/GeneratorDetails";
 import CustomerSubscriptionPage from "./pages/Customer/CustomerSubscriptionPage";
 import CustomerBillsPage from "./pages/Customer/CustomerBillsPage";
+import CustomerOfferDetailsPage from "./pages/Customer/CustomerOfferDetailsPage";
 import CustomerReviewsPage from "./pages/Customer/CustomerReviewsPage";
 import CustomerComplaintsPage from "./pages/Customer/CustomerComplaintsPage";
 import Profile from "./pages/Customer/Profile";
+import ProviderHome from "./pages/Provider/ProviderHome";
+import ProviderSubscriptions from "./pages/Provider/ProviderSubscriptions";
 function App() {
   return (
     <Routes>
@@ -72,6 +75,21 @@ function App() {
       />
       <Route path="/provider-pending" element={<ProviderPending />} />
       <Route path="/provider-success" element={<ProviderSuccess />} />
+
+      <Route
+        path="/provider"
+        element={<ProviderHome />}
+      />
+
+      <Route
+        path="/provider/home"
+        element={<ProviderHome />}
+      />
+
+      <Route
+        path="/provider/subscriptions"
+        element={<ProviderSubscriptions />}
+      />
 
       {/* Redirects */}
       <Route path="/home" element={<Navigate to="/" replace />} />
@@ -159,6 +177,14 @@ function App() {
         element={
           <ProtectedRoute allowedRoles={["customer", "client", "user"]}>
             <CustomerBillsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/customer/offers/:offerId"
+        element={
+          <ProtectedRoute allowedRoles={["customer", "client", "user"]}>
+            <CustomerOfferDetailsPage />
           </ProtectedRoute>
         }
       />

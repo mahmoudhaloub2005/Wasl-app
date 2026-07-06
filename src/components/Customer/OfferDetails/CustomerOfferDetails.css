@@ -1,0 +1,356 @@
+.customer-offer-details {
+  min-height: 100vh;
+  background: #f7f8fd;
+  color: #071a33;
+  font-family: "Noto Sans Arabic", sans-serif;
+  padding-bottom: 56px;
+}
+
+.offer-details-container {
+  width: 1208px;
+  max-width: calc(100% - 64px);
+  margin: 0 auto;
+}
+
+.offer-details-hero {
+  position: relative;
+  min-height: 530px;
+  border-radius: 10px;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 12px 28px rgba(0, 40, 142, 0.14);
+}
+
+.offer-details-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(0, 22, 58, 0.05) 0%, rgba(0, 47, 142, 0.84) 100%),
+    linear-gradient(90deg, rgba(0, 16, 48, 0.36), rgba(0, 36, 120, 0.08) 45%, rgba(0, 16, 48, 0.38));
+}
+
+.offer-back-button {
+  position: absolute;
+  top: 36px;
+  right: 34px;
+  z-index: 2;
+  width: 52px;
+  height: 52px;
+  border: 0;
+  background: transparent;
+  color: #ffffff;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.offer-back-button svg {
+  font-size: 42px;
+}
+
+.offer-hero-content {
+  position: absolute;
+  right: 72px;
+  bottom: 76px;
+  z-index: 2;
+  width: min(720px, calc(100% - 120px));
+  color: #ffffff;
+  text-align: right;
+}
+
+.offer-hero-content span {
+  display: inline-flex;
+  min-width: 172px;
+  height: 32px;
+  padding: 0 22px;
+  border-radius: 999px;
+  background: #ffb020;
+  color: #7a4800;
+  font-size: 14px;
+  font-weight: 800;
+  align-items: center;
+  justify-content: center;
+}
+
+.offer-hero-content h1 {
+  margin: 24px 0 18px;
+  font-size: 46px;
+  line-height: 1.25;
+  font-weight: 900;
+}
+
+.offer-hero-content p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 18px;
+  line-height: 1.9;
+  font-weight: 500;
+}
+
+.offer-details-grid {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: 380px minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+  direction: ltr;
+}
+
+.offer-price-card,
+.offer-benefits-card {
+  direction: rtl;
+  background: #ffffff;
+  border: 1px solid #cfd6e4;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 40, 142, 0.05);
+}
+
+.offer-price-card {
+  padding: 30px 30px 34px;
+}
+
+.available-badge {
+  display: inline-flex;
+  height: 28px;
+  padding: 0 14px;
+  border-radius: 5px;
+  background: #e4f2ec;
+  color: #007a55;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.offer-price {
+  margin: 10px 0 28px;
+  text-align: left;
+  color: #071a33;
+}
+
+.offer-price span {
+  display: block;
+  color: #4b5565;
+  font-size: 15px;
+}
+
+.offer-price strong {
+  color: #003c9e;
+  font-size: 42px;
+  line-height: 1;
+  font-weight: 900;
+}
+
+.offer-price em {
+  color: #071a33;
+  font-size: 15px;
+  font-style: normal;
+}
+
+.offer-price-card ul {
+  list-style: none;
+  margin: 0 0 28px;
+  padding: 24px 0 0;
+  border-top: 1px solid #cfd6e4;
+}
+
+.offer-price-card li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #4b5565;
+  font-size: 16px;
+  line-height: 1.9;
+}
+
+.offer-price-card li + li {
+  margin-top: 10px;
+}
+
+.offer-price-card li svg {
+  color: #003c9e;
+  font-size: 24px;
+  flex: 0 0 auto;
+}
+
+.offer-subscribe-button,
+.offer-contact-button {
+  width: 100%;
+  height: 58px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.offer-subscribe-button {
+  border: 0;
+  background: #ff9d00;
+  color: #003c9e;
+}
+
+.offer-contact-button {
+  margin-top: 20px;
+  border: 2px solid #003c9e;
+  background: #ffffff;
+  color: #003c9e;
+}
+
+.offer-small-note {
+  margin: 28px 0 0;
+  color: #4b5565;
+  font-size: 12px;
+  line-height: 1.8;
+  text-align: center;
+}
+
+.offer-benefits-card {
+  padding: 34px 34px;
+}
+
+.offer-benefits-card h2 {
+  margin: 0 0 26px;
+  color: #003c9e;
+  font-size: 26px;
+  line-height: 1.35;
+  font-weight: 900;
+}
+
+.offer-benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.offer-benefit-item {
+  min-height: 104px;
+  padding: 22px 24px;
+  border-radius: 8px;
+  background: #eef4ff;
+
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.benefit-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  color: #ffffff;
+  flex: 0 0 auto;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.benefit-icon.blue {
+  background: #1f49bd;
+}
+
+.benefit-icon.green {
+  background: #007a55;
+}
+
+.benefit-icon.orange {
+  background: #ff9d00;
+}
+
+.benefit-icon svg {
+  font-size: 28px;
+}
+
+.offer-benefit-item h3 {
+  margin: 0;
+  color: #071a33;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.offer-benefit-item p {
+  margin: 6px 0 0;
+  color: #4b5565;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.offer-tech-details {
+  margin: 34px 0 0;
+  margin-left: 412px;
+  padding-right: 0;
+  text-align: right;
+}
+
+.offer-tech-details h2 {
+  margin: 0 0 16px;
+  color: #003c9e;
+  font-size: 28px;
+  font-weight: 900;
+}
+
+.offer-tech-details p {
+  margin: 0;
+  color: #4b5565;
+  font-size: 17px;
+  line-height: 2;
+}
+
+.offer-tech-details blockquote {
+  margin: 26px 0 0;
+  padding: 18px 24px;
+  border-right: 5px solid #003c9e;
+  border-radius: 8px;
+  background: #eaf1ff;
+  color: #003c9e;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.9;
+}
+
+@media (max-width: 1050px) {
+  .offer-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .offer-tech-details {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .offer-details-container {
+    max-width: calc(100% - 28px);
+  }
+
+  .offer-details-hero {
+    min-height: 430px;
+  }
+
+  .offer-hero-content {
+    right: 24px;
+    bottom: 36px;
+    width: calc(100% - 48px);
+  }
+
+  .offer-hero-content h1 {
+    font-size: 32px;
+  }
+
+  .offer-hero-content p {
+    font-size: 15px;
+  }
+
+  .offer-benefits-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .offer-benefit-item {
+    align-items: flex-start;
+  }
+}

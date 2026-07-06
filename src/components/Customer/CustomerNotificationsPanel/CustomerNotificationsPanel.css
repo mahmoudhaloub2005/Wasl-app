@@ -45,9 +45,13 @@
   position: relative;
   min-height: 100px;
   background: #edf4ff;
+  border: 0;
   border-radius: 10px;
   padding: 18px 38px 14px 18px;
   overflow: hidden;
+  width: 100%;
+  cursor: pointer;
+  font-family: inherit;
 
   display: flex;
   align-items: flex-start;
@@ -55,6 +59,19 @@
   gap: 14px;
 
   direction: rtl;
+  text-align: inherit;
+}
+
+.notification-card.read {
+  opacity: 0.62;
+}
+
+.notification-card.unread {
+  opacity: 1;
+}
+
+.notification-card:disabled {
+  cursor: wait;
 }
 
 .notification-card::before {

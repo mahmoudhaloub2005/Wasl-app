@@ -1,19 +1,8 @@
 import { useState } from "react";
 import { IoCloseOutline, IoInformationCircleOutline } from "react-icons/io5";
-import { designGenerators } from "../../../data/generatorsStorage";
-
-export const compareGenerators = designGenerators.map((generator) => ({
-  id: generator.id,
-  name: generator.name,
-  location: generator.location,
-  price: generator.priceText,
-  capacity: generator.capacity,
-  status: generator.status,
-  rating: generator.rating,
-  image: generator.image,
-}));
 
 function CompareGeneratorsModal({
+  generators = [],
   initialSelectedIds = [],
   onClose,
   onStartCompare,
@@ -25,8 +14,8 @@ function CompareGeneratorsModal({
 
   const toggleGenerator = (id) => {
     setSelectedIds((currentIds) => {
-      if (currentIds.includes(id)) {
-        return currentIds.filter((currentId) => currentId !== id);
+      if (currentIds.some((currentId) => String(currentId) === String(id))) {
+        return currentIds.filter((currentId) => String(currentId) !== String(id));
       }
 
       if (currentIds.length >= 2) {
@@ -63,8 +52,10 @@ function CompareGeneratorsModal({
         </header>
 
         <div className="compare-generators-list">
-          {compareGenerators.map((generator) => {
-            const isSelected = selectedIds.includes(generator.id);
+          {generators.map((generator) => {
+            const isSelected = selectedIds.some(
+              (selectedId) => String(selectedId) === String(generator.id)
+            );
 
             return (
               <button
@@ -85,7 +76,7 @@ function CompareGeneratorsModal({
                 <span className="compare-generator-info">
                   <strong>{generator.name}</strong>
                   <em>{generator.location}</em>
-                  <b>{generator.price}</b>
+                  <b>{generator.priceText}</b>
                 </span>
               </button>
             );

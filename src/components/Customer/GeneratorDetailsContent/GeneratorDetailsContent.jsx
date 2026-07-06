@@ -1,6 +1,8 @@
 import "./GeneratorDetailsContent.css";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getGeneratorById } from "../../../data/generatorsStorage";
+import { getGeneratorDetails } from "../../../services/generatorService";
 
 import providerUser from "../../../assets/customer/fgp/icons/provider-user.svg";
 import providerLocation from "../../../assets/customer/fgp/icons/provider-location.svg";
@@ -17,7 +19,52 @@ import reviewAvatar from "../../../assets/customer/fgp/images/review-avatar.png"
 function GeneratorDetailsContent() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const generator = getGeneratorById(id);
+  const [generator, setGenerator] = useState(() => getGeneratorById(id));
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadGenerator() {
+      try {
+        setLoading(true);
+        const data = await getGeneratorDetails(id);
+
+        if (isMounted && data?.id) {
+          setGenerator(data);
+        }
+      } catch (error) {
+        console.error("Failed to load generator details:", error);
+
+        if (isMounted) {
+          setGenerator(getGeneratorById(id));
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadGenerator();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [id]);
+
+  if (loading && !generator) {
+    return (
+      <main className="generator-details-content" dir="rtl">
+        <div className="generator-details-container">
+          <div className="details-empty-state">
+            <h2>جاري تحميل بيانات المولد...</h2>
+            <p>نحضّر تفاصيل المولد من الخادم.</p>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   if (!generator) {
     return (
