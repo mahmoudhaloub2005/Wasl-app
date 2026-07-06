@@ -39,7 +39,6 @@ import CustomerReviewsPage from "./pages/Customer/CustomerReviewsPage";
 import CustomerComplaintsPage from "./pages/Customer/CustomerComplaintsPage";
 import Profile from "./pages/Customer/Profile";
 import ProviderHome from "./pages/Provider/ProviderHome";
-import ProviderSubscriptions from "./pages/Provider/ProviderSubscriptions";
 function App() {
   return (
     <Routes>
@@ -78,17 +77,20 @@ function App() {
 
       <Route
         path="/provider"
-        element={<ProviderHome />}
+        element={
+          <ProtectedRoute allowedRoles={["provider", "seller", "owner"]}>
+            <ProviderHome />
+          </ProtectedRoute>
+        }
       />
 
       <Route
         path="/provider/home"
-        element={<ProviderHome />}
-      />
-
-      <Route
-        path="/provider/subscriptions"
-        element={<ProviderSubscriptions />}
+        element={
+          <ProtectedRoute allowedRoles={["provider", "seller", "owner"]}>
+            <ProviderHome />
+          </ProtectedRoute>
+        }
       />
 
       {/* Redirects */}

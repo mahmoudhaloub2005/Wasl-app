@@ -6,16 +6,25 @@
   font-family: "Noto Sans Arabic", sans-serif;
 }
 
-body {
-  direction: rtl;
-  background: #ffffff;
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+  background: #ffffff !important;
 }
 
+body {
+  direction: rtl;
+  overflow-x: hidden;
+}
+
+/* Navbar */
 .navbar {
   width: 946px;
   max-width: 95%;
   height: 74px;
-  margin: 35px auto;
+  margin: 38px auto 0;
 
   display: flex;
   align-items: center;
@@ -23,9 +32,10 @@ body {
 
   background: #f8f9ff;
   border-radius: 77px;
-  padding: 0 30px;
+  padding: 0 42px;
 }
 
+/* Logo */
 .logo {
   display: flex;
   align-items: center;
@@ -35,14 +45,24 @@ body {
 .logo img {
   width: 49px;
   height: 48px;
+  object-fit: contain;
 }
 
 .logo h2 {
   font-size: 30px;
-  font-weight: 700;
+  font-weight: 800;
   color: #00288e;
+  line-height: 1;
 }
 
+.logo-clickable {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* Links */
 .links {
   display: flex;
   align-items: center;
@@ -57,7 +77,6 @@ body {
   padding-bottom: 8px;
   transition: 0.3s;
   user-select: none;
-  outline: none;
 }
 
 .links li:hover {
@@ -72,11 +91,13 @@ body {
   width: 0;
   height: 2px;
   background: #855300;
+  border-radius: 10px;
   transition: 0.3s;
 }
 
 .links li.active {
   color: #00288e;
+  font-weight: 600;
 }
 
 .links li.active::after {
@@ -90,22 +111,21 @@ body {
   box-shadow: none;
 }
 
-.links li::selection {
-  background: transparent;
-}
-
+/* Button */
 .btn {
-  width: 114px;
-  height: 40px;
+  width: 94px;
+  height: 39px;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   background: #00288e;
   color: #ffffff;
   font-size: 16px;
-  font-weight: 400;
+  font-weight: 500;
+
   display: flex;
   justify-content: center;
   align-items: center;
+
   cursor: pointer;
   transition: 0.3s;
 }
@@ -114,17 +134,11 @@ body {
   background: #0b3ab6;
 }
 
-.logo-clickable {
-  border: none;
-  background: transparent;
-  padding: 0;
-  cursor: pointer;
-}
-
+/* Responsive */
 @media (max-width: 992px) {
   .navbar {
     max-width: 95%;
-    padding: 0 20px;
+    padding: 0 24px;
   }
 
   .logo h2 {
@@ -157,7 +171,6 @@ body {
     height: auto;
     padding: 20px;
     border-radius: 24px;
-
     flex-direction: column;
     gap: 20px;
   }
