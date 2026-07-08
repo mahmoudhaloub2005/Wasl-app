@@ -133,7 +133,7 @@ function ProviderHome() {
       <main className="provider-home__container">
         <section className="provider-home__hero">
           <div className="provider-home__welcome">
-            <h1>مرحباً بك، أحمد</h1>
+            <h1>مرحباً بك، </h1>
             <p>نظرة عامة على أداء شبكة الطاقة اليوم</p>
           </div>
 
