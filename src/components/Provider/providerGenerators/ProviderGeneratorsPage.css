@@ -1,0 +1,31 @@
+.provider-generators-page{
+
+width:90%;
+
+margin:40px auto;
+
+min-height:70vh;
+
+}
+
+.provider-generators-content{
+
+display:grid;
+
+grid-template-columns:320px 1fr;
+
+gap:30px;
+
+align-items:start;
+
+}
+
+.provider-left{
+
+display:flex;
+
+flex-direction:column;
+
+gap:25px;
+
+}

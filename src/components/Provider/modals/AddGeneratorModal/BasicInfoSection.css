@@ -1,0 +1,74 @@
+
+.info-card-block {
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.block-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.block-title h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #0f172a;
+}
+
+.inputs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-group.full-row {
+  grid-column: span 2;
+}
+
+.input-group label {
+  font-size: 13px;
+  color: #475569;
+}
+
+.input-group input, .custom-select, .custom-textarea {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background-color: #f1f5f9;
+  font-size: 14px;
+  outline: none;
+}
+
+.input-with-unit, .input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.unit-label {
+  position: absolute;
+  left: 15px;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.geo-icon {
+  position: absolute;
+  left: 15px;
+  color: #94a3b8;
+}
+
+.custom-textarea {
+  resize: none;
+  height: 100px;
+}

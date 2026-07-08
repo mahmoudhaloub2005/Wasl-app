@@ -1,0 +1,33 @@
+
+.ad-form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.ad-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ad-input-group label {
+  font-size: 13px;
+  color: #475569;
+  font-weight: 500;
+}
+
+.ad-input-group input, .ad-input-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background-color: #f1f5f9;
+  font-size: 14px;
+  outline: none;
+}
+
+.ad-input-group textarea {
+  resize: none;
+  height: 90px;
+}

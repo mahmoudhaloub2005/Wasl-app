@@ -1,0 +1,61 @@
+.review-filter{
+
+display:flex;
+
+justify-content:flex-end;
+
+align-items:center;
+
+gap:15px;
+
+background:#F7F8FD;
+
+padding:18px 25px;
+
+border-radius:15px;
+
+}
+
+.review-filter span{
+
+font-weight:600;
+
+color:#444;
+
+}
+
+.review-filter button{
+
+padding:10px 20px;
+
+border:1px solid #D9DCE5;
+
+background:#fff;
+
+border-radius:25px;
+
+cursor:pointer;
+
+font-size:14px;
+
+transition:.3s;
+
+}
+
+.review-filter button.active{
+
+background:#00328F;
+
+color:#fff;
+
+border-color:#00328F;
+
+}
+
+.review-filter button:hover{
+
+background:#00328F;
+
+color:#fff;
+
+}

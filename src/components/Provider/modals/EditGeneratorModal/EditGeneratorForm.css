@@ -1,0 +1,50 @@
+.edit-form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.edit-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.edit-input-group label {
+  font-size: 13px;
+  color: #334155;
+  font-weight: 700; 
+  text-align: center; 
+}
+
+.edit-input-group input, .edit-input-group select {
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  background-color: #eff6ff; 
+  color: #1e293b;
+  outline: none;
+  text-align: center; 
+}
+
+.edit-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.edit-input-group select {
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+  background-repeat: no-repeat;
+  background-position: left 12px center;
+  background-size: 16px;
+}

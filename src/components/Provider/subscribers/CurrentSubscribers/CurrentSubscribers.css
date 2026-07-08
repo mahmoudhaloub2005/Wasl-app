@@ -1,0 +1,21 @@
+
+.current-subscribers{
+
+display:flex;
+
+flex-direction:column;
+
+gap:18px;
+
+}
+
+.current-subscribers h2{
+
+margin-bottom:10px;
+
+font-size:28px;
+
+color:#1E293B;
+
+}
+

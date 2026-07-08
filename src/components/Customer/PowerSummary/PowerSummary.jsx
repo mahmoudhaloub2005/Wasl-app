@@ -1,6 +1,3 @@
-
-PowerSummary.jsx
-
 import "./PowerSummary.css";
 
 function PowerSummary() {

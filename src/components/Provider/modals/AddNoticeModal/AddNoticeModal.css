@@ -1,0 +1,74 @@
+.notice-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  direction: rtl;
+  font-family: sans-serif;
+}
+
+.notice-modal-wrapper {
+  background-color: #ffffff;
+  width: 90%;
+  max-width: 460px; 
+  max-height: 90vh;
+  border-radius: 16px;
+  padding: 35px 40px;
+  position: relative;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.notice-modal-close {
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #94a3b8;
+  cursor: pointer;
+}
+
+.notice-modal-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.notice-modal-header h2 {
+  font-size: 20px;
+  color: #1e3a8a;
+  margin: 0;
+  font-weight: 700;
+}
+
+.notice-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.btn-send-notice {
+  background-color: #0b2582;
+  color: #ffffff;
+  border: none;
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 5px;
+  transition: background-color 0.2s;
+}
+
+.btn-send-notice:hover {
+  background-color: #071952;
+}

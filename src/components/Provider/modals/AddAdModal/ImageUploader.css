@@ -1,0 +1,47 @@
+
+.uploader-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.uploader-label {
+  font-size: 13px;
+  color: #475569;
+  font-weight: 500;
+}
+
+.dropzone-box {
+  border: 2px dashed #cbd5e1; /* إطار متقطع رمادي حسب التصميم */
+  background-color: #f8fafc;
+  border-radius: 10px;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.dropzone-box:hover {
+  background-color: #f1f5f9;
+}
+
+.upload-icon {
+  font-size: 32px;
+  color: #64748b;
+}
+
+.upload-text {
+  margin: 0;
+  font-size: 14px;
+  color: #334155;
+  font-weight: 500;
+}
+
+.upload-hint {
+  font-size: 11px;
+  color: #94a3b8;
+}

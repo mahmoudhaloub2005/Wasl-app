@@ -1,0 +1,35 @@
+
+.map-section-container {
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.map-header-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.map-header-label h4 {
+  margin: 0;
+  font-size: 14px;
+  color: #0f172a;
+}
+
+.map-header-label p {
+  margin: 0;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.leaflet-map-wrapper {
+  height: 180px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  z-index: 1;
+}

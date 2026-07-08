@@ -4,7 +4,6 @@ import "./OtpPage.css";
 import imag from "../../../assets/icons/image.png";
 
 export default function OtpPage() {
-  console.log(imag);
   const navigate = useNavigate();
   const location = useLocation();
 

@@ -1,0 +1,10 @@
+.reviews-complaints-page{ 
+    width:90%;
+    margin:40px auto; 
+    min-height:70vh; 
+    display:flex; 
+    flex-direction:column;
+    gap:30px; 
+    direction: rtl;
+    font-family: sans-serif;
+} 

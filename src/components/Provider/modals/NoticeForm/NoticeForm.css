@@ -1,0 +1,37 @@
+
+.notice-form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.notice-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notice-input-group label {
+  font-size: 13px;
+  color: #475569;
+  font-weight: 500;
+}
+.notice-input-group input, .notice-input-group textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 8px;
+  background-color: #f1f5f9;
+  font-size: 14px;
+  color: #1e293b;
+  outline: none;
+}
+
+.notice-input-group textarea {
+  resize: none;
+  height: 110px;
+}
+
+.notice-input-group input:focus, .notice-input-group textarea:focus {
+  background-color: #e2e8f0;
+}
