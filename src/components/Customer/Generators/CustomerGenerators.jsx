@@ -6,8 +6,8 @@ import CompareResult from "./CompareResult";
 import FilterSection from "./FilterSection";
 import GeneratorsHeader from "./GeneratorHero";
 import GeneratorsCards from "./GeneratorsCards";
-import { designGenerators } from "../../../data/generatorsStorage";
 import {
+  compareGenerators,
   getGenerators,
   searchGenerators,
 } from "../../../services/generatorService";
@@ -22,6 +22,9 @@ function CustomerGenerators() {
   const [error, setError] = useState("");
   const [isCompareOpen, setIsCompareOpen] = useState(false);
   const [compareIds, setCompareIds] = useState([]);
+  const [compareData, setCompareData] = useState([]);
+  const [compareLoading, setCompareLoading] = useState(false);
+  const [compareError, setCompareError] = useState("");
   const compareResultRef = useRef(null);
 
   useEffect(() => {
@@ -44,8 +47,8 @@ function CustomerGenerators() {
         console.error("Failed to load generators:", err);
 
         if (isMounted) {
-          setError("تعذر تحميل المولدات من الخادم، يتم عرض البيانات المتاحة حاليا.");
-          setGenerators(designGenerators);
+          setError("تعذر تحميل المولدات من الخادم.");
+          setGenerators([]);
         }
       } finally {
         if (isMounted) {
@@ -72,6 +75,56 @@ function CustomerGenerators() {
       }, 120);
     }
   }, [compareIds]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadCompareResult() {
+      if (compareIds.length !== 2) {
+        setCompareData([]);
+        setCompareError("");
+        return;
+      }
+
+      const localSelection = compareIds
+        .map((id) =>
+          generators.find((generator) => String(generator.id) === String(id))
+        )
+        .filter(Boolean);
+
+      try {
+        setCompareLoading(true);
+        setCompareError("");
+
+        const data = await compareGenerators(compareIds);
+
+        if (isMounted) {
+          setCompareData(data.length === 2 ? data : localSelection);
+        }
+      } catch (err) {
+        console.error("Failed to compare generators:", err);
+
+        if (isMounted) {
+          setCompareData(localSelection);
+          setCompareError(
+            err.response?.status === 404 || err.response?.status === 405
+              ? ""
+              : "تعذر تحميل نتيجة المقارنة من الخادم."
+          );
+        }
+      } finally {
+        if (isMounted) {
+          setCompareLoading(false);
+        }
+      }
+    }
+
+    loadCompareResult();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [compareIds, generators]);
 
   return (
     <main className="customer-generators-page" dir="rtl">
@@ -101,8 +154,10 @@ function CustomerGenerators() {
 
       <div ref={compareResultRef}>
         <CompareResult
-          generators={generators}
+          generators={compareData.length ? compareData : generators}
           selectedIds={compareIds}
+          loading={compareLoading}
+          errorMessage={compareError}
           onChangeSelection={() => setIsCompareOpen(true)}
         />
       </div>

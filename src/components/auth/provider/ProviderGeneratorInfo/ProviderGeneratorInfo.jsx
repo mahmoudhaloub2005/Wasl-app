@@ -16,10 +16,14 @@ function ProviderGeneratorInfo() {
   const savedGeneratorData = locationState.generatorData || {};
 
   const [formData, setFormData] = useState({
+    generatorName: savedGeneratorData.generatorName || "",
     generatorType: savedGeneratorData.generatorType || "",
+    area: savedGeneratorData.area || "",
     capacity: savedGeneratorData.capacity || "",
+    availableLoad: savedGeneratorData.availableLoad || "",
     location: savedGeneratorData.location || "",
     price: savedGeneratorData.price || "",
+    description: savedGeneratorData.description || "",
     startTime: savedGeneratorData.startTime || "",
     endTime: savedGeneratorData.endTime || "",
   });
@@ -48,10 +52,14 @@ function ProviderGeneratorInfo() {
   const handleSubmit = () => {
     if (
       !providerData ||
+      !formData.generatorName ||
       !formData.generatorType ||
+      !formData.area ||
       !formData.capacity ||
+      !formData.availableLoad ||
       !formData.location ||
       !formData.price ||
+      !formData.description ||
       !formData.startTime ||
       !formData.endTime
     ) {
@@ -106,24 +114,39 @@ function ProviderGeneratorInfo() {
 
         <div className="form-row2">
           <div className="form-group2">
-            <label>نوع المولد</label>
+            <label>اسم المولد</label>
 
-            <div className="select-box2">
-              <FiChevronDown />
+            <div className="input-icon2">
+              <FiInfo />
 
-              <select
-                name="generatorType"
-                value={formData.generatorType}
+              <input
+                type="text"
+                name="generatorName"
+                value={formData.generatorName}
                 onChange={handleChange}
-              >
-                <option value="">اختر النوع</option>
-                <option value="ديزل">ديزل</option>
-                <option value="بنزين">بنزين</option>
-                <option value="غاز">غاز</option>
-              </select>
+                placeholder="اسم المولد كما سيظهر للعملاء"
+              />
             </div>
           </div>
 
+          <div className="form-group2">
+            <label>نوع المولد</label>
+
+            <div className="input-icon2">
+              <FiChevronDown />
+
+              <input
+                type="text"
+                name="generatorType"
+                value={formData.generatorType}
+                onChange={handleChange}
+                placeholder="نوع المولد"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="form-row2">
           <div className="form-group2">
             <label>قدرة التوليد (KVA)</label>
 
@@ -143,7 +166,23 @@ function ProviderGeneratorInfo() {
 
         <div className="form-row2">
           <div className="form-group2">
-            <label>سعر الكيلو</label>
+            <label>الحمل المتاح</label>
+
+            <div className="input-with-unit2">
+              <input
+                type="text"
+                name="availableLoad"
+                value={formData.availableLoad}
+                onChange={handleChange}
+                placeholder="الحمل المتاح للاشتراكات"
+              />
+
+              <span>KVA</span>
+            </div>
+          </div>
+
+          <div className="form-group2">
+            <label>سعر الأمبير</label>
 
             <div className="input-with-unit2">
               <input
@@ -162,6 +201,22 @@ function ProviderGeneratorInfo() {
         </div>
 
         <div className="form-row2">
+          <div className="form-group2">
+            <label>المنطقة</label>
+
+            <div className="input-icon2">
+              <FiMapPin />
+
+              <input
+                type="text"
+                name="area"
+                value={formData.area}
+                onChange={handleChange}
+                placeholder="اسم المنطقة"
+              />
+            </div>
+          </div>
+
           <div className="form-group2">
             <label>الموقع / الحي</label>
 
@@ -201,6 +256,24 @@ function ProviderGeneratorInfo() {
                 />
                 <small>إلى</small>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="form-row2">
+          <div className="form-group2 full">
+            <label>وصف المولد</label>
+
+            <div className="input-icon2">
+              <FiInfo />
+
+              <input
+                type="text"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="وصف مختصر للخدمة والتغطية"
+              />
             </div>
           </div>
         </div>

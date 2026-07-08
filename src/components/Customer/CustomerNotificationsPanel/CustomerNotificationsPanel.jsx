@@ -1,41 +1,11 @@
 import "./CustomerNotificationsPanel.css";
 
 import newNotifications from "../../../assets/customer/icons/new-notifications.svg";
-import unpaidBill from "../../../assets/customer/icons/unpaid-bill.svg";
-import paidBill from "../../../assets/customer/icons/paid-bill.svg";
-
-const defaultNotifications = [
-  {
-    id: 1,
-    title: "صدرت فاتورة شهر تموز",
-    description: "تم إصدار فاتورتك الجديدة بمبلغ",
-    time: "منذ ساعتين",
-    icon: newNotifications,
-    iconAlt: "تنبيه جديد",
-    colorClass: "notification-blue",
-  },
-  {
-    id: 2,
-    title: "صيانة مجدولة",
-    description: "تنبيه: صيانة دورية للمولد غداً من...",
-    time: "منذ 5 ساعات",
-    icon: unpaidBill,
-    iconAlt: "صيانة مجدولة",
-    colorClass: "notification-orange",
-  },
-  {
-    id: 3,
-    title: "تم استلام الدفعة",
-    description: "شكراً لك، تم تأكيد استلام دفعتك...",
-    time: "أمس، 10:30 صباحاً",
-    icon: paidBill,
-    iconAlt: "تم استلام الدفعة",
-    colorClass: "notification-gray",
-  },
-];
 
 function CustomerNotificationsPanel({
-  notifications = defaultNotifications,
+  notifications = [],
+  loading = false,
+  errorMessage = "",
   onMarkAsRead,
   onShowAllNotifications,
 }) {
@@ -52,7 +22,31 @@ function CustomerNotificationsPanel({
       </div>
 
       <div className="notifications-list">
-        {hasNotifications ? (
+        {loading ? (
+          <article className="notification-card notification-blue">
+            <span className="notification-side-dot"></span>
+
+            <div className="notification-content">
+              <h3>جاري تحميل التنبيهات...</h3>
+              <p>نحضّر آخر الإشعارات من الخادم.</p>
+              <small>الآن</small>
+            </div>
+
+            <img src={newNotifications} alt="تحميل التنبيهات" />
+          </article>
+        ) : errorMessage ? (
+          <article className="notification-card notification-orange">
+            <span className="notification-side-dot"></span>
+
+            <div className="notification-content">
+              <h3>تعذر تحميل التنبيهات</h3>
+              <p>{errorMessage}</p>
+              <small>الآن</small>
+            </div>
+
+            <img src={newNotifications} alt="تعذر تحميل التنبيهات" />
+          </article>
+        ) : hasNotifications ? (
           notifications.map((notification) => (
             <button
               type="button"
@@ -88,7 +82,7 @@ function CustomerNotificationsPanel({
         )}
       </div>
 
-      {hasNotifications && (
+      {!loading && hasNotifications && (
         <button
           className="show-all-notifications"
           type="button"

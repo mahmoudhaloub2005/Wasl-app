@@ -1,30 +1,6 @@
 import "./CustomerMiniStats.css";
 
-const defaultStats = [
-  {
-    id: 1,
-    title: "عدد الفواتير غير المدفوعة",
-    value: "1 فاتورة",
-    cardClass: "mini-stat-red",
-    textClass: "red-text",
-  },
-  {
-    id: 2,
-    title: "آخر دفعة تم سدادها",
-    value: "100 شيكل",
-    cardClass: "mini-stat-green",
-    textClass: "dark-text",
-  },
-  {
-    id: 3,
-    title: "الاشتراك الحالي (أمبير)",
-    value: "10 أمبير",
-    cardClass: "mini-stat-blue",
-    textClass: "blue-text",
-  },
-];
-
-function CustomerMiniStats({ stats = defaultStats }) {
+function CustomerMiniStats({ stats = [] }) {
   return (
     <div className="customer-mini-stats" dir="rtl">
       {stats.map((stat) => (

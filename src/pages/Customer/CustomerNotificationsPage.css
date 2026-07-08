@@ -1,0 +1,46 @@
+.customer-notifications-page {
+  min-height: 100vh;
+  background: #f6f8ff;
+  padding: 54px 0 70px;
+  font-family: "Noto Sans Arabic", sans-serif;
+  color: #071a33;
+}
+
+.customer-notifications-container {
+  width: 760px;
+  max-width: calc(100% - 48px);
+  margin: 0 auto;
+}
+
+.customer-notifications-title {
+  margin-bottom: 24px;
+  text-align: right;
+}
+
+.customer-notifications-title h1 {
+  margin: 0 0 8px;
+  color: #071a33;
+  font-size: 34px;
+  font-weight: 900;
+}
+
+.customer-notifications-title p {
+  margin: 0;
+  color: #4b5565;
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+@media (max-width: 620px) {
+  .customer-notifications-page {
+    padding-top: 32px;
+  }
+
+  .customer-notifications-container {
+    max-width: calc(100% - 28px);
+  }
+
+  .customer-notifications-title h1 {
+    font-size: 28px;
+  }
+}

@@ -5,6 +5,42 @@ import { loginUser } from "../../../services/authService";
 import "./Login.css";
 import images from "../../../assets/images/images.png";
 
+function getAuthPayload(data) {
+  const token =
+    data?.token ||
+    data?.access_token ||
+    data?.data?.token ||
+    data?.data?.access_token ||
+    data?.user?.token ||
+    data?.data?.user?.token;
+
+  const user =
+    data?.user ||
+    data?.data?.user ||
+    data?.customer ||
+    data?.data?.customer ||
+    data?.provider ||
+    data?.data?.provider ||
+    data?.data ||
+    null;
+
+  const role =
+    user?.role ||
+    user?.type ||
+    user?.accountType ||
+    data?.role ||
+    data?.type ||
+    data?.data?.role ||
+    data?.data?.type ||
+    "customer";
+
+  return {
+    token,
+    user,
+    role: String(role).toLowerCase(),
+  };
+}
+
 function Login() {
   const navigate = useNavigate();
 
@@ -45,26 +81,12 @@ function Login() {
 
     try {
       const data = await loginUser(formData.email, formData.password);
-
-      console.log("Login Response:", data);
-
-      const token =
-        data.token ||
-        data.access_token ||
-        data.data?.token ||
-        data.user?.token;
+      const { token, user, role } = getAuthPayload(data);
 
       if (!token) {
         setErrorMessage("تم تسجيل الدخول لكن لم يصل التوكن من الخادم");
         return;
       }
-
-      const user =
-        data.user ||
-        data.data?.user ||
-        data.customer ||
-        data.provider ||
-        data.data;
 
       const storage = formData.remember ? localStorage : sessionStorage;
 
@@ -75,28 +97,16 @@ function Login() {
         storage.setItem("wasel_user", JSON.stringify(user));
       }
 
-      const role =
-        user?.role ||
-        user?.type ||
-        user?.accountType ||
-        data.role ||
-        data.type ||
-        data.data?.role ||
-        data.data?.type ||
-        "customer";
+      storage.setItem("wasel_user_role", role);
 
-      const normalizedRole = String(role).toLowerCase();
-
-      storage.setItem("wasel_user_role", normalizedRole);
-
-      if (normalizedRole === "provider") {
+      if (role === "provider") {
         navigate("/provider/home");
-      } else if (normalizedRole === "admin") {
+      } else if (role === "admin") {
         navigate("/admin");
       } else if (
-        normalizedRole === "customer" ||
-        normalizedRole === "client" ||
-        normalizedRole === "user"
+        role === "customer" ||
+        role === "client" ||
+        role === "user"
       ) {
         navigate("/customer");
       } else {

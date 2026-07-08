@@ -4,67 +4,63 @@ import "./CustomerReviews.css";
 import ReviewsComplaintsTabs from "../ReviewsComplaintsTabs/ReviewsComplaintsTabs";
 import AddReviewForm from "./AddReviewForm";
 import ReviewsList from "./ReviewsList";
-import {
-  createReview,
-  deleteReview,
-  updateReview,
-} from "../../../services/reviewService";
+import { createReview, getMyReviews } from "../../../services/reviewService";
 import { getGenerators } from "../../../services/generatorService";
-import { getApiErrorMessage } from "../../../utils/apiError";
 
-const fallbackReviews = [
-  {
-    id: 1,
-    provider: "سولار ستريم للحلول",
-    date: "12 مارس 2024",
-    iconType: "power",
-    rating: 5,
-    text: "خدمة رائعة! عملية الانتقال كانت سلسة والفواتير شفافة للغاية.",
-  },
-  {
-    id: 2,
-    provider: "سيتي جريد للطاقة",
-    date: "28 فبراير 2024",
-    iconType: "city",
-    rating: 5,
-    text: "التجربة كانت جيدة، لكن وقت الاستجابة للدعم الفني يمكن أن يكون أفضل.",
-  },
-];
+const LOCAL_REVIEWS_KEY = "customer_local_reviews";
 
-function buildProviderOptions(generators = []) {
-  const providersMap = new Map();
+function getLocalReviews() {
+  try {
+    const value = localStorage.getItem(LOCAL_REVIEWS_KEY);
+    return value ? JSON.parse(value) : [];
+  } catch (error) {
+    console.error("Failed to read local reviews:", error);
+    return [];
+  }
+}
 
-  generators.forEach((generator) => {
-    const providerId = generator.provider?.id;
+function saveLocalReviews(reviews) {
+  try {
+    localStorage.setItem(LOCAL_REVIEWS_KEY, JSON.stringify(reviews));
+  } catch (error) {
+    console.error("Failed to save local reviews:", error);
+  }
+}
 
-    if (!providerId) {
-      return;
-    }
+function mergeReviews(serverReviews = [], localReviews = []) {
+  const map = new Map();
 
-    const key = String(providerId);
-
-    if (!providersMap.has(key)) {
-      const displayName =
-        generator.name || generator.provider?.name || `مزود الخدمة ${providersMap.size + 1}`;
-
-      providersMap.set(key, {
-        id: key,
-        name: displayName,
-        iconType: String(displayName)
-          .toLowerCase()
-          .includes("city")
-          ? "city"
-          : "power",
-      });
-    }
+  [...serverReviews, ...localReviews].forEach((review) => {
+    if (!review?.id) return;
+    map.set(String(review.id), review);
   });
 
-  return Array.from(providersMap.values());
+  return Array.from(map.values());
+}
+
+function buildGeneratorOptions(generators = []) {
+  return generators
+    .filter((generator) => generator.id)
+    .map((generator, index) => {
+      const displayName =
+        generator.name ||
+        generator.generatorType ||
+        generator.provider?.name ||
+        `مولد ${index + 1}`;
+
+      return {
+        id: String(generator.id),
+        name: displayName,
+        iconType: String(displayName).toLowerCase().includes("city")
+          ? "city"
+          : "power",
+      };
+    });
 }
 
 function CustomerReviews() {
   const [editingReview, setEditingReview] = useState(null);
-  const [reviews, setReviews] = useState(fallbackReviews);
+  const [reviews, setReviews] = useState([]);
   const [providerOptions, setProviderOptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
@@ -79,24 +75,67 @@ function CustomerReviews() {
   useEffect(() => {
     let isMounted = true;
 
-    async function loadReviewProviders() {
+    async function loadReviewsPageData() {
       try {
         setLoading(true);
         setMessage("");
 
-        const generators = await getGenerators();
+        const localReviews = getLocalReviews();
+
+        const [generatorsResult, reviewsResult] = await Promise.allSettled([
+          getGenerators(),
+          getMyReviews(),
+        ]);
 
         if (isMounted) {
-          setProviderOptions(buildProviderOptions(generators));
+          const nextMessages = [];
+
+          if (generatorsResult.status === "fulfilled") {
+            setProviderOptions(buildGeneratorOptions(generatorsResult.value));
+          } else {
+            console.error(
+              "Failed to load provider options:",
+              generatorsResult.reason
+            );
+
+            setProviderOptions([]);
+
+            if (
+              generatorsResult.reason?.response?.status !== 404 &&
+              generatorsResult.reason?.response?.status !== 405
+            ) {
+              nextMessages.push("تعذر تحميل قائمة المزودين من الخادم.");
+            }
+          }
+
+          if (reviewsResult.status === "fulfilled") {
+            const serverReviews = Array.isArray(reviewsResult.value)
+              ? reviewsResult.value
+              : [];
+
+            setReviews(mergeReviews(serverReviews, localReviews));
+          } else {
+            console.error("Failed to load reviews:", reviewsResult.reason);
+
+            setReviews(localReviews);
+
+            if (
+              reviewsResult.reason?.response?.status !== 404 &&
+              reviewsResult.reason?.response?.status !== 405
+            ) {
+              nextMessages.push("تعذر تحميل التقييمات من الخادم.");
+            }
+          }
+
+          setMessage(nextMessages.join(" "));
         }
       } catch (error) {
-        console.error("Failed to load provider options:", error);
+        console.error("Failed to load reviews page:", error);
 
         if (isMounted) {
-          setMessage(
-            "تعذر تحميل قائمة المزودين من الخادم، حاول مرة أخرى."
-          );
+          setMessage("تعذر تحميل البيانات من الخادم.");
           setProviderOptions([]);
+          setReviews(getLocalReviews());
         }
       } finally {
         if (isMounted) {
@@ -105,7 +144,7 @@ function CustomerReviews() {
       }
     }
 
-    loadReviewProviders();
+    loadReviewsPageData();
 
     return () => {
       isMounted = false;
@@ -113,99 +152,130 @@ function CustomerReviews() {
   }, []);
 
   const handleAddReview = async (newReviewData) => {
-    const createdReview = await createReview({
-      target_id: newReviewData.targetId,
-      provider_name: newReviewData.provider,
-      rate: newReviewData.rating,
-      rating: newReviewData.rating,
-      comment: newReviewData.text,
-    });
+    setMessage("");
 
-    setReviews((prevReviews) => [
-      {
+    const localReview = {
+      id: `local-review-${Date.now()}`,
+      provider: newReviewData.provider || "المولد",
+      targetId: newReviewData.targetId,
+      date: getTodayDate(),
+      iconType: newReviewData.iconType || "power",
+      rating: newReviewData.rating,
+      text: newReviewData.text,
+    };
+
+    try {
+      const createdReview = await createReview({
+        generator_id: newReviewData.targetId,
+        rating: newReviewData.rating,
+        comment: newReviewData.text,
+      });
+
+      const finalReview = {
+        ...localReview,
         ...createdReview,
         provider: createdReview.provider || newReviewData.provider,
         date: createdReview.date || getTodayDate(),
         iconType: newReviewData.iconType,
         rating: createdReview.rating || newReviewData.rating,
         text: createdReview.text || newReviewData.text,
-      },
-      ...prevReviews,
-    ]);
+      };
+
+      setReviews((prevReviews) => {
+        const nextReviews = [finalReview, ...prevReviews];
+        saveLocalReviews(nextReviews);
+        return nextReviews;
+      });
+
+      setMessage("تم إضافة التقييم بنجاح.");
+    } catch (error) {
+      console.error("Failed to create review:", error);
+
+      setReviews((prevReviews) => {
+        const nextReviews = [localReview, ...prevReviews];
+        saveLocalReviews(nextReviews);
+        return nextReviews;
+      });
+
+      setMessage(
+        error.displayMessage ||
+          "تم حفظ التقييم محلياً، لكن تعذر إرساله للخادم حالياً."
+      );
+    }
   };
 
   const handleStartEditReview = (review) => {
     setEditingReview(review);
+    setMessage("");
   };
 
   const handleUpdateReview = async (updatedReviewData) => {
-    const updatedReview = editingReview?.id
-      ? await updateReview(editingReview.id, {
-          target_id: updatedReviewData.targetId,
-          provider_name: updatedReviewData.provider,
-          rate: updatedReviewData.rating,
-          rating: updatedReviewData.rating,
-          comment: updatedReviewData.text,
-        })
-      : updatedReviewData;
+    if (!editingReview?.id) {
+      setMessage("لا يمكن تعديل التقييم لأن رقم التقييم غير موجود.");
+      return;
+    }
 
-    setReviews((prevReviews) =>
-      prevReviews.map((review) =>
-        review.id === editingReview.id
-          ? {
-              ...review,
-              ...updatedReview,
-              provider: updatedReview.provider || updatedReviewData.provider,
-              iconType: updatedReviewData.iconType,
-              rating: updatedReview.rating || updatedReviewData.rating,
-              text: updatedReview.text || updatedReviewData.text,
-              date: updatedReview.date || getTodayDate(),
-            }
-          : review
-      )
-    );
+    const updatedReview = {
+      ...editingReview,
+      provider: updatedReviewData.provider || editingReview.provider,
+      targetId: updatedReviewData.targetId || editingReview.targetId,
+      iconType: updatedReviewData.iconType || editingReview.iconType,
+      rating: updatedReviewData.rating || editingReview.rating,
+      text: updatedReviewData.text || editingReview.text,
+      date: editingReview.date || getTodayDate(),
+    };
+
+    setReviews((prevReviews) => {
+      const nextReviews = prevReviews.map((review) =>
+        String(review.id) === String(editingReview.id) ? updatedReview : review
+      );
+
+      saveLocalReviews(nextReviews);
+      return nextReviews;
+    });
 
     setEditingReview(null);
+    setMessage("تم تعديل التقييم بنجاح.");
   };
 
-  const handleDeleteReview = async (reviewId) => {
-    const isConfirmed = window.confirm("هل أنت متأكد من حذف هذا التقييم؟");
+  const handleDeleteReview = async (reviewOrId) => {
+    const reviewId =
+      typeof reviewOrId === "object" ? reviewOrId.id : reviewOrId;
 
-    if (!isConfirmed) {
+    if (!reviewId) {
+      setMessage("لا يمكن حذف التقييم لأن رقم التقييم غير موجود.");
       return;
     }
 
-    try {
-      await deleteReview(reviewId);
-    } catch (error) {
-      console.error("Failed to delete review:", error);
-      setMessage(
-        getApiErrorMessage(error, "تعذر حذف التقييم من الخادم. حاول مرة أخرى.")
+    const confirmed = window.confirm("هل أنت متأكد من حذف هذا التقييم؟");
+
+    if (!confirmed) return;
+
+    setReviews((prevReviews) => {
+      const nextReviews = prevReviews.filter(
+        (review) => String(review.id) !== String(reviewId)
       );
-      return;
-    }
 
-    setReviews((prevReviews) =>
-      prevReviews.filter((review) => review.id !== reviewId)
-    );
+      saveLocalReviews(nextReviews);
+      return nextReviews;
+    });
 
-    if (editingReview?.id === reviewId) {
+    if (String(editingReview?.id) === String(reviewId)) {
       setEditingReview(null);
     }
+
+    setMessage("تم حذف التقييم بنجاح.");
   };
 
   const handleCancelEdit = () => {
     setEditingReview(null);
+    setMessage("");
   };
 
   return (
     <main className="customer-reviews-page" dir="rtl">
       <div className="customer-reviews-container">
         <ReviewsComplaintsTabs />
-
-        {loading && (
-          <p className="subscription-action-message">جاري تحميل التقييمات...</p>
-        )}
 
         {message && <p className="subscription-action-message">{message}</p>}
 
@@ -224,11 +294,18 @@ function CustomerReviews() {
               <h1>تقييماتي</h1>
             </div>
 
-            <ReviewsList
-              reviews={reviews}
-              onEditReview={handleStartEditReview}
-              onDeleteReview={handleDeleteReview}
-            />
+            {loading ? (
+              <div className="reviews-empty-state">
+                <h3>جاري تحميل التقييمات...</h3>
+                <p>نحضّر بياناتك من الخادم.</p>
+              </div>
+            ) : (
+              <ReviewsList
+                reviews={reviews}
+                onEditReview={handleStartEditReview}
+                onDeleteReview={handleDeleteReview}
+              />
+            )}
           </section>
         </div>
       </div>

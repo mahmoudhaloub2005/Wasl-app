@@ -3,7 +3,7 @@ import { IoChevronBackOutline } from "react-icons/io5";
 
 import BillStatusBadge from "./BillStatusBadge";
 
-function BillsTable({ bills, loadingInvoiceId, onViewBill }) {
+function BillsTable({ bills, loading = false, loadingInvoiceId, onViewBill }) {
   return (
     <section className="bills-table-card">
       <div className="bills-table-title-row">
@@ -27,14 +27,14 @@ function BillsTable({ bills, loadingInvoiceId, onViewBill }) {
         </thead>
 
         <tbody>
-          {bills.length === 0 && (
+          {!loading && bills.length === 0 && (
             <tr>
-              <td colSpan="5">لا توجد فواتير حاليا.</td>
+              <td colSpan="5">لا توجد فواتير حالياً</td>
             </tr>
           )}
 
           {bills.map((bill) => (
-            <tr key={bill.id}>
+            <tr key={bill.id || bill.invoiceNumber}>
               <td>{bill.invoiceNumber}</td>
               <td>{bill.month}</td>
               <td>{bill.amount}</td>

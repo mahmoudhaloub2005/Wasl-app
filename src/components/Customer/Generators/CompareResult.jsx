@@ -1,4 +1,10 @@
-function CompareResult({ generators = [], selectedIds, onChangeSelection }) {
+function CompareResult({
+  generators = [],
+  selectedIds,
+  loading = false,
+  errorMessage = "",
+  onChangeSelection,
+}) {
   const selectedGenerators = selectedIds
     .map((id) =>
       generators.find((generator) => String(generator.id) === String(id))
@@ -21,6 +27,9 @@ function CompareResult({ generators = [], selectedIds, onChangeSelection }) {
           تغيير الاختيار
         </button>
       </div>
+
+      {loading && <p className="compare-result-message">جاري تحميل المقارنة...</p>}
+      {errorMessage && <p className="compare-result-message">{errorMessage}</p>}
 
       <div className="compare-result-grid">
         {selectedGenerators.map((generator) => (

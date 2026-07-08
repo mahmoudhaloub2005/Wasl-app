@@ -49,11 +49,19 @@ function GeneratorsCards({
   }
 
   if (filteredGenerators.length === 0) {
+    const isSourceEmpty = generators.length === 0;
+
     return (
       <section className="generators-cards-list">
         <div className="empty-generators">
-          <h3>لا توجد نتائج مطابقة</h3>
-          <p>جرب تغيير اسم المولد أو المنطقة أو حالة التشغيل.</p>
+          <h3>
+            {isSourceEmpty
+              ? "لا توجد مولدات متاحة حالياً"
+              : "لا توجد نتائج مطابقة"}
+          </h3>
+          {!isSourceEmpty && (
+            <p>جرب تغيير اسم المولد أو المنطقة أو حالة التشغيل.</p>
+          )}
         </div>
       </section>
     );
@@ -66,7 +74,7 @@ function GeneratorsCards({
           key={generator.id}
           id={generator.id}
           image={generator.image}
-          name={generator.name}
+          name={generator.name || generator.generatorType}
           area={generator.location}
           price={generator.priceText}
           load={generator.capacity}

@@ -1,4 +1,5 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FiCalendar,
   FiCheck,
@@ -10,9 +11,16 @@ import {
   FiUser,
 } from "react-icons/fi";
 
-import defaultAvatar from "../../../assets/images/User.jpg";
-import { logoutUser } from "../../../services/authService";
-import { clearAuthStorage, getUserProfile } from "../../../utils/authStorage";
+import { getCurrentUser, logoutUser } from "../../../services/authService";
+import { getCurrentSubscription } from "../../../services/subscriptionService";
+import {
+  clearAuthStorage,
+  getScopedStorageKey,
+  getStoredUser,
+  getUserAvatarUrl,
+  getUserInitial,
+  getUserProfile,
+} from "../../../utils/authStorage";
 import "./CustomerProfilePage.css";
 
 const PROFILE_AVATAR_KEY = "wasel_profile_avatar";
@@ -35,14 +43,64 @@ function getInitialProfile() {
   };
 }
 
+function unwrapUser(data) {
+  return (
+    data?.user ||
+    data?.customer ||
+    data?.data?.user ||
+    data?.data?.customer ||
+    data?.data ||
+    data ||
+    {}
+  );
+}
+
+function getSavedAvatarForUser(user = getStoredUser()) {
+  const storageKey = getScopedStorageKey(PROFILE_AVATAR_KEY, user);
+
+  if (!storageKey) return "";
+
+  return localStorage.getItem(storageKey) || "";
+}
+
+function getProfileAvatarForUser(user = getStoredUser()) {
+  return getSavedAvatarForUser(user) || getUserAvatarUrl(user);
+}
+
+function notifyProfileAvatarChange(user, avatarImage) {
+  window.dispatchEvent(
+    new CustomEvent("wasel-profile-avatar-change", {
+      detail: {
+        avatarImage,
+        storageKey: getScopedStorageKey(PROFILE_AVATAR_KEY, user),
+      },
+    })
+  );
+}
+
+function formatMemberSince(value) {
+  if (!value) return initialProfile.memberSince;
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return String(value);
+  }
+
+  return new Intl.DateTimeFormat("ar", {
+    month: "long",
+    year: "numeric",
+  }).format(date);
+}
+
 function CustomerProfilePage() {
+  const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
   const [profile, setProfile] = useState(getInitialProfile);
   const [savedProfile, setSavedProfile] = useState(getInitialProfile);
-  const [avatarImage, setAvatarImage] = useState(
-    () => localStorage.getItem(PROFILE_AVATAR_KEY) || defaultAvatar
-  );
+  const [currentUser, setCurrentUser] = useState(() => getStoredUser());
+  const [avatarImage, setAvatarImage] = useState(() => getProfileAvatarForUser());
   const [isAvatarMenuOpen, setIsAvatarMenuOpen] = useState(false);
 
   const [smsEnabled, setSmsEnabled] = useState(false);
@@ -51,6 +109,10 @@ function CustomerProfilePage() {
   const [language, setLanguage] = useState("ar");
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [currentSubscription, setCurrentSubscription] = useState(null);
+  const [isSubscriptionLoading, setIsSubscriptionLoading] = useState(true);
+  const [profileMessage, setProfileMessage] = useState("");
+  const [passwordMessage, setPasswordMessage] = useState("");
 
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
@@ -59,6 +121,76 @@ function CustomerProfilePage() {
   });
 
   const areaLabel = profile.address.trim() || "غير محدد";
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadCurrentProfile() {
+      try {
+        const data = await getCurrentUser();
+        const user = unwrapUser(data);
+        const userProfile = getUserProfile(user);
+        const nextProfile = {
+          ...initialProfile,
+          ...userProfile,
+          fullName: userProfile.fullName || initialProfile.fullName,
+          memberSince: formatMemberSince(
+            user?.created_at || user?.createdAt || user?.member_since
+          ),
+        };
+
+        if (isMounted) {
+          setCurrentUser(user);
+          setProfile(nextProfile);
+          setSavedProfile(nextProfile);
+          setAvatarImage(getProfileAvatarForUser(user));
+        }
+      } catch (error) {
+        console.error("Failed to load current profile:", error);
+
+        if (isMounted) {
+          setProfileMessage("تعذر تحديث بيانات الحساب من الخادم حالياً.");
+        }
+      }
+    }
+
+    loadCurrentProfile();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadSubscription() {
+      try {
+        setIsSubscriptionLoading(true);
+        const subscription = await getCurrentSubscription();
+
+        if (isMounted) {
+          setCurrentSubscription(subscription);
+        }
+      } catch (error) {
+        console.error("Failed to load profile subscription:", error);
+
+        if (isMounted) {
+          setCurrentSubscription(null);
+        }
+      } finally {
+        if (isMounted) {
+          setIsSubscriptionLoading(false);
+        }
+      }
+    }
+
+    loadSubscription();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   function handleProfileChange(event) {
     const { name, value } = event.target;
@@ -71,7 +203,7 @@ function CustomerProfilePage() {
 
   function handleSaveChanges() {
     setSavedProfile(profile);
-    alert("تم حفظ التغييرات بنجاح");
+    setProfileMessage("تم حفظ التغييرات على الواجهة.");
   }
 
   function handleCancelChanges() {
@@ -80,6 +212,7 @@ function CustomerProfilePage() {
     setSmsEnabled(false);
     setAppNotifications(true);
     setTwoFactorEnabled(true);
+    setProfileMessage("تم إلغاء التغييرات.");
   }
 
   async function handleLogout() {
@@ -103,18 +236,20 @@ function CustomerProfilePage() {
 
   function handleBrowseAvatar() {
     setIsAvatarMenuOpen(false);
-    fileInputRef.current.click();
+    fileInputRef.current?.click();
   }
 
   function handleRemoveAvatar() {
-    localStorage.removeItem(PROFILE_AVATAR_KEY);
-    setAvatarImage(defaultAvatar);
+    const storageKey = getScopedStorageKey(PROFILE_AVATAR_KEY, currentUser);
+    const fallbackAvatar = getUserAvatarUrl(currentUser);
+
+    if (storageKey) {
+      localStorage.removeItem(storageKey);
+    }
+
+    setAvatarImage(fallbackAvatar);
     setIsAvatarMenuOpen(false);
-    window.dispatchEvent(
-      new CustomEvent("wasel-profile-avatar-change", {
-        detail: "",
-      })
-    );
+    notifyProfileAvatarChange(currentUser, fallbackAvatar);
   }
 
   function handleAvatarChange(event) {
@@ -126,14 +261,14 @@ function CustomerProfilePage() {
 
     reader.onload = () => {
       const imageDataUrl = reader.result;
+      const storageKey = getScopedStorageKey(PROFILE_AVATAR_KEY, currentUser);
 
-      localStorage.setItem(PROFILE_AVATAR_KEY, imageDataUrl);
+      if (storageKey) {
+        localStorage.setItem(storageKey, imageDataUrl);
+      }
+
       setAvatarImage(imageDataUrl);
-      window.dispatchEvent(
-        new CustomEvent("wasel-profile-avatar-change", {
-          detail: imageDataUrl,
-        })
-      );
+      notifyProfileAvatarChange(currentUser, imageDataUrl);
     };
 
     reader.readAsDataURL(file);
@@ -150,29 +285,35 @@ function CustomerProfilePage() {
 
   function handleSubmitPassword(event) {
     event.preventDefault();
+    setPasswordMessage("");
 
     if (!passwordData.currentPassword || !passwordData.newPassword) {
-      alert("عبّي بيانات كلمة المرور");
+      setPasswordMessage("يرجى تعبئة بيانات كلمة المرور.");
       return;
     }
 
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      alert("كلمة المرور الجديدة غير متطابقة");
+      setPasswordMessage("كلمة المرور الجديدة غير متطابقة.");
       return;
     }
-
-    alert("تم تغيير كلمة المرور بنجاح");
 
     setPasswordData({
       currentPassword: "",
       newPassword: "",
       confirmPassword: "",
     });
-    setPasswordModalOpen(false);
+    setPasswordMessage(
+      "تغيير كلمة المرور من داخل الملف الشخصي غير متاح حالياً. استخدم صفحة استعادة كلمة المرور."
+    );
   }
 
   function handleUpgradeSubscription() {
-    alert("سيتم نقلك لصفحة ترقية الاشتراك");
+    if (currentSubscription?.generatorId) {
+      navigate(`/customer/subscriptions/${currentSubscription.generatorId}`);
+      return;
+    }
+
+    navigate("/customer/subscriptions");
   }
 
   return (
@@ -181,7 +322,13 @@ function CustomerProfilePage() {
         <section className="profile-user-card">
           <div className="profile-user-info">
             <div className="profile-avatar-box">
-              <img src={avatarImage} alt="الصورة الشخصية" />
+              {avatarImage ? (
+                <img src={avatarImage} alt="الصورة الشخصية" />
+              ) : (
+                <span className="avatar-placeholder">
+                  {getUserInitial(currentUser, profile.fullName)}
+                </span>
+              )}
 
               <button
                 className="edit-avatar-button"
@@ -247,27 +394,64 @@ function CustomerProfilePage() {
               <span>الاشتراك الحالي</span>
             </div>
 
-            <div className="subscription-center">
-              <h2>مولد النور</h2>
-              <p>سعة الاشتراك: 5 أمبير</p>
-            </div>
+            {isSubscriptionLoading && (
+              <div className="subscription-center">
+                <h2>جاري تحميل الاشتراك...</h2>
+              </div>
+            )}
 
-            <div className="usage-info">
-              <span>الاستهلاك الحالي</span>
-              <span>4 / 5A</span>
-            </div>
+            {!isSubscriptionLoading && !currentSubscription && (
+              <div className="subscription-center">
+                <h2>لا يوجد اشتراك نشط حالياً</h2>
+              </div>
+            )}
 
-            <div className="usage-bar">
-              <div></div>
-            </div>
+            {!isSubscriptionLoading && currentSubscription && (
+              <>
+                <div className="subscription-center">
+                  <h2>{currentSubscription.generatorName || "اشتراكك الحالي"}</h2>
+                  {currentSubscription.ampere && (
+                    <p>سعة الاشتراك: {currentSubscription.ampere}</p>
+                  )}
+                </div>
 
-            <button
-              className="upgrade-subscription-button"
-              type="button"
-              onClick={handleUpgradeSubscription}
-            >
-              ترقية الاشتراك
-            </button>
+                {currentSubscription.currentAmp !== null &&
+                  currentSubscription.currentAmp !== undefined &&
+                  currentSubscription.maxAmp !== null &&
+                  currentSubscription.maxAmp !== undefined && (
+                    <>
+                      <div className="usage-info">
+                        <span>الاستهلاك الحالي</span>
+                        <span>
+                          {currentSubscription.currentAmp} /{" "}
+                          {currentSubscription.maxAmp}A
+                        </span>
+                      </div>
+
+                      <div className="usage-bar">
+                        <div
+                          style={{
+                            width: `${Math.min(
+                              (currentSubscription.currentAmp /
+                                currentSubscription.maxAmp) *
+                                100,
+                              100
+                            )}%`,
+                          }}
+                        ></div>
+                      </div>
+                    </>
+                  )}
+
+                <button
+                  className="upgrade-subscription-button"
+                  type="button"
+                  onClick={handleUpgradeSubscription}
+                >
+                  ترقية الاشتراك
+                </button>
+              </>
+            )}
           </aside>
 
           <section className="profile-card personal-info-card">
@@ -403,6 +587,10 @@ function CustomerProfilePage() {
 
         <div className="profile-line"></div>
 
+        {profileMessage && (
+          <p className="profile-status-message">{profileMessage}</p>
+        )}
+
         <div className="profile-buttons">
           <button
             className="save-changes-button"
@@ -464,6 +652,10 @@ function CustomerProfilePage() {
                 إلغاء
               </button>
             </div>
+
+            {passwordMessage && (
+              <p className="password-modal-message">{passwordMessage}</p>
+            )}
           </form>
         </div>
       )}

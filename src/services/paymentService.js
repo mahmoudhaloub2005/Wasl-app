@@ -67,16 +67,20 @@ export async function getMyPayments(params = {}) {
 }
 
 export async function createPayment({ amount, file, invoiceId }) {
+  if (!invoiceId) {
+    const error = new Error("invoice_id is required before creating payment");
+    error.displayMessage =
+      "لا يمكن إرسال الدفع قبل ربطه بفاتورة حقيقية من الخادم.";
+    throw error;
+  }
+
   const formData = new FormData();
 
   formData.append("amount", amount);
-
-  if (invoiceId) {
-    formData.append("invoice_id", invoiceId);
-  }
+  formData.append("invoice_id", invoiceId);
 
   if (file) {
-    formData.append("proof", file);
+    formData.append("receipt_image", file);
   }
 
   const response = await api.post("/payments", formData);

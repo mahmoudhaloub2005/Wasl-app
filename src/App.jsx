@@ -37,6 +37,7 @@ import CustomerBillsPage from "./pages/Customer/CustomerBillsPage";
 import CustomerOfferDetailsPage from "./pages/Customer/CustomerOfferDetailsPage";
 import CustomerReviewsPage from "./pages/Customer/CustomerReviewsPage";
 import CustomerComplaintsPage from "./pages/Customer/CustomerComplaintsPage";
+import CustomerNotificationsPage from "./pages/Customer/CustomerNotificationsPage";
 import Profile from "./pages/Customer/Profile";
 import ProviderHome from "./pages/Provider/ProviderHome";
 function App() {
@@ -95,12 +96,6 @@ function App() {
 
       {/* Redirects */}
       <Route path="/home" element={<Navigate to="/" replace />} />
-
-      {/* Any wrong link returns to home */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-
-
-         <Route path="/" element={<Navigate to="/customer" replace />} />
 
       <Route
         path="/customer"
@@ -190,7 +185,7 @@ function App() {
           </ProtectedRoute>
         }
       />
-<Route
+      <Route
         path="/customer/reviews"
         element={
           <ProtectedRoute allowedRoles={["customer", "client", "user"]}>
@@ -198,7 +193,7 @@ function App() {
           </ProtectedRoute>
         }
       />
-<Route
+      <Route
         path="/customer/complaints"
         element={
           <ProtectedRoute allowedRoles={["customer", "client", "user"]}>
@@ -206,7 +201,15 @@ function App() {
           </ProtectedRoute>
         }
       />
-<Route
+      <Route
+        path="/customer/notifications"
+        element={
+          <ProtectedRoute allowedRoles={["customer", "client", "user"]}>
+            <CustomerNotificationsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/customer/profile"
         element={
           <ProtectedRoute allowedRoles={["customer", "client", "user"]}>
@@ -214,8 +217,10 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route path="/customer/*" element={<Navigate to="/customer" replace />} />
+
       {/* لازم يكون آخر Route */}
-      <Route path="*" element={<Navigate to="/customer" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

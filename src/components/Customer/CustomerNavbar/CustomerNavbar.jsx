@@ -5,27 +5,74 @@ import "./CustomerNavbar.css";
 import logo from "/src/assets/customer/icons/logo.svg";
 import notification from "/src/assets/customer/icons/notification.svg";
 import settings from "/src/assets/customer/icons/settings.svg";
-import { getUserDisplayName } from "../../../utils/authStorage";
+import {
+  getScopedStorageKey,
+  getStoredUser,
+  getUserAvatarUrl,
+  getUserInitial,
+} from "../../../utils/authStorage";
 
 const PROFILE_AVATAR_KEY = "wasel_profile_avatar";
 
+function getSavedAvatarForUser(user = getStoredUser()) {
+  const storageKey = getScopedStorageKey(PROFILE_AVATAR_KEY, user);
+
+  if (!storageKey) return "";
+
+  return localStorage.getItem(storageKey) || "";
+}
+
+function getProfileAvatarForUser(user = getStoredUser()) {
+  return getSavedAvatarForUser(user) || getUserAvatarUrl(user);
+}
+
 function CustomerNavbar() {
   const navigate = useNavigate();
-  const profileLetter = getUserDisplayName().charAt(0) || "م";
-  const [profileAvatar, setProfileAvatar] = useState(
-    () => localStorage.getItem(PROFILE_AVATAR_KEY) || ""
+  const [currentUser, setCurrentUser] = useState(() => getStoredUser());
+  const profileLetter = getUserInitial(currentUser);
+  const [profileAvatar, setProfileAvatar] = useState(() =>
+    getProfileAvatarForUser()
   );
 
   useEffect(() => {
+    function refreshCurrentAvatar() {
+      const nextUser = getStoredUser();
+
+      setCurrentUser(nextUser);
+      setProfileAvatar(getProfileAvatarForUser(nextUser));
+    }
+
     function handleAvatarChange(event) {
-      setProfileAvatar(
-        event.detail || localStorage.getItem(PROFILE_AVATAR_KEY) || ""
-      );
+      const nextUser = getStoredUser();
+      const currentStorageKey = getScopedStorageKey(PROFILE_AVATAR_KEY, nextUser);
+      const detail = event.detail;
+
+      if (
+        detail &&
+        typeof detail === "object" &&
+        detail.storageKey &&
+        currentStorageKey &&
+        detail.storageKey !== currentStorageKey
+      ) {
+        return;
+      }
+
+      setCurrentUser(nextUser);
+
+      if (detail && typeof detail === "object" && "avatarImage" in detail) {
+        setProfileAvatar(detail.avatarImage || getProfileAvatarForUser(nextUser));
+        return;
+      }
+
+      refreshCurrentAvatar();
     }
 
     function handleStorageChange(event) {
-      if (event.key === PROFILE_AVATAR_KEY) {
-        setProfileAvatar(event.newValue || "");
+      if (
+        event.key === "wasel_user" ||
+        event.key?.startsWith(`${PROFILE_AVATAR_KEY}_`)
+      ) {
+        refreshCurrentAvatar();
       }
     }
 
@@ -43,6 +90,10 @@ function CustomerNavbar() {
 
   function goToProfile() {
     navigate("/customer/profile");
+  }
+
+  function goToNotifications() {
+    navigate("/customer/notifications");
   }
 
   return (
@@ -128,6 +179,7 @@ function CustomerNavbar() {
             type="button"
             className="customer-notification-action"
             title="الإشعارات"
+            onClick={goToNotifications}
           >
             <img src={notification} alt="الإشعارات" />
             <span></span>

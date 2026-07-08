@@ -1,6 +1,8 @@
 import { IoCheckmark, IoFlash } from "react-icons/io5";
 
 function SubscriptionProgress({ steps }) {
+  if (!steps?.length) return null;
+
   return (
     <section className="subscription-progress-card">
       <h2>مسار الاشتراك</h2>

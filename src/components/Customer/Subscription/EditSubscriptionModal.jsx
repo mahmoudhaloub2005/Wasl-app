@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import {
   IoCalendarOutline,
   IoCloseOutline,
@@ -8,26 +8,23 @@ import {
   IoSparklesOutline,
   IoThunderstormSharp,
 } from "react-icons/io5";
+import { getApiErrorMessage } from "../../../utils/apiError";
 
 const ampereOptions = [
   {
     value: 3,
-    price: 50,
     description: "مناسب للإنارة، التلفاز، والمراوح فقط.",
   },
   {
     value: 5,
-    price: 75,
     description: "للإنارة، الثلاجة، وتبريد صحراوي واحد.",
   },
   {
     value: 10,
-    price: 140,
     description: "يشغل مكيف هواء 1.5 طن مع الأجهزة الأساسية.",
   },
   {
     value: 15,
-    price: 200,
     description: "مثالي للمنازل الكبيرة مع تشغيل مكيفين.",
   },
 ];
@@ -36,42 +33,44 @@ const paymentPlans = [
   {
     id: "monthly",
     title: "شهري",
-    badge: "الأكثر شيوعا",
+    badge: "الأكثر شيوعًا",
     description: "يتم استلام الفاتورة في الأول من كل شهر.",
     icon: <IoCalendarOutline />,
   },
   {
-    id: "weekly",
-    title: "أسبوعي",
-    description: "تجزئة الدفعات لتسهيل الإدارة المالية.",
+    id: "biweekly",
+    title: "كل أسبوعين",
+    description: "تجزئة الدفعات إلى دفعتين خلال الشهر.",
     icon: <IoGridOutline />,
   },
 ];
 
 function EditSubscriptionModal({ subscription, onClose, onConfirm }) {
   const currentAmpere = subscription.ampereValue || 5;
+
   const [selectedAmpere, setSelectedAmpere] = useState(currentAmpere);
   const [paymentPlan, setPaymentPlan] = useState(
     subscription.paymentPlan || "monthly"
   );
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const selectedOption = useMemo(
-    () => ampereOptions.find((option) => option.value === selectedAmpere),
-    [selectedAmpere]
-  );
+  const handleConfirm = async () => {
+    try {
+      setErrorMessage("");
+      setIsSubmitting(true);
 
-  const monthlyCost = selectedOption?.price || 0;
-  const previousBalance = 15;
-  const changeFees = 40;
-  const durationDiscount = -25;
-  const total = monthlyCost + previousBalance + changeFees + durationDiscount;
-
-  const handleConfirm = () => {
-    onConfirm?.({
-      ampere: selectedAmpere,
-      paymentPlan,
-      total,
-    });
+      await onConfirm?.({
+        ampere: selectedAmpere,
+        paymentPlan,
+      });
+    } catch (error) {
+      setErrorMessage(
+        getApiErrorMessage(error, "تعذر تعديل الاشتراك. حاول مرة أخرى.")
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -112,44 +111,24 @@ function EditSubscriptionModal({ subscription, onClose, onConfirm }) {
 
                 <div>
                   <dt>نظام الدفع</dt>
-                  <dd>{paymentPlan === "monthly" ? "شهري" : "أسبوعي"}</dd>
+                  <dd>
+                    {paymentPlan === "monthly" ? "شهري" : "كل أسبوعين"}
+                  </dd>
                 </div>
               </dl>
-
-              <div className="summary-divider" />
-
-              <dl className="summary-price-list">
-                <div>
-                  <dt>رصيد مدور (سابق)</dt>
-                  <dd>+{previousBalance} شيكل</dd>
-                </div>
-
-                <div>
-                  <dt>رسوم الاشتراك الجديد</dt>
-                  <dd>+{changeFees} شيكل</dd>
-                </div>
-
-                <div className="discount-row">
-                  <dt>خصم تعديل المدة</dt>
-                  <dd>{durationDiscount} شيكل</dd>
-                </div>
-              </dl>
-
-              <div className="summary-divider dashed" />
-
-              <div className="summary-total">
-                <span>المبلغ المطلوب دفعه</span>
-                <strong>{total} شيكل</strong>
-                <em>صافي المستحق</em>
-              </div>
 
               <button
                 className="confirm-edit-subscription"
                 type="button"
                 onClick={handleConfirm}
+                disabled={isSubmitting}
               >
-                تأكيد التعديل
+                {isSubmitting ? "جاري التعديل..." : "تأكيد التعديل"}
               </button>
+
+              {errorMessage && (
+                <p className="edit-subscription-error">{errorMessage}</p>
+              )}
 
               <button
                 className="ignore-edit-subscription"
@@ -161,7 +140,7 @@ function EditSubscriptionModal({ subscription, onClose, onConfirm }) {
 
               <p className="summary-note">
                 بالضغط على تأكيد، فإنك توافق على شروط الخدمة وتعديل سعة الخط
-                برمجيا خلال 15 دقيقة.
+                برمجيًا خلال 15 دقيقة.
               </p>
             </div>
 
@@ -192,17 +171,19 @@ function EditSubscriptionModal({ subscription, onClose, onConfirm }) {
 
               <div>
                 <div className="current-plan-meta">
-                  <span>{subscription.generatorName}</span>
-                  <b>اشتراك نشط</b>
+                  <span>{subscription.generatorName || "المولد"}</span>
+                  {subscription.statusLabel && <b>{subscription.statusLabel}</b>}
                 </div>
 
                 <h3>الخطة الحالية: {currentAmpere} أمبير</h3>
               </div>
 
-              <div className="current-plan-cost">
-                <span>التكلفة الشهرية</span>
-                <strong>{currentAmpere * 15} شيكل</strong>
-              </div>
+              {subscription.pricePerAmpere && (
+                <div className="current-plan-cost">
+                  <span>السعر للأمبير</span>
+                  <strong>{subscription.pricePerAmpere}</strong>
+                </div>
+              )}
             </div>
 
             <div className="edit-section-title">
@@ -228,7 +209,6 @@ function EditSubscriptionModal({ subscription, onClose, onConfirm }) {
                     <strong>{option.value}</strong>
                     <span>أمبير</span>
                     <div />
-                    <b>{option.price} شيكل</b>
                     <p>{option.description}</p>
                   </button>
                 );

@@ -1,30 +1,20 @@
 import "./SubscriptionJourney.css";
 
-function SubscriptionJourney() {
+function SubscriptionJourney({ steps = [] }) {
+  if (!steps.length) return null;
+
   return (
     <section className="journey">
-
       <h2>رحلة الاشتراك</h2>
 
       <div className="journey-steps">
-
-        <div className="step active">
-          ✓
-          <p>تم تقديم الطلب</p>
-        </div>
-
-        <div className="step active">
-          ✓
-          <p>تمت الموافقة</p>
-        </div>
-
-        <div className="step active">
-          ✓
-          <p>اشتراك نشط</p>
-        </div>
-
+        {steps.map((step) => (
+          <div className={`step ${step.type || ""}`} key={step.id || step.title}>
+            {step.type === "done" ? "✓" : ""}
+            <p>{step.title}</p>
+          </div>
+        ))}
       </div>
-
     </section>
   );
 }

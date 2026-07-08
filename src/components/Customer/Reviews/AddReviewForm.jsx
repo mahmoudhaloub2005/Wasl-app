@@ -63,7 +63,7 @@ function AddReviewForm({
     }
 
     if (!providerId) {
-      setErrorMessage("يرجى اختيار المزود قبل إرسال التقييم.");
+      setErrorMessage("يرجى اختيار المولد قبل إرسال التقييم.");
       return;
     }
 
@@ -108,7 +108,7 @@ function AddReviewForm({
 
         <form onSubmit={handleSubmit}>
           <div className="review-form-group">
-            <label htmlFor="provider">اختر المزود</label>
+            <label htmlFor="provider">اختر المولد</label>
 
             <div className="review-select-wrapper">
               <select
@@ -122,7 +122,7 @@ function AddReviewForm({
                 disabled={!providerOptions.length}
               >
                 {!providerOptions.length && (
-                  <option value="">لا يوجد مزودون متاحون</option>
+                  <option value="">لا توجد مولدات متاحة</option>
                 )}
 
                 {providerOptions.map((provider) => (

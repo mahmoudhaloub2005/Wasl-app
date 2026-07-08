@@ -6,6 +6,7 @@ import {
   IoBulbOutline,
   IoSpeedometerOutline,
 } from "react-icons/io5";
+import { getApiErrorMessage } from "../../../utils/apiError";
 
 const ampereOptions = {
   3: {
@@ -30,6 +31,16 @@ const ampereOptions = {
   },
 };
 
+const supportedAmpereValues = Object.keys(ampereOptions).map(Number);
+
+function getNearestAmpere(value) {
+  return supportedAmpereValues.reduce((nearestValue, optionValue) =>
+    Math.abs(optionValue - value) < Math.abs(nearestValue - value)
+      ? optionValue
+      : nearestValue
+  );
+}
+
 const paymentPlans = [
   {
     id: "monthly",
@@ -46,9 +57,11 @@ const paymentPlans = [
 function NewSubscriptionModal({ generator, onClose, onConfirm }) {
   const [ampere, setAmpere] = useState(5);
   const [paymentPlan, setPaymentPlan] = useState("monthly");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const fees = useMemo(() => {
-    const base = ampereOptions[ampere].base;
+    const base = ampereOptions[ampere]?.base || ampereOptions[5].base;
     const maintenance = 5;
     const deposit = 15;
 
@@ -60,16 +73,38 @@ function NewSubscriptionModal({ generator, onClose, onConfirm }) {
     };
   }, [ampere]);
 
-  const currentAmpere = ampereOptions[ampere];
+  const currentAmpere = ampereOptions[ampere] || ampereOptions[5];
 
-  const handleConfirm = () => {
-    onConfirm?.({
-      generatorId: generator?.id || null,
-      ampere,
-      paymentPlan,
-      monthlyCost: fees.base + fees.maintenance,
-      dueNow: 0,
-    });
+  const handleConfirm = async () => {
+    try {
+      setErrorMessage("");
+      setIsSubmitting(true);
+
+      await onConfirm?.({
+        generatorId: generator?.id || null,
+        generatorName:
+          generator?.name ||
+          generator?.generatorName ||
+          generator?.generator_name ||
+          "",
+        generatorType:
+          generator?.generatorType ||
+          generator?.generator_type ||
+          generator?.type ||
+          "",
+        ampere,
+        paymentPlan,
+        monthlyCost: fees.base + fees.maintenance,
+        dueNow: 0,
+      });
+    } catch (error) {
+      console.error("Failed to create subscription:", error);
+      setErrorMessage(
+        getApiErrorMessage(error, "تعذر إرسال طلب الاشتراك. حاول مرة أخرى.")
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -112,9 +147,14 @@ function NewSubscriptionModal({ generator, onClose, onConfirm }) {
             className="new-subscription-confirm"
             type="button"
             onClick={handleConfirm}
+            disabled={isSubmitting}
           >
-            إرسال طلب الاشتراك
+            {isSubmitting ? "جاري إرسال الطلب..." : "إرسال طلب الاشتراك"}
           </button>
+
+          {errorMessage && (
+            <p className="new-subscription-note">{errorMessage}</p>
+          )}
         </aside>
 
         <div className="new-subscription-content">
@@ -147,7 +187,10 @@ function NewSubscriptionModal({ generator, onClose, onConfirm }) {
               max="15"
               step="1"
               value={ampere}
-              onChange={(event) => setAmpere(Number(event.target.value))}
+              onChange={(event) => {
+                setAmpere(getNearestAmpere(Number(event.target.value)));
+                setErrorMessage("");
+              }}
               aria-label="عدد الأمبيرات المطلوبة"
             />
 
@@ -175,7 +218,10 @@ function NewSubscriptionModal({ generator, onClose, onConfirm }) {
                 }`}
                 key={plan.id}
                 type="button"
-                onClick={() => setPaymentPlan(plan.id)}
+                onClick={() => {
+                  setPaymentPlan(plan.id);
+                  setErrorMessage("");
+                }}
               >
                 <strong>{plan.title}</strong>
                 <span>{plan.description}</span>

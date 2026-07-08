@@ -52,35 +52,41 @@ function CompareGeneratorsModal({
         </header>
 
         <div className="compare-generators-list">
-          {generators.map((generator) => {
-            const isSelected = selectedIds.some(
-              (selectedId) => String(selectedId) === String(generator.id)
-            );
+          {generators.length === 0 ? (
+            <div className="compare-loading">لا توجد بيانات حالياً</div>
+          ) : (
+            generators.map((generator) => {
+              const isSelected = selectedIds.some(
+                (selectedId) => String(selectedId) === String(generator.id)
+              );
 
-            return (
-              <button
-                className={`compare-generator-row ${
-                  isSelected ? "selected" : ""
-                }`}
-                type="button"
-                key={generator.id}
-                onClick={() => toggleGenerator(generator.id)}
-              >
-                <span
-                  className={`compare-checkbox ${isSelected ? "checked" : ""}`}
-                  aria-hidden="true"
-                />
+              return (
+                <button
+                  className={`compare-generator-row ${
+                    isSelected ? "selected" : ""
+                  }`}
+                  type="button"
+                  key={generator.id}
+                  onClick={() => toggleGenerator(generator.id)}
+                >
+                  <span
+                    className={`compare-checkbox ${
+                      isSelected ? "checked" : ""
+                    }`}
+                    aria-hidden="true"
+                  />
 
-                <img src={generator.image} alt={generator.name} />
+                  <img src={generator.image} alt={generator.name} />
 
-                <span className="compare-generator-info">
-                  <strong>{generator.name}</strong>
-                  <em>{generator.location}</em>
-                  <b>{generator.priceText}</b>
-                </span>
-              </button>
-            );
-          })}
+                  <span className="compare-generator-info">
+                    <strong>{generator.name}</strong>
+                    <em>{generator.location}</em>
+                    <b>{generator.priceText}</b>
+                  </span>
+                </button>
+              );
+            })
+          )}
         </div>
 
         <footer className="compare-generators-footer">

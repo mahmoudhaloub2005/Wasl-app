@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import CustomerActionSuccessModal from "../Shared/CustomerActionSuccessModal";
@@ -6,8 +6,10 @@ import { getApiErrorMessage } from "../../../utils/apiError";
 
 function SendPaymentProof({
   defaultAmount = "",
+  invoice = null,
   invoiceId = "",
   invoiceNumber = "",
+  canCreateInvoice = false,
   onSubmitPaymentProof,
 }) {
   const navigate = useNavigate();
@@ -18,15 +20,10 @@ function SendPaymentProof({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const maxFileSize = 5 * 1024 * 1024;
-
-  useEffect(() => {
-    setAmount(String(defaultAmount || ""));
-    setSelectedFile(null);
-    setErrorMessage("");
-  }, [defaultAmount, invoiceId]);
+  const canSubmitPayment = Boolean(invoiceId || canCreateInvoice);
 
   const handleAmountChange = (event) => {
-    if (!invoiceId) {
+    if (!canSubmitPayment) {
       return;
     }
 
@@ -36,7 +33,7 @@ function SendPaymentProof({
   };
 
   const handleFileChange = (event) => {
-    if (!invoiceId) {
+    if (!canSubmitPayment) {
       event.target.value = "";
       return;
     }
@@ -84,7 +81,7 @@ function SendPaymentProof({
       return;
     }
 
-    if (!invoiceId) {
+    if (!canSubmitPayment) {
       setErrorMessage("لا توجد فاتورة مستحقة لإرسال دفعة عليها.");
       return;
     }
@@ -95,6 +92,7 @@ function SendPaymentProof({
       await onSubmitPaymentProof?.({
         amount: numericAmount,
         file: selectedFile,
+        invoice,
         invoiceId,
       });
 
@@ -121,7 +119,7 @@ function SendPaymentProof({
           <p className="payment-invoice-note">الفاتورة: {invoiceNumber}</p>
         )}
 
-        {!invoiceId && (
+        {!canSubmitPayment && (
           <p className="payment-proof-error">
             لا توجد فاتورة مستحقة حاليا لإرسال دفعة عليها.
           </p>
@@ -138,7 +136,7 @@ function SendPaymentProof({
               value={amount}
               onChange={handleAmountChange}
               placeholder="اكتب المبلغ"
-              disabled={!invoiceId}
+              disabled={!canSubmitPayment}
             />
 
             {errorMessage && (
@@ -151,14 +149,14 @@ function SendPaymentProof({
 
         <label
           className={
-            invoiceId ? "upload-proof-box" : "upload-proof-box disabled"
+            canSubmitPayment ? "upload-proof-box" : "upload-proof-box disabled"
           }
         >
           <input
             type="file"
             accept="image/png,image/jpeg"
             onChange={handleFileChange}
-            disabled={!invoiceId}
+            disabled={!canSubmitPayment}
           />
 
           <IoCloudUploadOutline />
@@ -174,7 +172,7 @@ function SendPaymentProof({
           type="button"
           className="send-proof-button"
           onClick={handleSubmit}
-          disabled={isSubmitting || !invoiceId}
+          disabled={isSubmitting || !canSubmitPayment}
         >
           {isSubmitting ? "جاري إرسال الإثبات..." : "إرسال الإثبات"}
         </button>

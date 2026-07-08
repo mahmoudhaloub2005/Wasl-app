@@ -8,6 +8,7 @@ import {
   FiLock,
   FiEye,
   FiEyeOff,
+  FiBriefcase,
 } from "react-icons/fi";
 
 function useProviderRegister(navigate, initialData = {}) {
@@ -74,6 +75,23 @@ function useProviderRegister(navigate, initialData = {}) {
   };
 }
 
+function splitProviderFullName(fullName = "") {
+  const nameParts = String(fullName).trim().split(/\s+/).filter(Boolean);
+  const firstName = nameParts.shift() || "";
+
+  return {
+    firstName,
+    lastName: nameParts.join(" "),
+  };
+}
+
+function joinProviderFullName(firstName, lastName) {
+  return [firstName, lastName]
+    .map((part) => String(part || "").trim())
+    .filter(Boolean)
+    .join(" ");
+}
+
 const ProviderRegister = () => {
   const navigate = useNavigate();
   const initialData = useLocation().state?.providerData || {};
@@ -86,10 +104,29 @@ const ProviderRegister = () => {
     handleChange,
     handleSubmit,
   } = useProviderRegister(navigate, initialData);
+  const nameParts = splitProviderFullName(formData.fullName);
+
+  const handleNamePartChange = (partName, value) => {
+    const nextNameParts = {
+      ...nameParts,
+      [partName]: value,
+    };
+
+    handleChange({
+      target: {
+        name: "fullName",
+        value: joinProviderFullName(
+          nextNameParts.firstName,
+          nextNameParts.lastName
+        ),
+        type: "text",
+      },
+    });
+  };
 
   return (
     <div className="provider-page">
-      <div className="steps">
+      <div className="provider-register-steps">
         <div className="step active">
           <div className="circle">1</div>
           <span>المعلومات الشخصية</span>
@@ -99,14 +136,14 @@ const ProviderRegister = () => {
 
         <div className="step">
           <div className="circle">2</div>
-          <span>بيانات المولد</span>
+          <span>تفاصيل المولد</span>
         </div>
 
         <div className="line"></div>
 
         <div className="step">
           <div className="circle">3</div>
-          <span>تأكيد الحساب</span>
+          <span>الوثائق</span>
         </div>
       </div>
 
@@ -114,27 +151,27 @@ const ProviderRegister = () => {
         <h2>تسجيل مزود الخدمة</h2>
 
         <p className="desc">
-          املأ هذا في بضع دقائق لإنشاء حسابك الأساسي للانضمام إلى شبكتنا.
+          أهلاً بك في فولت ستريم، ابدأ بتزويدنا ببياناتك الأساسية للانضمام إلى شبكتنا.
         </p>
 
         <div className="row">
           <div className="input-group">
-            <label>الاسم الكامل</label>
+            <label>البريد الإلكتروني</label>
 
             <div className="input">
               <input
-                type="text"
-                name="fullName"
-                value={formData.fullName}
+                type="email"
+                name="email"
+                value={formData.email}
                 onChange={handleChange}
-                placeholder="أدخل اسمك الكامل"
+                placeholder="example@domain.com"
               />
-              <FiUser />
+              <FiMail />
             </div>
           </div>
 
           <div className="input-group">
-            <label> اسم الشركة</label>
+            <label>اسم الشركة</label>
 
             <div className="input">
               <input
@@ -142,25 +179,46 @@ const ProviderRegister = () => {
                 name="facilityName"
                 value={formData.facilityName}
                 onChange={handleChange}
-                placeholder="اسم الشركة "
+                placeholder="اسم الشركة"
               />
-              <FiUser />
+              <FiBriefcase />
             </div>
           </div>
         </div>
 
-        <div className="input-group full">
-          <label>البريد الإلكتروني</label>
+        <div className="row">
+          <div className="input-group">
+            <label>الاسم الأول</label>
 
-          <div className="input">
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="example@domain.com"
-            />
-            <FiMail />
+            <div className="input">
+              <input
+                type="text"
+                name="fullName"
+                value={nameParts.firstName}
+                onChange={(event) =>
+                  handleNamePartChange("firstName", event.target.value)
+                }
+                placeholder="أدخل الاسم الأول"
+              />
+              <FiUser />
+            </div>
+          </div>
+
+          <div className="input-group">
+            <label>الاسم الأخير</label>
+
+            <div className="input">
+              <input
+                type="text"
+                name="fullName"
+                value={nameParts.lastName}
+                onChange={(event) =>
+                  handleNamePartChange("lastName", event.target.value)
+                }
+                placeholder="أدخل الاسم الأخير"
+              />
+              <FiUser />
+            </div>
           </div>
         </div>
 
@@ -184,12 +242,16 @@ const ProviderRegister = () => {
             <label>كلمة المرور</label>
 
             <div className="input password">
-              <span
+              <button
+                type="button"
                 className="eye-icon"
                 onClick={() => setShowPassword(!showPassword)}
+                aria-label={
+                  showPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"
+                }
               >
                 {showPassword ? <FiEyeOff /> : <FiEye />}
-              </span>
+              </button>
 
               <input
                 type={showPassword ? "text" : "password"}
@@ -222,7 +284,7 @@ const ProviderRegister = () => {
         {message && <p className="register-error">{message}</p>}
 
         <button type="submit" className="next-btn1">
-          الخطوة التالية : بيانات المولد
+          الخطوة التالية : تفاصيل المولد
         </button>
 
         <p className="login-text">

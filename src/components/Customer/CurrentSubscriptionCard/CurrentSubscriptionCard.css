@@ -76,6 +76,24 @@
   border-radius: 50%;
 }
 
+.subscription-status.pending {
+  background: #fff3d6;
+  color: #9a5d00;
+}
+
+.subscription-status.pending span {
+  background: #9a5d00;
+}
+
+.subscription-status.cancelled {
+  background: #ffe7e7;
+  color: #b42318;
+}
+
+.subscription-status.cancelled span {
+  background: #b42318;
+}
+
 /* هنا المهم: نخلي usage شمال و price يمين زي Figma */
 .subscription-details-grid {
   display: grid;

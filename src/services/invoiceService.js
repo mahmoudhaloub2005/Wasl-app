@@ -1,20 +1,37 @@
 import api from "./api";
 
 function unwrapList(data) {
-  if (Array.isArray(data)) return data;
-  if (Array.isArray(data?.data)) return data.data;
-  if (Array.isArray(data?.invoices)) return data.invoices;
-  if (Array.isArray(data?.data?.invoices)) return data.data.invoices;
-  if (Array.isArray(data?.items)) return data.items;
+  const listCandidates = [
+    data,
+    data?.data,
+    data?.invoices,
+    data?.data?.invoices,
+    data?.bills,
+    data?.data?.bills,
+    data?.items,
+    data?.data?.items,
+    data?.results,
+    data?.data?.results,
+    data?.data?.data,
+  ];
+
+  const list = listCandidates.find(Array.isArray);
+
+  if (list) return list;
   if (data?.invoice) return [data.invoice];
   if (data?.data?.invoice) return [data.data.invoice];
-  if (data?.data && typeof data.data === "object") return [data.data];
+  if (data?.data && isInvoiceLike(data.data)) return [data.data];
+  if (isInvoiceLike(data)) return [data];
 
   return [];
 }
 
 function unwrapItem(data) {
   return data?.data?.invoice || data?.invoice || data?.data || data;
+}
+
+function isMissingEndpoint(error) {
+  return error?.response?.status === 404 || error?.response?.status === 405;
 }
 
 function getFirstValue(source, keys, fallback = "") {
@@ -27,6 +44,32 @@ function getFirstValue(source, keys, fallback = "") {
   }
 
   return fallback;
+}
+
+function isInvoiceLike(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return false;
+  }
+
+  return [
+    "id",
+    "_id",
+    "uuid",
+    "invoice_id",
+    "invoiceId",
+    "invoice_number",
+    "invoiceNumber",
+    "number",
+    "code",
+    "amount",
+    "total",
+    "total_amount",
+    "totalAmount",
+    "status",
+    "state",
+    "payment_status",
+    "paymentStatus",
+  ].some((key) => value[key] !== undefined && value[key] !== null);
 }
 
 function toNumber(value, fallback = 0) {
@@ -50,19 +93,42 @@ function formatDate(value) {
 }
 
 function normalizeStatus(status) {
-  const value = String(status || "").toLowerCase();
+  const value = String(status || "")
+    .toLowerCase()
+    .replace(/[_-]+/g, " ")
+    .trim();
 
   if (
     value.includes("unpaid") ||
-    value.includes("not_paid") ||
-    value.includes("غير مدفوع")
+    value.includes("not paid") ||
+    value.includes("notpaid") ||
+    value.includes("due") ||
+    value.includes("غير مدفوع") ||
+    value.includes("غير مسدد") ||
+    value.includes("مستحق")
   ) {
     return "unpaid";
   }
 
-  if (value.includes("paid") || value.includes("مدفوع")) return "paid";
-  if (value.includes("pending") || value.includes("review") || value.includes("تحقق")) {
+  if (
+    value.includes("pending") ||
+    value.includes("review") ||
+    value.includes("waiting") ||
+    value.includes("قيد") ||
+    value.includes("تحقق") ||
+    value.includes("انتظار")
+  ) {
     return "pending";
+  }
+
+  if (
+    value.includes("paid") ||
+    value.includes("settled") ||
+    value.includes("completed") ||
+    value.includes("مدفوع") ||
+    value.includes("مسدد")
+  ) {
+    return "paid";
   }
 
   return "unpaid";
@@ -109,9 +175,80 @@ export function normalizeInvoice(invoice = {}) {
   };
 }
 
+function getInvoiceFromResponse(data) {
+  const list = unwrapList(data);
+  const invoice = list[0] || unwrapItem(data);
+
+  return isInvoiceLike(invoice) ? normalizeInvoice(invoice) : null;
+}
+
+function createInvoiceUnavailableError(lastError) {
+  const error = new Error(
+    "لا يمكن إرسال إثبات الدفع قبل إنشاء فاتورة حقيقية من الخادم لهذا الاشتراك."
+  );
+
+  error.displayMessage =
+    "لا توجد فاتورة حقيقية مرتبطة بهذا الاشتراك حالياً. يلزم إضافة endpoint في الباك لإنشاء فاتورة مستحقة من الاشتراك قبل إرسال الدفع.";
+  error.cause = lastError;
+
+  return error;
+}
+
+export async function ensureInvoiceForSubscription({
+  subscriptionId,
+  amount,
+  month,
+} = {}) {
+  if (!subscriptionId) {
+    throw createInvoiceUnavailableError();
+  }
+
+  const payload = {
+    subscription_id: subscriptionId,
+    amount,
+    month,
+  };
+
+  const attempts = [
+    {
+      url: "/invoices/ensure",
+      body: payload,
+    },
+    {
+      url: `/subscriptions/${subscriptionId}/invoices`,
+      body: { amount, month },
+    },
+    {
+      url: "/invoices",
+      body: payload,
+    },
+  ];
+
+  let lastError = null;
+
+  for (const attempt of attempts) {
+    try {
+      const response = await api.post(attempt.url, attempt.body);
+      const invoice = getInvoiceFromResponse(response.data);
+
+      if (invoice?.id) {
+        return invoice;
+      }
+    } catch (error) {
+      lastError = error;
+
+      if (!isMissingEndpoint(error)) {
+        throw error;
+      }
+    }
+  }
+
+  throw createInvoiceUnavailableError(lastError);
+}
+
 export async function getMyInvoices(params = {}) {
   const response = await api.get("/invoices/my", { params });
-  return unwrapList(response.data).map(normalizeInvoice);
+  return unwrapList(response.data).filter(isInvoiceLike).map(normalizeInvoice);
 }
 
 export async function getInvoiceDetails(id) {
