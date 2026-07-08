@@ -116,6 +116,20 @@ function NewSubscriptionModal({ generator, onClose, onConfirm }) {
         aria-labelledby="new-subscription-title"
         dir="rtl"
       >
+        <header className="new-subscription-modal-header">
+          <h2 id="new-subscription-title">طلب اشتراك جديد</h2>
+
+          <button
+            className="new-subscription-close"
+            type="button"
+            aria-label="إغلاق"
+            onClick={onClose}
+          >
+            <IoClose />
+          </button>
+        </header>
+
+        <div className="new-subscription-modal-body">
         <aside className="new-subscription-summary">
           <h3>ملخص الاشتراك</h3>
 
@@ -155,20 +169,9 @@ function NewSubscriptionModal({ generator, onClose, onConfirm }) {
           {errorMessage && (
             <p className="new-subscription-note">{errorMessage}</p>
           )}
-        </aside>
+          </aside>
 
-        <div className="new-subscription-content">
-          <button
-            className="new-subscription-close"
-            type="button"
-            aria-label="إغلاق"
-            onClick={onClose}
-          >
-            <IoClose />
-          </button>
-
-          <h2 id="new-subscription-title">طلب اشتراك جديد</h2>
-
+          <div className="new-subscription-content">
           <div className="new-subscription-section-title">
             <IoSpeedometerOutline aria-hidden="true" />
             <h3>حجم الاشتراك</h3>
@@ -233,6 +236,7 @@ function NewSubscriptionModal({ generator, onClose, onConfirm }) {
             لن يتم طلب أي دفعة الآن. بعد موافقة المزود وتفعيل الاشتراك ستظهر
             الفاتورة في صفحة الفواتير والمدفوعات.
           </p>
+          </div>
         </div>
       </section>
     </div>
