@@ -221,11 +221,16 @@ function GeneratorDetailsContent() {
   const terms = Array.isArray(generator.terms) ? generator.terms : [];
   const review = generator.review || {};
   const provider = generator.provider || {};
+
+  // هذا الاسم هو اللي راح يظهر عنوان كبير فوق الصورة
+  const providerCompanyName = getProviderCompanyName(generator, provider);
+
   const providerLocationText = getProviderLocationText(provider);
+
   const providerRows = [
     {
       label: "الاسم",
-      value: provider.name,
+      value: providerCompanyName,
       icon: <img src={providerUser} alt="" />,
     },
     {
@@ -265,6 +270,7 @@ function GeneratorDetailsContent() {
       icon: <FiActivity />,
     },
   ];
+
   const availableProviderRows = providerRows.filter((row) =>
     hasProviderValue(row.value)
   );
@@ -367,6 +373,7 @@ function GeneratorDetailsContent() {
                     key={row.label}
                   >
                     <span className="provider-row-icon">{row.icon}</span>
+
                     <div className="provider-row-text">
                       <span>{row.label}</span>
                       <p>{String(row.value)}</p>
@@ -385,7 +392,7 @@ function GeneratorDetailsContent() {
         <section className="generator-details-main">
           <section className="generator-details-hero">
             {generator.image && (
-              <img src={generator.image} alt={generator.name || "المولد"} />
+              <img src={generator.image} alt={providerCompanyName} />
             )}
 
             <div className="generator-details-hero-overlay"></div>
@@ -395,15 +402,16 @@ function GeneratorDetailsContent() {
                 {generator.status && (
                   <span className="online-badge">{generator.status}</span>
                 )}
+
                 {generator.generatorType && (
                   <span>{generator.generatorType}</span>
                 )}
+
                 {generator.location && <span>{generator.location}</span>}
               </div>
 
-              <h1>
-                {generator.name || generator.generatorType || "تفاصيل المولد"}
-              </h1>
+              {/* هنا التعديل المهم: صار يعرض اسم الشركة بدل نوع المولد */}
+              <h1>{providerCompanyName}</h1>
 
               {generator.shortDescription && (
                 <p>{generator.shortDescription}</p>
@@ -517,6 +525,29 @@ function GeneratorDetailsContent() {
         </div>
       )}
     </main>
+  );
+}
+
+function getProviderCompanyName(generator = {}, provider = {}) {
+  return (
+    generator.provider_name ||
+    generator.providerName ||
+    generator.company_name ||
+    generator.companyName ||
+    generator.facility_name ||
+    generator.facilityName ||
+    generator.providerCompanyName ||
+    generator.provider_company_name ||
+    provider.company_name ||
+    provider.companyName ||
+    provider.facility_name ||
+    provider.facilityName ||
+    provider.provider_name ||
+    provider.providerName ||
+    provider.name ||
+    provider.full_name ||
+    provider.fullName ||
+    "اسم الشركة غير متوفر"
   );
 }
 

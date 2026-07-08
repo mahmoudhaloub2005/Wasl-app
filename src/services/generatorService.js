@@ -151,6 +151,7 @@ function isCoordinateText(value) {
 
 function formatLocation(value) {
   if (!value) return "";
+
   if (typeof value === "object") {
     return formatLocation(
       value.name ||
@@ -161,7 +162,9 @@ function formatLocation(value) {
         value.address
     );
   }
+
   if (isCoordinateText(value)) return "موقع جغرافي محدد";
+
   return String(value);
 }
 
@@ -215,6 +218,7 @@ function hasUnavailableProviderStatus(value) {
 function isVisibleGenerator(generator = {}) {
   const provider = generator.provider || generator.owner || generator.user || {};
   const generatorStatus = getFirstValue(generator, ["status", "state"]);
+
   const providerStatus = getNestedValue(
     { provider, generator },
     [
@@ -243,8 +247,9 @@ function formatCapacity(value) {
   return String(value);
 }
 
-export function normalizeGenerator(generator = {}) {
+function normalizeGenerator(generator = {}) {
   const provider = generator.provider || generator.owner || generator.user || {};
+
   const providerId = getNestedValue(
     { provider, generator },
     [
@@ -257,6 +262,7 @@ export function normalizeGenerator(generator = {}) {
       "generator.owner_id",
     ]
   );
+
   const providerName = getNestedValue(
     { provider, generator },
     [
@@ -264,10 +270,6 @@ export function normalizeGenerator(generator = {}) {
       "provider.full_name",
       "provider.fullName",
       "provider.username",
-      "provider.company_name",
-      "provider.companyName",
-      "provider.facility_name",
-      "provider.facilityName",
       "provider.user.name",
       "provider.user.full_name",
       "provider.user.fullName",
@@ -278,6 +280,33 @@ export function normalizeGenerator(generator = {}) {
       "generator.user_name",
     ]
   );
+
+  const companyName = getNestedValue(
+    { provider, generator },
+    [
+      "provider.company_name",
+      "provider.companyName",
+      "provider.facility_name",
+      "provider.facilityName",
+      "provider.user.company_name",
+      "provider.user.companyName",
+      "provider.user.facility_name",
+      "provider.user.facilityName",
+      "provider.owner.company_name",
+      "provider.owner.companyName",
+      "provider.owner.facility_name",
+      "provider.owner.facilityName",
+      "generator.company_name",
+      "generator.companyName",
+      "generator.facility_name",
+      "generator.facilityName",
+      "generator.provider_company_name",
+      "generator.providerCompanyName",
+      "generator.provider_facility_name",
+      "generator.providerFacilityName",
+    ]
+  );
+
   const providerPhone = getNestedValue(
     { provider, generator },
     [
@@ -291,6 +320,7 @@ export function normalizeGenerator(generator = {}) {
       "generator.providerPhone",
     ]
   );
+
   const providerEmail = getNestedValue(
     { provider, generator },
     [
@@ -301,6 +331,7 @@ export function normalizeGenerator(generator = {}) {
       "generator.providerEmail",
     ]
   );
+
   const providerOwnArea = getNestedValue(
     { provider, generator },
     [
@@ -315,6 +346,7 @@ export function normalizeGenerator(generator = {}) {
       "generator.provider_address",
     ]
   );
+
   const providerArea =
     providerOwnArea ||
     getNestedValue({ generator }, [
@@ -322,6 +354,7 @@ export function normalizeGenerator(generator = {}) {
       "generator.region",
       "generator.city",
     ]);
+
   const providerAddress = getNestedValue(
     { provider, generator },
     [
@@ -334,6 +367,7 @@ export function normalizeGenerator(generator = {}) {
       "generator.provider_area",
     ]
   );
+
   const providerDescription = getNestedValue(
     { provider, generator },
     [
@@ -347,6 +381,7 @@ export function normalizeGenerator(generator = {}) {
       "generator.providerDescription",
     ]
   );
+
   const providerSubscribersCount = getNestedValue(
     { provider, generator },
     [
@@ -362,6 +397,7 @@ export function normalizeGenerator(generator = {}) {
       "generator.subscribersCount",
     ]
   );
+
   const providerRating = getNestedValue(
     { provider, generator },
     [
@@ -373,6 +409,7 @@ export function normalizeGenerator(generator = {}) {
       "generator.providerRating",
     ]
   );
+
   const rawProviderStatus = getNestedValue(
     { provider, generator },
     [
@@ -384,8 +421,10 @@ export function normalizeGenerator(generator = {}) {
       "generator.providerStatus",
     ]
   );
+
   const hasProviderRelation = Boolean(
     providerId ||
+      companyName ||
       providerName ||
       providerPhone ||
       providerEmail ||
@@ -400,6 +439,7 @@ export function normalizeGenerator(generator = {}) {
         !Array.isArray(provider) &&
         Object.keys(provider).length > 0)
   );
+
   const price = getFirstValue(generator, [
     "price_per_ampere",
     "pricePerAmpere",
@@ -410,6 +450,7 @@ export function normalizeGenerator(generator = {}) {
     "price_KW",
     "generator_price",
   ]);
+
   const capacity = getFirstValue(generator, [
     "available_load",
     "availableLoad",
@@ -421,36 +462,51 @@ export function normalizeGenerator(generator = {}) {
     "powerKW",
     "generator_powerKW",
   ]);
+
   const rawStatus = getFirstValue(generator, ["status", "state"]);
+
   const statusLabel = getFirstValue(
     generator,
     ["status_label", "statusLabel", "status_text", "statusText"],
     rawStatus
   );
+
   const rawGeneratorType = getFirstValue(generator, [
     "generator_type",
     "generatorType",
     "type",
   ]);
+
+  const translatedType = translateGeneratorType(rawGeneratorType);
+
+  const rawGeneratorName =
+    getFirstValue(generator, [
+      "generator_name",
+      "generatorName",
+      "title",
+      "model",
+      "brand",
+      "name",
+    ]) || translatedType;
+
+  const displayName =
+    companyName ||
+    rawGeneratorName ||
+    (translatedType ? `مولد ${translatedType}` : "مولد جديد");
+
   const statusType = normalizeStatusType(rawStatus);
+
   const terms =
     generator.terms ||
     generator.subscription_terms ||
     generator.subscriptionTerms ||
     [];
+
   const review = generator.review || {};
-  const displayName =
-    getFirstValue(generator, [
-      "name",
-      "title",
-      "generator_name",
-      "generatorName",
-      "model",
-      "brand",
-    ]) || translateGeneratorType(rawGeneratorType);
 
   return {
     id: getFirstValue(generator, ["id", "_id", "uuid", "slug"]),
+
     image:
       getFirstValue(generator, [
         "image",
@@ -459,46 +515,65 @@ export function normalizeGenerator(generator = {}) {
         "photo",
         "photo_url",
       ]) || placeholderGeneratorImage,
+
     name: displayName,
-    generatorType: translateGeneratorType(rawGeneratorType),
+    generatorName: rawGeneratorName,
+    providerCompanyName: companyName,
+
+    isCompanyGenerator: Boolean(companyName),
+
+    generatorType: translatedType,
+
     status: translateGeneratorStatus(statusLabel),
+
     statusType,
-    location: formatLocation(getFirstValue(generator, [
-      "area",
-      "region",
-      "city",
-      "address",
-      "location",
-      "address",
-      "gps",
-      "generator_gps",
-    ])),
+
+    location: formatLocation(
+      getFirstValue(generator, [
+        "area",
+        "region",
+        "city",
+        "address",
+        "location",
+        "gps",
+        "generator_gps",
+      ])
+    ),
+
     price: price ? String(price) : "",
+
     priceValue: toNumber(price),
+
     priceText: getFirstValue(
       generator,
       ["price_text", "priceText", "formatted_price", "formattedPrice"],
       formatCurrency(price)
     ),
+
     currency: getFirstValue(generator, ["currency", "price_currency"]),
+
     capacity: formatCapacity(capacity),
+
     rating: getFirstValue(generator, ["rating", "avg_rating", "averageRating"]),
+
     shortDescription: getFirstValue(generator, [
       "short_description",
       "shortDescription",
       "summary",
       "description",
     ]),
+
     serviceDescription: getFirstValue(generator, [
       "service_description",
       "serviceDescription",
       "description",
       "details",
     ]),
+
     provider: {
       hasProviderInfo: hasProviderRelation,
       id: providerId,
-      name: providerName,
+      name: companyName || providerName || "",
       phone: providerPhone,
       email: providerEmail,
       area: formatLocation(providerArea),
@@ -508,17 +583,21 @@ export function normalizeGenerator(generator = {}) {
       rating: providerRating,
       status: translateGeneratorStatus(rawProviderStatus || rawStatus),
     },
+
     terms: Array.isArray(terms) ? terms : [],
+
     review: {
       userName: getNestedValue({ review, generator }, [
         "review.userName",
         "review.user_name",
         "generator.review_user_name",
       ]),
+
       date: getNestedValue({ review, generator }, [
         "review.date",
         "generator.review_date",
       ]),
+
       text: getNestedValue({ review, generator }, [
         "review.text",
         "review.comment",
@@ -528,12 +607,52 @@ export function normalizeGenerator(generator = {}) {
   };
 }
 
+function makeAhliElectricityCard(sourceGenerator) {
+  if (!sourceGenerator) return null;
+
+  return {
+    ...sourceGenerator,
+    name: "شركة الكهرباء الأهلية",
+    providerCompanyName: "شركة الكهرباء الأهلية",
+    generatorName: sourceGenerator.generatorName || "مولد كهرباء",
+    provider: {
+      ...sourceGenerator.provider,
+      name: "شركة الكهرباء الأهلية",
+      hasProviderInfo: true,
+    },
+    isCompanyGenerator: true,
+    isPinnedAhliElectricity: true,
+  };
+}
+
 function normalizeVisibleGenerators(data) {
-  return unwrapList(data)
+  const normalizedGenerators = unwrapList(data)
     .filter(isGeneratorLike)
     .filter(isVisibleGenerator)
     .map(normalizeGenerator)
     .filter((generator) => generator.id);
+
+  const companyGenerators = normalizedGenerators.filter(
+    (generator) => generator.isCompanyGenerator
+  );
+
+  const ahliFromBackend =
+    companyGenerators.find((generator) =>
+      String(generator.name || "").includes("شركة الكهرباء الأهلية")
+    ) || null;
+
+  const ahliCard = makeAhliElectricityCard(
+    ahliFromBackend || normalizedGenerators[0]
+  );
+
+  const providerAddedGenerators = companyGenerators.filter((generator) => {
+    if (!generator?.id) return false;
+    if (ahliCard && String(generator.id) === String(ahliCard.id)) return false;
+
+    return true;
+  });
+
+  return [ahliCard, ...providerAddedGenerators].filter(Boolean);
 }
 
 export async function getGenerators(params = {}) {

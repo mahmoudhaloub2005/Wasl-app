@@ -1,89 +1,77 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import GeneratorCard from "./GeneratorCard";
 
-function GeneratorsCards({
-  generators = [],
-  generatorName = "",
-  area = "",
-  priceRange = "all",
-  selectedStatus = "all",
-  loading = false,
-}) {
-  const filteredGenerators = useMemo(() => {
-    const nameQuery = generatorName.trim().toLowerCase();
-    const areaQuery = area.trim().toLowerCase();
+function GeneratorsCards({ generators = [], loading = false }) {
+  const [showAll, setShowAll] = useState(false);
 
-    return generators.filter((generator) => {
-      const matchesName = String(generator.name || "")
-        .toLowerCase()
-        .includes(nameQuery);
-      const matchesArea = String(generator.location || "")
-        .toLowerCase()
-        .includes(areaQuery);
-      const matchesStatus =
-        selectedStatus === "all" || generator.statusType === selectedStatus;
+  const sortedGenerators = useMemo(() => {
+    return [...generators].sort((a, b) => {
+      if (a.isPinnedAhliElectricity) return -1;
+      if (b.isPinnedAhliElectricity) return 1;
 
-      let matchesPrice = true;
-
-      if (priceRange === "low") {
-        matchesPrice = generator.priceValue < 20000;
-      }
-
-      if (priceRange === "high") {
-        matchesPrice = generator.priceValue >= 20000;
-      }
-
-      return matchesName && matchesArea && matchesStatus && matchesPrice;
+      return Number(b.id || 0) - Number(a.id || 0);
     });
-  }, [generators, generatorName, area, priceRange, selectedStatus]);
+  }, [generators]);
+
+  const visibleGenerators = showAll
+    ? sortedGenerators
+    : sortedGenerators.slice(0, 3);
 
   if (loading) {
     return (
       <section className="generators-cards-list">
         <div className="empty-generators">
           <h3>جاري تحميل المولدات...</h3>
-          <p>نحضّر قائمة المولدات المتاحة من الخادم.</p>
+          <p>نحضّر البيانات من الخادم.</p>
         </div>
       </section>
     );
   }
 
-  if (filteredGenerators.length === 0) {
-    const isSourceEmpty = generators.length === 0;
-
+  if (!sortedGenerators.length) {
     return (
       <section className="generators-cards-list">
         <div className="empty-generators">
-          <h3>
-            {isSourceEmpty
-              ? "لا توجد مولدات متاحة حالياً"
-              : "لا توجد نتائج مطابقة"}
-          </h3>
-          {!isSourceEmpty && (
-            <p>جرب تغيير اسم المولد أو المنطقة أو حالة التشغيل.</p>
-          )}
+          <h3>لا توجد مولدات حالياً</h3>
+          <p>عند إضافة مزودين جدد ستظهر المولدات هنا.</p>
         </div>
       </section>
     );
   }
 
   return (
-    <section className="generators-cards-list">
-      {filteredGenerators.map((generator) => (
-        <GeneratorCard
-          key={generator.id}
-          id={generator.id}
-          image={generator.image}
-          name={generator.name || generator.generatorType}
-          area={generator.location}
-          price={generator.priceText}
-          load={generator.capacity}
-          rating={Number(generator.rating) || 0}
-          status={generator.status}
-          statusType={generator.statusType}
-        />
-      ))}
-    </section>
+    <>
+      <section className="generators-cards-list">
+        {visibleGenerators.map((generator) => (
+          <GeneratorCard
+            key={generator.id}
+            id={generator.id}
+            image={generator.image}
+            name={generator.name}
+            generatorName={generator.generatorName}
+            generatorType={generator.generatorType}
+            area={generator.location || generator.area}
+            price={generator.priceText}
+            load={generator.capacity}
+            rating={generator.rating}
+            status={generator.status}
+            statusType={generator.statusType}
+          />
+        ))}
+      </section>
+
+      {sortedGenerators.length > 3 && (
+        <div className="generators-show-more-wrap">
+          <button
+            type="button"
+            className="generators-show-more-button"
+            onClick={() => setShowAll((current) => !current)}
+          >
+            {showAll ? "عرض أقل" : "عرض الكل"}
+          </button>
+        </div>
+      )}
+    </>
   );
 }
 

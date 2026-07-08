@@ -2,102 +2,75 @@ import { Link } from "react-router-dom";
 
 function GeneratorCard({
   id,
-  generatorId,
-  _id,
-  uuid,
   image,
   name,
+  generatorName,
+  generatorType,
   area,
   price,
   load,
-  rating,
+  rating = 0,
   status,
   statusType,
 }) {
-  const realGeneratorId = id || generatorId || _id || uuid;
+  const title = name || generatorName || generatorType || "مولد غير محدد";
+  const locationText = area || "موقع جغرافي محدد";
 
-  const displayName = name || "";
+  const numericRating = Number(rating) || 0;
 
-  const stars = Array.from(
-    { length: 5 },
-    (_, index) => index < Math.round(Number(rating) || 0)
-  );
-
-  const generatorState = {
-    id: realGeneratorId,
-    image,
-    name,
-    area,
-    price,
-    load,
-    rating,
-    status,
-    statusType,
-  };
+  const finalStatusType =
+    statusType === "maintenance" ||
+    String(status || "").includes("صيانة") ||
+    String(status || "").includes("متوقف")
+      ? "maintenance"
+      : "working";
 
   return (
     <article className="customer-generator-card">
       <div className="customer-generator-image">
-        {image && <img src={image} alt={displayName} />}
+        {image && <img src={image} alt={title} />}
 
         {status && (
-          <span className={`customer-generator-status ${statusType || ""}`}>
+          <span className={`customer-generator-status ${finalStatusType}`}>
             {status}
           </span>
         )}
       </div>
 
       <div className="customer-generator-body">
-        <h3>{displayName}</h3>
+        <h3>{title}</h3>
 
-        {area && <p>{area}</p>}
+        <p>{locationText}</p>
 
-        {(price || load) && (
-          <div className="customer-generator-info">
-            {price && (
-              <div>
-                <span>السعر لكل أمبير</span>
-                <strong>{price}</strong>
-              </div>
-            )}
-
-            {price && load && <span className="customer-info-divider"></span>}
-
-            {load && (
-              <div>
-                <span>الحمل المتاح</span>
-                <strong>{load}</strong>
-              </div>
-            )}
+        <div className="customer-generator-info">
+          <div>
+            <span>السعر لكل أمبير</span>
+            <strong>{price || "غير محدد"}</strong>
           </div>
-        )}
+
+          <span className="customer-info-divider"></span>
+
+          <div>
+            <span>الحمل المتاح</span>
+            <strong>{load || "غير محدد"}</strong>
+          </div>
+        </div>
 
         <div className="customer-generator-footer">
           <div className="customer-generator-stars">
-            {stars.map((isActive, index) => (
-              <span key={index} className={isActive ? "filled" : ""}>
+            {[1, 2, 3, 4, 5].map((star) => (
+              <span key={star} className={star <= numericRating ? "filled" : ""}>
                 ★
               </span>
             ))}
           </div>
 
-          {realGeneratorId ? (
-            <Link
-              to={`/customer/generator-details/${realGeneratorId}`}
-              state={{ generator: generatorState }}
-              className="customer-generator-details-link"
-            >
-              عرض التفاصيل
-            </Link>
-          ) : (
-            <button
-              type="button"
-              className="customer-generator-details-link"
-              disabled
-            >
-              عرض التفاصيل
-            </button>
-          )}
+          <Link
+            className="customer-generator-details-link"
+            to={`/customer/generator-details/${id}`}
+          >
+            عرض التفاصيل
+          </Link>
         </div>
       </div>
     </article>

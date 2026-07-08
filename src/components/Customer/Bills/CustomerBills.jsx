@@ -5,12 +5,13 @@ import BillsSummaryCards from "./BillsSummaryCards";
 import BillsTable from "./BillsTable";
 import SendPaymentProof from "./SendPaymentProof";
 import PaymentsHistory from "./PaymentsHistory";
-import {
-  ensureInvoiceForSubscription,
-  getMyInvoices,
-} from "../../../services/invoiceService";
+import { getMyInvoices } from "../../../services/invoiceService";
 import { createPayment, getMyPayments } from "../../../services/paymentService";
-import { getCurrentSubscription } from "../../../services/subscriptionService";
+import {
+  getCurrentSubscription,
+  getCustomerSubscriptionForDisplay,
+  getLocalCustomerSubscription,
+} from "../../../services/subscriptionService";
 import { getApiErrorMessage } from "../../../utils/apiError";
 
 function isMissingEndpoint(error) {
@@ -36,6 +37,28 @@ function formatCurrentArabicMonth(date = new Date()) {
   }).format(date);
 }
 
+function formatArabicDateTime(date = new Date()) {
+  return new Intl.DateTimeFormat("ar", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(date);
+}
+
+function getPackageAmountFromAmpere(ampere) {
+  const ampereValue = toNumber(ampere);
+  const packageAmounts = {
+    3: 45,
+    5: 60,
+    10: 115,
+    15: 170,
+  };
+
+  return packageAmounts[ampereValue] || 0;
+}
+
 function getSubscriptionAmount(subscription = {}) {
   const directAmount = toNumber(
     subscription.monthlyCost ||
@@ -56,7 +79,11 @@ function getSubscriptionAmount(subscription = {}) {
     subscription.ampereValue || subscription.amperes || subscription.ampere
   );
 
-  return pricePerAmpere > 0 && amperes > 0 ? pricePerAmpere * amperes : 0;
+  if (pricePerAmpere > 0 && amperes > 0) {
+    return pricePerAmpere * amperes;
+  }
+
+  return getPackageAmountFromAmpere(amperes);
 }
 
 function getSubscriptionProviderName(subscription = {}) {
@@ -71,14 +98,69 @@ function getSubscriptionProviderName(subscription = {}) {
   );
 }
 
+function getSubscriptionStatusText(subscription = {}) {
+  return String(
+    subscription.status ||
+      subscription.state ||
+      subscription.statusLabel ||
+      subscription.statusText ||
+      subscription.rawStatus ||
+      ""
+  ).toLowerCase();
+}
+
+function isRejectedOrCancelledSubscription(subscription = {}) {
+  const statusText = getSubscriptionStatusText(subscription);
+
+  return (
+    subscription.isCancelled ||
+    subscription.isRejected ||
+    statusText.includes("cancel") ||
+    statusText.includes("reject") ||
+    statusText.includes("ملغي") ||
+    statusText.includes("ملغى") ||
+    statusText.includes("مرفوض")
+  );
+}
+
+function canBuildDraftInvoiceFromSubscription(subscription = {}) {
+  if (!subscription || isRejectedOrCancelledSubscription(subscription)) {
+    return false;
+  }
+
+  const amountValue = getSubscriptionAmount(subscription);
+  const hasSubscriptionIdentity = Boolean(
+    subscription.id ||
+      subscription.subscriptionNumber ||
+      subscription.generatorId ||
+      subscription.generatorName ||
+      subscription.generator_name
+  );
+
+  return Boolean(subscription.isActive || hasSubscriptionIdentity || amountValue > 0);
+}
+
+function getFirstDraftSubscription(...subscriptions) {
+  return (
+    subscriptions.find((subscription) =>
+      canBuildDraftInvoiceFromSubscription(subscription)
+    ) || null
+  );
+}
+
 function buildSubscriptionDraftInvoice(subscription) {
-  if (!subscription?.id || !subscription?.isActive) return null;
+  if (!canBuildDraftInvoiceFromSubscription(subscription)) return null;
 
   const now = new Date();
   const year = now.getFullYear();
   const monthNumber = String(now.getMonth() + 1).padStart(2, "0");
   const amountValue = getSubscriptionAmount(subscription);
-  const subscriptionId = String(subscription.id);
+  const subscriptionId = String(
+    subscription.id ||
+      subscription.subscriptionNumber ||
+      subscription.generatorId ||
+      "001"
+  );
 
   return {
     id: "",
@@ -94,7 +176,7 @@ function buildSubscriptionDraftInvoice(subscription) {
     issuedAt: now.toISOString(),
     paymentMethod: "دفعة",
     isTemporary: true,
-    needsInvoiceCreation: true,
+    demoOnly: true,
     subscriptionId,
     generatorName: subscription.generatorName || subscription.generator_name || "",
     providerName: getSubscriptionProviderName(subscription),
@@ -115,16 +197,22 @@ function CustomerBills() {
       setLoading(true);
       setErrorMessage("");
 
-      const [invoicesResult, paymentsResult, subscriptionResult] =
+      const [
+        invoicesResult,
+        paymentsResult,
+        currentSubscriptionResult,
+        displaySubscriptionResult,
+      ] =
         await Promise.allSettled([
           getMyInvoices(),
           getMyPayments(),
           getCurrentSubscription(),
+          getCustomerSubscriptionForDisplay(),
         ]);
 
       let nextBills = [];
       let nextPayments = [];
-      let activeSubscription = null;
+      let draftSubscription = null;
       let firstError = null;
 
       if (invoicesResult.status === "fulfilled") {
@@ -143,16 +231,34 @@ function CustomerBills() {
         firstError = firstError || paymentsResult.reason;
       }
 
-      if (subscriptionResult.status === "fulfilled") {
-        activeSubscription = subscriptionResult.value?.isActive
-          ? subscriptionResult.value
-          : null;
-      } else if (!isMissingEndpoint(subscriptionResult.reason)) {
-        firstError = firstError || subscriptionResult.reason;
+      const localSubscription = getLocalCustomerSubscription();
+
+      if (
+        currentSubscriptionResult.status === "rejected" &&
+        !isMissingEndpoint(currentSubscriptionResult.reason)
+      ) {
+        firstError = firstError || currentSubscriptionResult.reason;
       }
 
-      if (nextBills.length === 0 && activeSubscription) {
-        const draftInvoice = buildSubscriptionDraftInvoice(activeSubscription);
+      if (
+        displaySubscriptionResult.status === "rejected" &&
+        !isMissingEndpoint(displaySubscriptionResult.reason)
+      ) {
+        firstError = firstError || displaySubscriptionResult.reason;
+      }
+
+      draftSubscription = getFirstDraftSubscription(
+        currentSubscriptionResult.status === "fulfilled"
+          ? currentSubscriptionResult.value
+          : null,
+        displaySubscriptionResult.status === "fulfilled"
+          ? displaySubscriptionResult.value
+          : null,
+        localSubscription
+      );
+
+      if (nextBills.length === 0 && draftSubscription) {
+        const draftInvoice = buildSubscriptionDraftInvoice(draftSubscription);
 
         if (draftInvoice) {
           nextBills = [draftInvoice];
@@ -257,22 +363,43 @@ function CustomerBills() {
       setErrorMessage("");
       setSuccessMessage("");
 
-      let payableInvoiceId = invoiceId;
+      if (invoice?.isTemporary) {
+        const submittedAt = new Date();
+        const temporaryInvoiceKey = invoice.temporaryId || invoice.invoiceNumber;
 
-      if (!payableInvoiceId && invoice?.needsInvoiceCreation) {
-        const realInvoice = await ensureInvoiceForSubscription({
-          subscriptionId: invoice.subscriptionId,
-          amount: invoice.amountValue || amount,
-          month: invoice.month,
-        });
+        setBills((currentBills) =>
+          currentBills.map((bill) =>
+            (bill.temporaryId || bill.invoiceNumber) === temporaryInvoiceKey
+              ? {
+                  ...bill,
+                  status: "pending",
+                  statusText: "قيد التحقق",
+                  paidAt: formatArabicDateTime(submittedAt),
+                  paymentMethod: "إثبات دفع",
+                }
+              : bill
+          )
+        );
 
-        payableInvoiceId = realInvoice.id;
+        setPayments((currentPayments) => [
+          {
+            id: `demo-payment-${temporaryInvoiceKey}-${submittedAt.getTime()}`,
+            title: `إثبات دفع للفاتورة ${invoice.invoiceNumber}`,
+            date: formatArabicDateTime(submittedAt),
+            amount: `+${amount}`,
+          },
+          ...currentPayments,
+        ]);
+
+        setSelectedInvoice(null);
+        setSuccessMessage("تم إرسال إثبات الدفع بنجاح، وسيتم مراجعته قريباً.");
+        return;
       }
 
       await createPayment({
         amount,
         file,
-        invoiceId: payableInvoiceId,
+        invoiceId,
       });
 
       await loadBillsData();
@@ -390,7 +517,7 @@ function CustomerBills() {
             invoice={paymentInvoice}
             invoiceId={paymentInvoice?.id || ""}
             invoiceNumber={paymentInvoice?.invoiceNumber || ""}
-            canCreateInvoice={Boolean(paymentInvoice?.needsInvoiceCreation)}
+            allowTemporaryPayment={Boolean(paymentInvoice?.isTemporary)}
             onSubmitPaymentProof={handleSubmitPaymentProof}
           />
         </div>

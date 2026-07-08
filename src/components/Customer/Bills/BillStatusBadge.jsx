@@ -1,6 +1,6 @@
 function BillStatusBadge({ status, text }) {
   return (
-    <span className={`status-badge ${status}`}>
+    <span className={`bill-status-badge ${status}`}>
       {text}
     </span>
   );

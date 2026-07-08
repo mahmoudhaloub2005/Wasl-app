@@ -9,7 +9,7 @@ function SendPaymentProof({
   invoice = null,
   invoiceId = "",
   invoiceNumber = "",
-  canCreateInvoice = false,
+  allowTemporaryPayment = false,
   onSubmitPaymentProof,
 }) {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ function SendPaymentProof({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const maxFileSize = 5 * 1024 * 1024;
-  const canSubmitPayment = Boolean(invoiceId || canCreateInvoice);
+  const canSubmitPayment = Boolean(invoiceId || allowTemporaryPayment);
 
   const handleAmountChange = (event) => {
     if (!canSubmitPayment) {
