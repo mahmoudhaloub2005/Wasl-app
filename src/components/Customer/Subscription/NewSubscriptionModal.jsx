@@ -5,6 +5,8 @@ import {
   IoHelpCircleOutline,
   IoBulbOutline,
   IoSpeedometerOutline,
+  IoWalletOutline,
+  IoCashOutline,
 } from "react-icons/io5";
 import { getApiErrorMessage } from "../../../utils/apiError";
 
@@ -116,20 +118,6 @@ function NewSubscriptionModal({ generator, onClose, onConfirm }) {
         aria-labelledby="new-subscription-title"
         dir="rtl"
       >
-        <header className="new-subscription-modal-header">
-          <h2 id="new-subscription-title">طلب اشتراك جديد</h2>
-
-          <button
-            className="new-subscription-close"
-            type="button"
-            aria-label="إغلاق"
-            onClick={onClose}
-          >
-            <IoClose />
-          </button>
-        </header>
-
-        <div className="new-subscription-modal-body">
         <aside className="new-subscription-summary">
           <h3>ملخص الاشتراك</h3>
 
@@ -152,9 +140,8 @@ function NewSubscriptionModal({ generator, onClose, onConfirm }) {
           </dl>
 
           <div className="new-summary-total">
-            <span>المبلغ المطلوب الآن</span>
-            <strong>0 شيكل</strong>
-            <small>سيتم إصدار الفاتورة بعد تفعيل الاشتراك</small>
+            <span>إجمالي المبلغ المستحق الآن</span>
+            <strong>{fees.total} شيكل</strong>
           </div>
 
           <button
@@ -172,6 +159,19 @@ function NewSubscriptionModal({ generator, onClose, onConfirm }) {
           </aside>
 
           <div className="new-subscription-content">
+          <div className="new-subscription-content-header">
+            <button
+              className="new-subscription-close"
+              type="button"
+              aria-label="إغلاق"
+              onClick={onClose}
+            >
+              <IoClose />
+            </button>
+
+            <h2 id="new-subscription-title">طلب اشتراك جديد</h2>
+          </div>
+
           <div className="new-subscription-section-title">
             <IoSpeedometerOutline aria-hidden="true" />
             <h3>حجم الاشتراك</h3>
@@ -232,12 +232,25 @@ function NewSubscriptionModal({ generator, onClose, onConfirm }) {
             ))}
           </div>
 
-          <p className="new-subscription-note">
-            لن يتم طلب أي دفعة الآن. بعد موافقة المزود وتفعيل الاشتراك ستظهر
-            الفاتورة في صفحة الفواتير والمدفوعات.
-          </p>
+          <div className="new-subscription-section-title payment-method-title">
+            <IoWalletOutline aria-hidden="true" />
+            <h3>طريقة الدفع</h3>
           </div>
-        </div>
+
+          <div className="new-payment-methods">
+            <div className="new-payment-method selected">
+              <span className="new-payment-radio" aria-hidden="true" />
+              <span>المحفظة الإلكترونية (بنك فلسطين / بال باي)</span>
+              <IoWalletOutline aria-hidden="true" />
+            </div>
+
+            <div className="new-payment-method">
+              <span className="new-payment-radio" aria-hidden="true" />
+              <span>دفع نقدي</span>
+              <IoCashOutline aria-hidden="true" />
+            </div>
+          </div>
+          </div>
       </section>
     </div>
   );
