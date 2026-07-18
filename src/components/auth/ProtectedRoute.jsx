@@ -7,13 +7,53 @@ import {
   getStoredUserRole,
 } from "../../utils/authStorage";
 
+const DEV_PROVIDER_USER = {
+  id: "dev-provider",
+  name: "مزود خدمة تجريبي",
+  role: "provider",
+};
+
+function isProviderAuthBypassEnabled(allowedRoles, pathname) {
+  return (
+    import.meta.env.DEV === true &&
+    import.meta.env.VITE_PROVIDER_AUTH_BYPASS === "true" &&
+    pathname.startsWith("/provider") &&
+    allowedRoles?.includes("provider")
+  );
+}
+
 function ProtectedRoute({ children, allowedRoles }) {
   const location = useLocation();
-  const [status, setStatus] = useState("checking");
-  const [role, setRole] = useState(getStoredUserRole());
+  const isDevProviderAuthBypassEnabled = isProviderAuthBypassEnabled(
+    allowedRoles,
+    location.pathname
+  );
+  const [status, setStatus] = useState(
+    isDevProviderAuthBypassEnabled ? "authenticated" : "checking"
+  );
+  const [role, setRole] = useState(
+    isDevProviderAuthBypassEnabled ? DEV_PROVIDER_USER.role : getStoredUserRole()
+  );
 
   useEffect(() => {
     let isMounted = true;
+
+    if (isDevProviderAuthBypassEnabled) {
+      // TODO: Remove development auth bypass when backend is available
+      localStorage.setItem("wasel_is_logged_in", "true");
+      localStorage.setItem("wasel_user_role", DEV_PROVIDER_USER.role);
+      localStorage.setItem("wasel_user", JSON.stringify(DEV_PROVIDER_USER));
+
+      if (isMounted) {
+        setRole(DEV_PROVIDER_USER.role);
+        setStatus("authenticated");
+      }
+
+      return () => {
+        isMounted = false;
+      };
+    }
+
     const token = getStoredToken();
 
     if (!token) {
@@ -77,7 +117,7 @@ function ProtectedRoute({ children, allowedRoles }) {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [isDevProviderAuthBypassEnabled]);
 
   if (status === "checking") {
     return (

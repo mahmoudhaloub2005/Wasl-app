@@ -40,6 +40,24 @@ import CustomerComplaintsPage from "./pages/Customer/CustomerComplaintsPage";
 import CustomerNotificationsPage from "./pages/Customer/CustomerNotificationsPage";
 import Profile from "./pages/Customer/Profile";
 import ProviderHome from "./pages/Provider/ProviderHome";
+import ProviderSubscriptions from "./pages/Provider/ProviderSubscriptions";
+import ProviderGenerators from "./pages/Provider/ProviderGenerators";
+import ProviderAdvertisements from "./pages/Provider/ProviderAdvertisements";
+import ProviderFinance from "./pages/Provider/ProviderFinance";
+import ProviderInvoices from "./pages/Provider/ProviderInvoices";
+import ProviderPayments from "./pages/Provider/ProviderPayments";
+import ProviderRatings from "./pages/Provider/ProviderRatings";
+import ProviderProfile from "./pages/Provider/ProviderProfile";
+import ProviderPreparedRoute from "./pages/Provider/ProviderPreparedRoute";
+
+function ProviderProtectedPage({ children }) {
+  return (
+    <ProtectedRoute allowedRoles={["provider", "seller", "owner"]}>
+      {children}
+    </ProtectedRoute>
+  );
+}
+
 function App() {
   return (
     <Routes>
@@ -79,18 +97,217 @@ function App() {
       <Route
         path="/provider"
         element={
-          <ProtectedRoute allowedRoles={["provider", "seller", "owner"]}>
+          <ProviderProtectedPage>
             <ProviderHome />
-          </ProtectedRoute>
+          </ProviderProtectedPage>
         }
       />
 
       <Route
         path="/provider/home"
         element={
-          <ProtectedRoute allowedRoles={["provider", "seller", "owner"]}>
+          <ProviderProtectedPage>
             <ProviderHome />
-          </ProtectedRoute>
+          </ProviderProtectedPage>
+        }
+      />
+
+      <Route
+        path="/provider/dashboard"
+        element={
+          <ProviderProtectedPage>
+            <ProviderHome />
+          </ProviderProtectedPage>
+        }
+      />
+
+      <Route
+        path="/provider/subscriptions"
+        element={
+          <ProviderProtectedPage>
+            <ProviderSubscriptions />
+          </ProviderProtectedPage>
+        }
+      />
+
+      <Route
+        path="/provider/generators"
+        element={
+          <ProviderProtectedPage>
+            <ProviderGenerators />
+          </ProviderProtectedPage>
+        }
+      />
+
+      <Route
+        path="/provider/generators/add"
+        element={<Navigate to="/provider/generators?add=1" replace />}
+      />
+
+      <Route
+        path="/provider/generators/:generatorId/edit"
+        element={
+          <ProviderProtectedPage>
+            <ProviderPreparedRoute title="ط·ع¾ط·آ¹ط·آ¯ط¸ظ¹ط¸â€‍ ط·آ§ط¸â€‍ط¸â€¦ط¸ث†ط¸â€‍ط·آ¯" />
+          </ProviderProtectedPage>
+        }
+      />
+
+      <Route
+        path="/provider/generators/:generatorId"
+        element={
+          <ProviderProtectedPage>
+            <ProviderPreparedRoute title="ط·ع¾ط¸ظ¾ط·آ§ط·آµط¸ظ¹ط¸â€‍ ط·آ§ط¸â€‍ط¸â€¦ط¸ث†ط¸â€‍ط·آ¯" />
+          </ProviderProtectedPage>
+        }
+      />
+
+      <Route
+        path="/provider/advertisements"
+        element={
+          <ProviderProtectedPage>
+            <ProviderAdvertisements />
+          </ProviderProtectedPage>
+        }
+      />
+
+      <Route
+        path="/provider/advertisements/add"
+        element={
+          <Navigate to="/provider/advertisements?add=1" replace />
+        }
+      />
+
+      <Route
+        path="/provider/finance"
+        element={
+          <ProviderProtectedPage>
+            <ProviderFinance />
+          </ProviderProtectedPage>
+        }
+      />
+
+      <Route path="/provider/financial" element={<Navigate to="/provider/finance" replace />} />
+
+      <Route
+        path="/provider/payments"
+        element={
+          <ProviderProtectedPage>
+            <ProviderFinance />
+          </ProviderProtectedPage>
+        }
+      />
+
+      <Route
+        path="/provider/finance/invoices"
+        element={
+          <ProviderProtectedPage>
+            <ProviderInvoices />
+          </ProviderProtectedPage>
+        }
+      />
+
+      <Route
+        path="/provider/finance/invoices/:recordId"
+        element={
+          <ProviderProtectedPage>
+            <ProviderPreparedRoute title="ط·ع¾ط¸ظ¾ط·آ§ط·آµط¸ظ¹ط¸â€‍ ط·آ§ط¸â€‍ط¸ظ¾ط·آ§ط·ع¾ط¸ث†ط·آ±ط·آ©" />
+          </ProviderProtectedPage>
+        }
+      />
+
+      <Route
+        path="/provider/finance/payments"
+        element={
+          <ProviderProtectedPage>
+            <ProviderPayments />
+          </ProviderProtectedPage>
+        }
+      />
+
+      <Route
+        path="/provider/finance/payments/:recordId"
+        element={
+          <ProviderProtectedPage>
+            <ProviderPreparedRoute title="ط·ع¾ط¸ظ¾ط·آ§ط·آµط¸ظ¹ط¸â€‍ ط·آ§ط¸â€‍ط·آ¯ط¸ظ¾ط·آ¹" />
+          </ProviderProtectedPage>
+        }
+      />
+
+      <Route
+        path="/provider/finance/reports"
+        element={
+          <ProviderProtectedPage>
+            <ProviderPreparedRoute title="ط·آ§ط¸â€‍ط·ع¾ط¸â€ڑط·آ§ط·آ±ط¸ظ¹ط·آ± ط·آ§ط¸â€‍ط¸â€¦ط·آ§ط¸â€‍ط¸ظ¹ط·آ©" />
+          </ProviderProtectedPage>
+        }
+      />
+
+      <Route
+        path="/provider/finance/capacity"
+        element={
+          <ProviderProtectedPage>
+            <ProviderPreparedRoute title="ط·آ³ط·آ¹ط·آ© ط·آ§ط·آ³ط·ع¾ط¸â€،ط¸â€‍ط·آ§ط¸ئ’ ط·آ§ط¸â€‍ط¸â€¦ط·آ´ط·ع¾ط·آ±ط¸ئ’ط¸ظ¹ط¸â€ " />
+          </ProviderProtectedPage>
+        }
+      />
+
+      <Route
+        path="/provider/financial/payment-verifications"
+        element={<Navigate to="/provider/finance/payments" replace />}
+      />
+
+      <Route
+        path="/provider/ratings-complaints"
+        element={
+          <ProviderProtectedPage>
+            <ProviderRatings />
+          </ProviderProtectedPage>
+        }
+      />
+
+      <Route
+        path="/provider/ratings"
+        element={
+          <ProviderProtectedPage>
+            <ProviderRatings />
+          </ProviderProtectedPage>
+        }
+      />
+
+      <Route
+        path="/provider/reviews"
+        element={
+          <ProviderProtectedPage>
+            <ProviderRatings />
+          </ProviderProtectedPage>
+        }
+      />
+
+      <Route
+        path="/provider/profile"
+        element={
+          <ProviderProtectedPage>
+            <ProviderProfile />
+          </ProviderProtectedPage>
+        }
+      />
+
+      <Route
+        path="/provider/notifications"
+        element={
+          <ProviderProtectedPage>
+            <ProviderPreparedRoute title="ط·آ§ط¸â€‍ط·آ¥ط·آ´ط·آ¹ط·آ§ط·آ±ط·آ§ط·ع¾" />
+          </ProviderProtectedPage>
+        }
+      />
+
+      <Route
+        path="/provider/activities/:activityId"
+        element={
+          <ProviderProtectedPage>
+            <ProviderPreparedRoute title="ط·ع¾ط¸ظ¾ط·آ§ط·آµط¸ظ¹ط¸â€‍ ط·آ§ط¸â€‍ط¸â€ ط·آ´ط·آ§ط·آ·" />
+          </ProviderProtectedPage>
         }
       />
 
@@ -133,7 +350,7 @@ function App() {
         }
       />
 
-      {/* الاشتراكات من النافبار */}
+      {/* ط·آ§ط¸â€‍ط·آ§ط·آ´ط·ع¾ط·آ±ط·آ§ط¸ئ’ط·آ§ط·ع¾ ط¸â€¦ط¸â€  ط·آ§ط¸â€‍ط¸â€ ط·آ§ط¸ظ¾ط·آ¨ط·آ§ط·آ± */}
       <Route
         path="/customer/subscriptions"
         element={
@@ -143,7 +360,7 @@ function App() {
         }
       />
 
-      {/* الاشتراك من تفاصيل مولد معيّن */}
+      {/* ط·آ§ط¸â€‍ط·آ§ط·آ´ط·ع¾ط·آ±ط·آ§ط¸ئ’ ط¸â€¦ط¸â€  ط·ع¾ط¸ظ¾ط·آ§ط·آµط¸ظ¹ط¸â€‍ ط¸â€¦ط¸ث†ط¸â€‍ط·آ¯ ط¸â€¦ط·آ¹ط¸ظ¹ط¸â€کط¸â€  */}
       <Route
         path="/customer/subscriptions/:generatorId"
         element={
@@ -153,7 +370,7 @@ function App() {
         }
       />
 
-      {/* احتياط لو الرابط بدون s */}
+      {/* ط·آ§ط·آ­ط·ع¾ط¸ظ¹ط·آ§ط·آ· ط¸â€‍ط¸ث† ط·آ§ط¸â€‍ط·آ±ط·آ§ط·آ¨ط·آ· ط·آ¨ط·آ¯ط¸ث†ط¸â€  s */}
       <Route
         path="/customer/subscription"
         element={<Navigate to="/customer/subscriptions" replace />}
@@ -168,7 +385,7 @@ function App() {
         }
       />
 
-      {/* الفواتير والمدفوعات */}
+      {/* ط·آ§ط¸â€‍ط¸ظ¾ط¸ث†ط·آ§ط·ع¾ط¸ظ¹ط·آ± ط¸ث†ط·آ§ط¸â€‍ط¸â€¦ط·آ¯ط¸ظ¾ط¸ث†ط·آ¹ط·آ§ط·ع¾ */}
       <Route
         path="/customer/bills"
         element={
@@ -219,7 +436,7 @@ function App() {
       />
       <Route path="/customer/*" element={<Navigate to="/customer" replace />} />
 
-      {/* لازم يكون آخر Route */}
+      {/* ط¸â€‍ط·آ§ط·آ²ط¸â€¦ ط¸ظ¹ط¸ئ’ط¸ث†ط¸â€  ط·آ¢ط·آ®ط·آ± Route */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
@@ -240,3 +457,6 @@ export default App;
 // }
 
 // export default App;
+
+
+

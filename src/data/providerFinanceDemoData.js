@@ -1,0 +1,55 @@
+// TODO: Replace provider finance demo data with backend response
+export const providerFinanceDemoInvoices = [
+  {
+    id: "figma-invoice-001",
+    amount: 450,
+    customerName: "أحمد محمد عبد الله",
+    dueDate: "2024-05-24",
+    dueDateLabel: "24 مايو 2024",
+    initials: "أ م",
+    invoiceNumber: "#INV-2024-001",
+    path: "/provider/finance/invoices/INV-2024-001",
+    status: "paid",
+  },
+  {
+    id: "figma-invoice-002",
+    amount: 1200,
+    customerName: "سارة خالد التميمي",
+    dueDate: "2024-05-28",
+    dueDateLabel: "28 مايو 2024",
+    initials: "س خ",
+    invoiceNumber: "#INV-2024-002",
+    path: "/provider/finance/invoices/INV-2024-002",
+    status: "pending",
+  },
+  {
+    id: "figma-invoice-003",
+    amount: 3750,
+    customerName: "مؤسسة المجد للتجارة",
+    dueDate: "2024-05-15",
+    dueDateLabel: "15 مايو 2024",
+    initials: "م م",
+    invoiceNumber: "#INV-2024-003",
+    path: "/provider/finance/invoices/INV-2024-003",
+    status: "overdue",
+  },
+  {
+    id: "figma-invoice-004",
+    amount: 890,
+    customerName: "فهد ناصر السبيعي",
+    dueDate: "2024-06-01",
+    dueDateLabel: "01 يونيو 2024",
+    initials: "ف ن",
+    invoiceNumber: "#INV-2024-004",
+    path: "/provider/finance/invoices/INV-2024-004",
+    status: "draft",
+  },
+];
+
+export const providerFinanceDemoStats = {
+  draft: 0,
+  overdue: 32,
+  paid: 940,
+  pending: 212,
+  total: 1284,
+};
