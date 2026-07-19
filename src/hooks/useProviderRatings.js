@@ -1,13 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
-import providerComplaintService from "../services/providerComplaintService";
-import providerReviewService from "../services/providerReviewService";
-
-const DATA_ERROR_MESSAGE =
-  "تعذر تحميل البيانات، يرجى المحاولة مرة أخرى.";
-const COMPLAINTS_ERROR_MESSAGE =
-  "تعذر تحميل الشكاوى، يرجى المحاولة مرة أخرى.";
 const COMPLAINTS_PAGE_SIZE = 3;
+const EMPTY_REVIEWS = [];
+const EMPTY_COMPLAINTS = [];
 
 const initialAdvancedFilters = {
   status: "all",
@@ -19,10 +14,6 @@ const initialAdvancedFilters = {
   ticketNumber: "",
 };
 
-function getActionErrorMessage(error, fallback) {
-  return error?.displayMessage || error?.message || fallback;
-}
-
 function normalizeRatingValue(value) {
   const rating = Number(value);
 
@@ -31,29 +22,7 @@ function normalizeRatingValue(value) {
   return Math.min(5, Math.max(1, Math.round(rating)));
 }
 
-function calculateSummary(reviews = [], fallbackSummary = null) {
-  if (fallbackSummary?.totalRatings) {
-    const totalRatings = Number(fallbackSummary.totalRatings || 0);
-    const distribution = [5, 4, 3, 2, 1].map((rating) => {
-      const match = (fallbackSummary.distribution || []).find(
-        (item) => Number(item.rating) === rating
-      );
-      const count = Number(match?.count || 0);
-
-      return {
-        rating,
-        count,
-        percentage: totalRatings ? Math.round((count / totalRatings) * 100) : 0,
-      };
-    });
-
-    return {
-      averageRating: Number(fallbackSummary.averageRating || 0),
-      totalRatings,
-      distribution,
-    };
-  }
-
+function calculateSummary(reviews = []) {
   const totalRatings = reviews.length;
   const distribution = [5, 4, 3, 2, 1].map((rating) => {
     const count = reviews.filter(
@@ -196,9 +165,13 @@ function hasActiveAdvancedFilters(filters) {
   });
 }
 
+async function noopUnavailableAction() {
+  return false;
+}
+
 export function useProviderRatings({
-  complaintService = providerComplaintService,
-  reviewService = providerReviewService,
+  initialReviews = EMPTY_REVIEWS,
+  initialComplaints = EMPTY_COMPLAINTS,
 } = {}) {
   const [reviewSort, setReviewSort] = useState("newest");
   const [complaintFilter, setComplaintFilter] = useState("all");
@@ -207,91 +180,11 @@ export function useProviderRatings({
     initialAdvancedFilters
   );
   const [complaintPage, setComplaintPageState] = useState(1);
-  const [reviews, setReviews] = useState([]);
-  const [complaints, setComplaints] = useState([]);
-  const [fallbackSummary, setFallbackSummary] = useState(null);
-  const [ratingsLoading, setRatingsLoading] = useState(true);
-  const [complaintsLoading, setComplaintsLoading] = useState(true);
-  const [ratingsError, setRatingsError] = useState("");
-  const [complaintsError, setComplaintsError] = useState("");
+  const [reviews] = useState(() => [...initialReviews]);
+  const [complaints] = useState(() => [...initialComplaints]);
   const [successMessage, setSuccessMessage] = useState("");
-  const [pendingActionKey, setPendingActionKey] = useState("");
 
-  useEffect(() => {
-    let isMounted = true;
-
-    async function loadProviderRatingsPage() {
-      setRatingsLoading(true);
-      setComplaintsLoading(true);
-      setRatingsError("");
-      setComplaintsError("");
-
-      const [reviewsResult, complaintsResult] = await Promise.all([
-        reviewService.getProviderReviews().then(
-          (value) => ({ status: "fulfilled", value }),
-          (reason) => ({ status: "rejected", reason })
-        ),
-        complaintService.getProviderComplaints().then(
-          (value) => ({ status: "fulfilled", value }),
-          (reason) => ({ status: "rejected", reason })
-        ),
-      ]);
-
-      if (!isMounted) return;
-
-      if (reviewsResult.status === "fulfilled") {
-        setReviews(reviewsResult.value);
-      } else {
-        setReviews([]);
-        setFallbackSummary(null);
-        setRatingsError(
-          getActionErrorMessage(reviewsResult.reason, DATA_ERROR_MESSAGE)
-        );
-      }
-
-      if (complaintsResult.status === "fulfilled") {
-        setComplaints(complaintsResult.value);
-      } else {
-        setComplaints([]);
-        setComplaintsError(
-          getActionErrorMessage(complaintsResult.reason, COMPLAINTS_ERROR_MESSAGE)
-        );
-      }
-
-      setComplaintsLoading(false);
-
-      if (reviewsResult.status === "fulfilled") {
-        try {
-          const nextSummary = await reviewService.getProviderRatingSummary(
-            reviewsResult.value
-          );
-
-          if (isMounted) {
-            setFallbackSummary(nextSummary);
-          }
-        } catch {
-          if (isMounted) {
-            setFallbackSummary(null);
-          }
-        }
-      }
-
-      if (isMounted) {
-        setRatingsLoading(false);
-      }
-    }
-
-    loadProviderRatingsPage();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [complaintService, reviewService]);
-
-  const ratingSummary = useMemo(
-    () => calculateSummary(reviews, fallbackSummary),
-    [reviews, fallbackSummary]
-  );
+  const ratingSummary = useMemo(() => calculateSummary(reviews), [reviews]);
 
   const sortedReviews = useMemo(
     () => sortReviewsByOption(reviews, reviewSort),
@@ -337,26 +230,6 @@ export function useProviderRatings({
     );
   }, [filteredComplaints, safeComplaintPage]);
 
-  function updateReviewReplyState(reviewId, providerReply) {
-    setReviews((currentReviews) =>
-      currentReviews.map((review) =>
-        String(review.id) === String(reviewId)
-          ? { ...review, providerReply }
-          : review
-      )
-    );
-  }
-
-  function updateComplaintState(nextComplaint) {
-    setComplaints((currentComplaints) =>
-      currentComplaints.map((complaint) =>
-        String(complaint.id) === String(nextComplaint.id)
-          ? nextComplaint
-          : complaint
-      )
-    );
-  }
-
   function setComplaintSearchTerm(value) {
     setComplaintSearchTermState(value);
     setComplaintPageState(1);
@@ -381,135 +254,6 @@ export function useProviderRatings({
     setComplaintPageState(page);
   }
 
-  async function retryComplaints() {
-    setComplaintsLoading(true);
-    setComplaintsError("");
-
-    try {
-      const nextComplaints = await complaintService.getProviderComplaints();
-      setComplaints(nextComplaints);
-    } catch (error) {
-      setComplaintsError(
-        getActionErrorMessage(error, COMPLAINTS_ERROR_MESSAGE)
-      );
-    } finally {
-      setComplaintsLoading(false);
-    }
-  }
-
-  async function submitReviewReply(reviewId, reply) {
-    setPendingActionKey(`review-reply-${reviewId}`);
-    setRatingsError("");
-    setSuccessMessage("");
-
-    try {
-      const nextReply = await reviewService.replyToReview(reviewId, reply);
-      updateReviewReplyState(reviewId, nextReply);
-      setSuccessMessage("تم إرسال الرد بنجاح");
-      return true;
-    } catch (error) {
-      setRatingsError(
-        getActionErrorMessage(error, "فشل إرسال الرد، يرجى المحاولة مرة أخرى.")
-      );
-      return false;
-    } finally {
-      setPendingActionKey("");
-    }
-  }
-
-  async function editReviewReply(reviewId, reply) {
-    setPendingActionKey(`review-reply-${reviewId}`);
-    setRatingsError("");
-    setSuccessMessage("");
-
-    try {
-      const nextReply = await reviewService.updateReviewReply(reviewId, reply);
-      updateReviewReplyState(reviewId, nextReply);
-      setSuccessMessage("تم تعديل الرد بنجاح");
-      return true;
-    } catch (error) {
-      setRatingsError(
-        getActionErrorMessage(error, "فشل تعديل الرد، يرجى المحاولة مرة أخرى.")
-      );
-      return false;
-    } finally {
-      setPendingActionKey("");
-    }
-  }
-
-  async function removeReviewReply(reviewId) {
-    setPendingActionKey(`review-delete-${reviewId}`);
-    setRatingsError("");
-    setSuccessMessage("");
-
-    try {
-      await reviewService.deleteReviewReply(reviewId);
-      updateReviewReplyState(reviewId, null);
-      setSuccessMessage("تم حذف الرد بنجاح");
-    } catch (error) {
-      setRatingsError(
-        getActionErrorMessage(error, "فشل حذف الرد، يرجى المحاولة مرة أخرى.")
-      );
-    } finally {
-      setPendingActionKey("");
-    }
-  }
-
-  async function submitComplaintReply(complaintId, payload) {
-    setPendingActionKey(`complaint-reply-${complaintId}`);
-    setComplaintsError("");
-    setSuccessMessage("");
-
-    try {
-      const nextComplaint = await complaintService.replyToComplaint(
-        complaintId,
-        payload
-      );
-
-      updateComplaintState(nextComplaint);
-      setSuccessMessage("تم إرسال الرد بنجاح");
-      return true;
-    } catch (error) {
-      setComplaintsError(
-        getActionErrorMessage(error, "فشل إرسال الرد، يرجى المحاولة مرة أخرى.")
-      );
-      return false;
-    } finally {
-      setPendingActionKey("");
-    }
-  }
-
-  async function updateComplaintStatus(complaintId, status) {
-    setPendingActionKey(`complaint-status-${complaintId}`);
-    setComplaintsError("");
-    setSuccessMessage("");
-
-    try {
-      const nextComplaint = await complaintService.updateComplaintStatus(
-        complaintId,
-        status
-      );
-
-      updateComplaintState(nextComplaint);
-      setSuccessMessage(
-        status === "resolved"
-          ? "تم حل الشكوى بنجاح"
-          : "تم تحديث حالة الشكوى بنجاح"
-      );
-      return true;
-    } catch (error) {
-      setComplaintsError(
-        getActionErrorMessage(
-          error,
-          "فشل تحديث حالة الشكوى، يرجى المحاولة مرة أخرى."
-        )
-      );
-      return false;
-    } finally {
-      setPendingActionKey("");
-    }
-  }
-
   return {
     advancedComplaintFilters,
     complaintFilter,
@@ -517,15 +261,14 @@ export function useProviderRatings({
     complaintSearchTerm,
     complaintStatusCounts,
     complaints: paginatedComplaints,
-    complaintsError,
+    complaintsError: "",
     complaintsForExport: filteredComplaints,
-    complaintsLoading,
+    complaintsLoading: false,
     hasActiveAdvancedFilters: hasActiveAdvancedFilters(advancedComplaintFilters),
-    isComplaintSearchActive: Boolean(complaintSearchTerm.trim()),
-    pendingActionKey,
+    pendingActionKey: "",
     ratingSummary,
-    ratingsError,
-    ratingsLoading,
+    ratingsError: "",
+    ratingsLoading: false,
     reviewSort,
     reviews: sortedReviews,
     setComplaintPage,
@@ -537,13 +280,12 @@ export function useProviderRatings({
     onAdvancedComplaintFiltersApply: applyAdvancedComplaintFilters,
     onAdvancedComplaintFiltersReset: resetAdvancedComplaintFilters,
     onComplaintFilterChange: changeComplaintFilter,
-    onComplaintReply: submitComplaintReply,
+    onComplaintReply: noopUnavailableAction,
     onComplaintSearchChange: setComplaintSearchTerm,
-    onComplaintStatusChange: updateComplaintStatus,
-    onComplaintsRetry: retryComplaints,
-    onDeleteReviewReply: removeReviewReply,
-    onEditReviewReply: editReviewReply,
-    onReplyToReview: submitReviewReply,
+    onComplaintStatusChange: noopUnavailableAction,
+    onDeleteReviewReply: noopUnavailableAction,
+    onEditReviewReply: noopUnavailableAction,
+    onReplyToReview: noopUnavailableAction,
   };
 }
 

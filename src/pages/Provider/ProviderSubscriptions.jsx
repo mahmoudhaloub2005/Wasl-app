@@ -7,6 +7,7 @@ import DeleteSubscriberModal from "../../components/Provider/subscriptions/Delet
 import ProviderSubscriptionsList from "../../components/Provider/subscriptions/ProviderSubscriptionsList";
 import ProviderSubscriptionsTabs from "../../components/Provider/subscriptions/ProviderSubscriptionsTabs";
 import Footer from "../../components/layout/Footer/Footer";
+import { providerServicePendingMessage } from "../../services/provider/providerFrontendStatus";
 import "./ProviderSubscriptions.css";
 
 const PENDING_REQUESTS_STORAGE_KEY = "wasel_provider_pending_requests";
@@ -92,7 +93,7 @@ function ProviderSubscriptions() {
       )
     );
     setSubscriberToDelete(null);
-    setSuccessMessage("تم حذف المشترك بنجاح");
+    setSuccessMessage(providerServicePendingMessage);
   }
 
   return (

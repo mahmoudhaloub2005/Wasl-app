@@ -11,6 +11,7 @@ import MarketAnalytics from "../../components/Provider/advertisements/MarketAnal
 import ProviderNavbar from "../../components/Provider/ProviderNavbar/ProviderNavbar";
 import Footer from "../../components/layout/Footer/Footer";
 import useProviderAdvertisements from "../../hooks/useProviderAdvertisements";
+import { providerServicePendingMessage } from "../../services/provider/providerFrontendStatus";
 import "./ProviderAdvertisements.css";
 
 function ProviderAdvertisements() {
@@ -61,7 +62,7 @@ function ProviderAdvertisements() {
     setSuccessMessage("");
     const createdAdvertisement = await createAdvertisement(formData);
 
-    setSuccessMessage("تم نشر الإعلان بنجاح.");
+    setSuccessMessage(providerServicePendingMessage);
     return createdAdvertisement;
   }
 
@@ -71,12 +72,12 @@ function ProviderAdvertisements() {
     if (editingAdvertisement) {
       await updateAdvertisement(editingAdvertisement.id, advertisementData);
       setEditingAdvertisement(null);
-      setSuccessMessage("تم حفظ تعديلات الإعلان بنجاح.");
+      setSuccessMessage(providerServicePendingMessage);
       return;
     }
 
     await createAdvertisement(advertisementData);
-    setSuccessMessage("تم نشر الإعلان بنجاح.");
+    setSuccessMessage(providerServicePendingMessage);
   }
 
   function handleEditAdvertisement(advertisement) {
@@ -90,7 +91,7 @@ function ProviderAdvertisements() {
 
     try {
       await toggleAdvertisementStatus(advertisementId);
-      setSuccessMessage("تم تحديث حالة الإعلان.");
+      setSuccessMessage(providerServicePendingMessage);
     } catch {
       // The hook exposes the Arabic error message in the page alert.
     }
@@ -109,7 +110,7 @@ function ProviderAdvertisements() {
       }
 
       setDeleteTarget(null);
-      setSuccessMessage("تم حذف الإعلان بنجاح.");
+      setSuccessMessage(providerServicePendingMessage);
     } catch {
       // The hook exposes the Arabic error message in the page alert.
     }

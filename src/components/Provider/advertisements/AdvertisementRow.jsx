@@ -53,13 +53,15 @@ function AdvertisementRow({
       <div className="advertisements-history-row__ad" role="cell">
         <span className="advertisements-history-row__thumb">
           {advertisement.imageUrl ? (
-            <img src={advertisement.imageUrl} alt={advertisement.title} />
+            <img src={advertisement.imageUrl} alt={advertisement.title || ""} />
           ) : (
             <FiImage aria-hidden="true" />
           )}
         </span>
-        <span>
-          <strong>{advertisement.title}</strong>
+        <span className="advertisements-history-row__content">
+          <strong dir="auto" title={advertisement.title || ""}>
+            {advertisement.title}
+          </strong>
           <small>{formatRelativeDate(advertisement.createdAt)}</small>
         </span>
       </div>

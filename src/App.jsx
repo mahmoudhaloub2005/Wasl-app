@@ -1,4 +1,4 @@
-﻿import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 // Public pages
 import Welcome from "./pages/public/Welcome";
@@ -48,6 +48,7 @@ import ProviderInvoices from "./pages/Provider/ProviderInvoices";
 import ProviderPayments from "./pages/Provider/ProviderPayments";
 import ProviderRatings from "./pages/Provider/ProviderRatings";
 import ProviderProfile from "./pages/Provider/ProviderProfile";
+import ProviderNotifications from "./pages/Provider/ProviderNotifications";
 import ProviderPreparedRoute from "./pages/Provider/ProviderPreparedRoute";
 
 function ProviderProtectedPage({ children }) {
@@ -297,7 +298,7 @@ function App() {
         path="/provider/notifications"
         element={
           <ProviderProtectedPage>
-            <ProviderPreparedRoute title="ط·آ§ط¸â€‍ط·آ¥ط·آ´ط·آ¹ط·آ§ط·آ±ط·آ§ط·ع¾" />
+            <ProviderNotifications />
           </ProviderProtectedPage>
         }
       />

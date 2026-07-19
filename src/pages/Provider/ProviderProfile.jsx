@@ -10,7 +10,7 @@ import ProviderProfileCard from "../../components/Provider/profile/ProviderProfi
 import ProviderProfileSkeleton from "../../components/Provider/profile/ProviderProfileSkeleton";
 import ProviderReadOnlyField from "../../components/Provider/profile/ProviderReadOnlyField";
 import useProviderProfile from "../../hooks/useProviderProfile";
-import { logoutProviderProfile } from "../../services/providerProfileService";
+import { clearAuthStorage } from "../../utils/authStorage";
 import "./ProviderProfile.css";
 
 function ProviderProfile() {
@@ -32,7 +32,7 @@ function ProviderProfile() {
     setIsLoggingOut(true);
 
     try {
-      await logoutProviderProfile();
+      clearAuthStorage();
     } finally {
       window.location.replace("/login");
     }

@@ -5,13 +5,16 @@ import AddGeneratorModal from "../../components/Provider/generators/AddGenerator
 import DeleteGeneratorModal from "../../components/Provider/generators/DeleteGeneratorModal";
 import EditGeneratorModal from "../../components/Provider/generators/EditGeneratorModal";
 import ProviderGeneratorsFeaturedList from "../../components/Provider/generators/ProviderGeneratorsFeaturedList";
-import ProviderGeneratorsHeader from "../../components/Provider/generators/ProviderGeneratorsHeader";
+import ProviderGeneratorsHeader, {
+  ProviderGeneratorsAddButton,
+} from "../../components/Provider/generators/ProviderGeneratorsHeader";
 import ProviderGeneratorsOverview from "../../components/Provider/generators/ProviderGeneratorsOverview";
 import ProviderGeneratorsTable from "../../components/Provider/generators/ProviderGeneratorsTable";
 import ProviderGeneratorsToolbar from "../../components/Provider/generators/ProviderGeneratorsToolbar";
 import ProviderNavbar from "../../components/Provider/ProviderNavbar/ProviderNavbar";
 import Footer from "../../components/layout/Footer/Footer";
 import useProviderGenerators from "../../hooks/useProviderGenerators";
+import { providerServicePendingMessage } from "../../services/provider/providerFrontendStatus";
 import "./ProviderGenerators.css";
 
 function ProviderGenerators() {
@@ -112,7 +115,7 @@ function ProviderGenerators() {
       setDeleteModalError("");
       await deleteGenerator(generatorToDelete.id);
       setGeneratorToDelete(null);
-      setGeneratorToast("تم حذف المولد بنجاح");
+      setGeneratorToast(providerServicePendingMessage);
     } catch (error) {
       setDeleteModalError(
         error?.message || "تعذر حذف المولد. حاول مرة أخرى."
@@ -121,17 +124,17 @@ function ProviderGenerators() {
   }
 
   function handleGeneratorCreated(result) {
+    const isFrontendOnly = result?.frontendOnly || result?.temporary;
+
     setGeneratorNotice({
-      tone: result.temporary ? "warning" : "success",
-      text: result.temporary
-        ? result.message
-        : "طھظ… طھط³ط¬ظٹظ„ ط§ظ„ظ…ظˆظ„ط¯ ط¨ظ†ط¬ط§ط­.",
+      tone: isFrontendOnly ? "warning" : "success",
+      text: result?.message || providerServicePendingMessage,
     });
   }
 
   async function handleSaveGenerator(updatedGenerator) {
     await updateGenerator(updatedGenerator);
-    setGeneratorToast("طھظ… ط­ظپط¸ طھط¹ط¯ظٹظ„ط§طھ ط§ظ„ظ…ظˆظ„ط¯ ط¨ظ†ط¬ط§ط­");
+    setGeneratorToast(providerServicePendingMessage);
   }
 
   return (
@@ -139,35 +142,40 @@ function ProviderGenerators() {
       <ProviderNavbar />
 
       <main className="provider-generators">
-        <ProviderGeneratorsHeader onAddGenerator={openAddGeneratorModal} />
-
-        {errorMessage && (
-          <div className="provider-generators-error" role="alert">
-            {errorMessage}
-          </div>
-        )}
-
-        {generatorNotice && (
-          <div
-            className={`provider-generators-notice provider-generators-notice--${generatorNotice.tone}`}
-            role="status"
-          >
-            {generatorNotice.text}
-          </div>
-        )}
-
         <section className="provider-generators__top">
-          <ProviderGeneratorsFeaturedList
-            generators={featuredGenerators}
-            isLoading={isLoading}
-            onActivate={activateGenerator}
-            onDelete={handleDeleteGenerator}
-            onEdit={handleOpenEditModal}
-            onMaintenance={placeGeneratorUnderMaintenance}
-            pendingActionKey={pendingActionKey}
-          />
+          <aside className="provider-generators__side">
+            <ProviderGeneratorsAddButton onAddGenerator={openAddGeneratorModal} />
+            <ProviderGeneratorsOverview overview={overview} />
+          </aside>
 
-          <ProviderGeneratorsOverview overview={overview} />
+          <div className="provider-generators__content">
+            <ProviderGeneratorsHeader />
+
+            {errorMessage && (
+              <div className="provider-generators-error" role="alert">
+                {errorMessage}
+              </div>
+            )}
+
+            {generatorNotice && (
+              <div
+                className={`provider-generators-notice provider-generators-notice--${generatorNotice.tone}`}
+                role="status"
+              >
+                {generatorNotice.text}
+              </div>
+            )}
+
+            <ProviderGeneratorsFeaturedList
+              generators={featuredGenerators}
+              isLoading={isLoading}
+              onActivate={activateGenerator}
+              onDelete={handleDeleteGenerator}
+              onEdit={handleOpenEditModal}
+              onMaintenance={placeGeneratorUnderMaintenance}
+              pendingActionKey={pendingActionKey}
+            />
+          </div>
         </section>
 
         {hasGenerators && (

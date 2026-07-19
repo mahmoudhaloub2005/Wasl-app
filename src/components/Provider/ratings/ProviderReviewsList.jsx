@@ -32,8 +32,8 @@ function ProviderReviewsList({
   if (!reviews.length) {
     return (
       <section className="provider-ratings-empty">
-        <h2>لا توجد تقييمات حتى الآن</h2>
-        <p>ستظهر تقييمات العملاء هنا عند وصولها.</p>
+        <h2>لا توجد بيانات حالياً</h2>
+        <p>ستظهر البيانات هنا عند توفرها.</p>
       </section>
     );
   }

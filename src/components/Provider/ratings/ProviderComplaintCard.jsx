@@ -3,7 +3,7 @@ import { FiUser } from "react-icons/fi";
 import {
   getComplaintPriorityLabel,
   getComplaintStatusLabel,
-} from "../../../services/providerComplaintService";
+} from "./providerComplaintsUi";
 import { formatComplaintTime } from "./providerRatingsFormatters";
 
 function getActionLabel(status) {

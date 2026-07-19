@@ -23,16 +23,12 @@
 }
 
 .provider-generators-header {
-  display: grid;
-  grid-template-columns: minmax(320px, 32%) minmax(0, 1fr);
-  align-items: flex-start;
-  gap: 24px;
-  margin-bottom: 24px;
-  direction: ltr;
+  margin: 0 0 24px;
+  direction: rtl;
+  text-align: right;
 }
 
 .provider-generators-header__text {
-  grid-column: 2;
   direction: rtl;
   text-align: right;
 }
@@ -53,8 +49,7 @@
 }
 
 .provider-generators-header__add {
-  grid-column: 1;
-  justify-self: start;
+  align-self: flex-start;
   min-width: 230px;
   height: 64px;
   border: 0;
@@ -142,6 +137,24 @@
   direction: ltr;
 }
 
+.provider-generators__side {
+  grid-column: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  align-self: start;
+  gap: 28px;
+  min-width: 0;
+  direction: ltr;
+}
+
+.provider-generators__content {
+  grid-column: 2;
+  min-width: 0;
+  direction: rtl;
+}
+
 .provider-generators-featured,
 .provider-generators-overview {
   direction: rtl;
@@ -149,13 +162,11 @@
 }
 
 .provider-generators-featured {
-  grid-column: 2;
   display: grid;
   gap: 32px;
 }
 
 .provider-generators-overview {
-  grid-column: 1;
   min-height: 286px;
   border-radius: 12px;
   background: #2848b8;
@@ -740,27 +751,25 @@
 }
 
 @media (max-width: 1080px) {
-  .provider-generators-header,
   .provider-generators__top {
     grid-template-columns: 1fr;
     direction: rtl;
   }
 
-  .provider-generators-header__text,
-  .provider-generators-header__add,
-  .provider-generators-featured,
-  .provider-generators-overview {
+  .provider-generators__side,
+  .provider-generators__content {
     grid-column: 1;
+  }
+
+  .provider-generators__side {
+    gap: 20px;
+    direction: rtl;
   }
 
   .provider-generators-header__add {
     width: 100%;
     min-width: 0;
-    justify-self: stretch;
-  }
-
-  .provider-generators-overview {
-    order: -1;
+    align-self: stretch;
   }
 
   .provider-generators__remaining {
@@ -774,14 +783,6 @@
   .provider-generators {
     width: calc(100% - 28px);
     padding-top: 34px;
-  }
-
-  .provider-generators-header {
-    align-items: stretch;
-  }
-
-  .provider-generators-header__add {
-    width: 100%;
   }
 
   .provider-generator-featured {

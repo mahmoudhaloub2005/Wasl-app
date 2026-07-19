@@ -5,7 +5,7 @@ import {
   complaintStatusOptions,
   getComplaintPriorityLabel,
   getComplaintStatusLabel,
-} from "../../../services/providerComplaintService";
+} from "./providerComplaintsUi";
 import { formatFullDateTime } from "./providerRatingsFormatters";
 
 function ComplaintReplyModal({

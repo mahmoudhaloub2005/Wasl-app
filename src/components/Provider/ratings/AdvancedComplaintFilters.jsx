@@ -4,7 +4,7 @@ import { FiX } from "react-icons/fi";
 import {
   complaintPriorityOptions,
   complaintStatusOptions,
-} from "../../../services/providerComplaintService";
+} from "./providerComplaintsUi";
 
 function AdvancedComplaintFilters({
   filters,

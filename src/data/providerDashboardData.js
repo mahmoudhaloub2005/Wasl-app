@@ -7,7 +7,7 @@ export const providerNavigationLinks = [
   },
   {
     id: "subscriptions",
-    label: "المشتركون",
+    label: "المشتركين",
     to: "/provider/subscriptions",
     activePaths: ["/provider/subscriptions"],
   },

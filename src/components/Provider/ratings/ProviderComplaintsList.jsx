@@ -1,9 +1,6 @@
 import { useState } from "react";
 
-import {
-  exportProviderComplaints,
-  getComplaintStatusLabel,
-} from "../../../services/providerComplaintService";
+import { exportProviderComplaints } from "./providerComplaintsUi";
 import AdvancedComplaintFilters from "./AdvancedComplaintFilters";
 import ComplaintDetailsModal from "./ComplaintDetailsModal";
 import ComplaintHistoryModal from "./ComplaintHistoryModal";
@@ -105,6 +102,7 @@ function downloadCsv(csvContent) {
 
 function ProviderComplaintsList({
   activeFilter,
+  canRetry = false,
   advancedFilters,
   complaints,
   complaintsForExport,
@@ -113,7 +111,6 @@ function ProviderComplaintsList({
   errorMessage,
   hasActiveAdvancedFilters,
   isLoading,
-  isSearchActive,
   onAdvancedFiltersApply,
   onAdvancedFiltersReset,
   onExportSuccess,
@@ -181,9 +178,11 @@ function ProviderComplaintsList({
       {errorMessage && (
         <section className="provider-ratings-empty provider-ratings-empty--error">
           <h2>{errorMessage}</h2>
-          <button type="button" onClick={onRetry}>
-            إعادة المحاولة
-          </button>
+          {canRetry && onRetry ? (
+            <button type="button" onClick={onRetry}>
+              إعادة المحاولة
+            </button>
+          ) : null}
         </section>
       )}
 
@@ -220,18 +219,8 @@ function ProviderComplaintsList({
 
       {!errorMessage && !isLoading && complaints.length === 0 && (
         <section className="provider-ratings-empty">
-          <h2>
-            {isSearchActive
-              ? "لا توجد نتائج مطابقة لبحثك."
-              : "لا توجد شكاوى مطابقة لخيارات البحث أو التصفية."}
-          </h2>
-          <p>
-            {counts.all === 0
-              ? "لا توجد شكاوى حتى الآن."
-              : activeFilter === "all"
-                ? "جرّب تعديل البحث أو الفلاتر لعرض نتائج أخرى."
-                : `لا توجد شكاوى بحالة ${getComplaintStatusLabel(activeFilter)} ضمن الفلاتر الحالية.`}
-          </p>
+          <h2>لا توجد بيانات حالياً</h2>
+          <p>ستظهر البيانات هنا عند توفرها.</p>
         </section>
       )}
 

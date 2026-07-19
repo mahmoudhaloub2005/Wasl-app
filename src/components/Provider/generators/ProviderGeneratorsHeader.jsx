@@ -1,4 +1,16 @@
-function ProviderGeneratorsHeader({ onAddGenerator }) {
+export function ProviderGeneratorsAddButton({ onAddGenerator }) {
+  return (
+    <button
+      type="button"
+      className="provider-generators-header__add"
+      onClick={onAddGenerator}
+    >
+      إضافة مولد جديد
+    </button>
+  );
+}
+
+function ProviderGeneratorsHeader() {
   return (
     <section
       className="provider-generators-header"
@@ -8,14 +20,6 @@ function ProviderGeneratorsHeader({ onAddGenerator }) {
         <h1 id="provider-generators-title">إدارة المولدات والأسعار</h1>
         <p>متابعة حالة المولدات الحالية وتعديل معايير الخدمة</p>
       </div>
-
-      <button
-        type="button"
-        className="provider-generators-header__add"
-        onClick={onAddGenerator}
-      >
-        إضافة مولد جديد
-      </button>
     </section>
   );
 }

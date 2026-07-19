@@ -7,11 +7,13 @@ import FinancialSummaryCards from "../../components/Provider/finance/FinancialSu
 import ProviderFinanceLayout from "../../components/Provider/finance/ProviderFinanceLayout";
 import SubscriberCapacityCard from "../../components/Provider/finance/SubscriberCapacityCard";
 import useProviderFinance from "../../hooks/useProviderFinance";
+import { getProviderDisplayName } from "../../utils/providerUserProfile";
 import "./ProviderFinance.css";
 
 function ProviderFinance() {
   const navigate = useNavigate();
   const finance = useProviderFinance();
+  const providerName = getProviderDisplayName();
 
   function goTo(path) {
     navigate(path);
@@ -29,7 +31,7 @@ function ProviderFinance() {
     <ProviderFinanceLayout>
       <FinanceHeader
         title="الإدارة المالية"
-        description="مرحباً بك في مركز التحكم المالي لمؤسستك"
+        description="مرحباً بك في مركز التحكم المالي لمولدك"
       />
 
       {finance.errorMessage && (
@@ -51,8 +53,10 @@ function ProviderFinance() {
       />
 
       <FinanceQuickAccess
+        invoices={finance.invoices}
         items={finance.quickAccessItems}
         onNavigate={goTo}
+        providerName={providerName}
       />
 
       <section className="provider-finance__details">

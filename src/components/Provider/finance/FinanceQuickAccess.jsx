@@ -1,6 +1,6 @@
 import FinanceQuickAccessCard from "./FinanceQuickAccessCard";
 
-function FinanceQuickAccess({ items, onNavigate }) {
+function FinanceQuickAccess({ invoices = [], items, onNavigate, providerName = "" }) {
   return (
     <section className="finance-quick" aria-labelledby="finance-quick-title">
       <h2 id="finance-quick-title">الوصول السريع</h2>
@@ -8,9 +8,11 @@ function FinanceQuickAccess({ items, onNavigate }) {
       <div className="finance-quick__grid">
         {items.map((item) => (
           <FinanceQuickAccessCard
+            invoices={item.id === "reports" ? invoices : []}
             item={item}
             key={item.id}
             onNavigate={onNavigate}
+            providerName={providerName}
           />
         ))}
       </div>

@@ -3,7 +3,7 @@ import { FiX } from "react-icons/fi";
 import {
   getComplaintPriorityLabel,
   getComplaintStatusLabel,
-} from "../../../services/providerComplaintService";
+} from "./providerComplaintsUi";
 import ComplaintHistoryTimeline from "./ComplaintHistoryTimeline";
 import { formatFullDateTime } from "./providerRatingsFormatters";
 

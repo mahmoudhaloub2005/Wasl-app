@@ -1034,6 +1034,10 @@
   transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
 }
 
+.finance-quick-card--reports {
+  cursor: default;
+}
+
 .finance-quick-card:hover,
 .finance-quick-card:focus-visible {
   border-color: #b9c8ee;
@@ -1078,9 +1082,32 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   cursor: pointer;
   font-size: 15px;
   font-weight: 900;
+}
+
+.finance-quick-card__button svg {
+  flex: 0 0 auto;
+  font-size: 17px;
+}
+
+.finance-quick-card__button:disabled {
+  cursor: progress;
+  opacity: 0.72;
+}
+
+.finance-quick-card .finance-quick-card__message {
+  margin: 10px 0 0;
+  color: #9a5b00;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.finance-quick-card .finance-quick-card__message--error {
+  color: #b42318;
 }
 
 .finance-quick-card__button--blue {

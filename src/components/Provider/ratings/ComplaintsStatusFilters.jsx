@@ -1,4 +1,4 @@
-import { complaintStatusOptions } from "../../../services/providerComplaintService";
+import { complaintStatusOptions } from "./providerComplaintsUi";
 
 function ComplaintsStatusFilters({ activeFilter, counts, onChange }) {
   return (

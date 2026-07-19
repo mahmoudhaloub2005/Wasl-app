@@ -1,7 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
-import providerDashboardService from "../services/providerDashboardService";
-import { subscribeProviderDemoStore } from "../services/providerDemoStore";
 import {
   providerDashboardCopy,
   providerQuickActions,
@@ -9,14 +7,17 @@ import {
   providerWorkingHourPeriods,
 } from "../data/providerDashboardData";
 import { getProviderProfile } from "../utils/providerUserProfile";
+import useProviderNotifications from "./useProviderNotifications";
 
 const INITIAL_ACTIVITY_LIMIT = 3;
 
-const initialDashboardState = {
-  summary: null,
-  activities: [],
-  generatorsUsage: [],
-  notifications: [],
+const emptySummary = {
+  activeSubscribers: 0,
+  hasUrgentSubscriptionRequests: false,
+  monthlyIncome: 0,
+  monthlyIncomeChange: null,
+  newSubscribers: 0,
+  newSubscriptionRequests: 0,
 };
 
 function formatNumber(value) {
@@ -32,8 +33,6 @@ function formatSignedNumber(value, suffix = "") {
 }
 
 function buildSummaryCards(summary) {
-  if (!summary) return [];
-
   const values = {
     monthlyIncome: formatNumber(summary.monthlyIncome),
     activeSubscribers: formatNumber(summary.activeSubscribers),
@@ -72,114 +71,22 @@ function buildGeneratorsUsage(generators) {
   }));
 }
 
-function getUnreadNotificationsCount(notifications) {
-  return notifications.filter((notification) => !notification.isRead).length;
-}
 
-function getErrorMessage(error) {
-  return error?.message || providerDashboardCopy.errorMessage;
-}
-
-export function useProviderDashboard(
-  dashboardService = providerDashboardService
-) {
+export function useProviderDashboard() {
   const [activeChartPeriod, setActiveChartPeriod] = useState("weekly");
   const [showAllActivities, setShowAllActivities] = useState(false);
-  const [dashboardData, setDashboardData] = useState(initialDashboardState);
-  const [workingHours, setWorkingHours] = useState(null);
-  const [isDashboardLoading, setIsDashboardLoading] = useState(true);
-  const [isWorkingHoursLoading, setIsWorkingHoursLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [workingHoursErrorMessage, setWorkingHoursErrorMessage] = useState("");
+  const [dashboardData, setDashboardData] = useState({
+    activities: [],
+    generatorsUsage: [],
+  });
   const [providerProfile] = useState(() => getProviderProfile());
-  const [storeVersion, setStoreVersion] = useState(0);
+  const {
+    addNotification,
+    notifications,
+    unreadCount: unreadNotificationsCount,
+  } = useProviderNotifications();
 
-  useEffect(() => {
-    return subscribeProviderDemoStore(() => {
-      setStoreVersion((currentVersion) => currentVersion + 1);
-    });
-  }, []);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    async function loadDashboardData() {
-      try {
-        setIsDashboardLoading(true);
-        setErrorMessage("");
-
-        const [summary, activities, generatorsUsage, notifications] =
-          await Promise.all([
-            dashboardService.getProviderDashboardSummary(),
-            dashboardService.getProviderActivities(),
-            dashboardService.getProviderGeneratorsUsage(),
-            dashboardService.getProviderNotifications(),
-          ]);
-
-        if (isMounted) {
-          setDashboardData({
-            summary,
-            activities,
-            generatorsUsage,
-            notifications,
-          });
-        }
-      } catch (error) {
-        if (isMounted) {
-          setDashboardData(initialDashboardState);
-          setErrorMessage(getErrorMessage(error));
-        }
-      } finally {
-        if (isMounted) {
-          setIsDashboardLoading(false);
-        }
-      }
-    }
-
-    loadDashboardData();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [dashboardService, storeVersion]);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    async function loadWorkingHours() {
-      try {
-        setIsWorkingHoursLoading(true);
-        setWorkingHoursErrorMessage("");
-
-        const nextWorkingHours =
-          await dashboardService.getProviderWorkingHours(activeChartPeriod);
-
-        if (isMounted) {
-          setWorkingHours(nextWorkingHours);
-        }
-      } catch (error) {
-        if (isMounted) {
-          setWorkingHours(null);
-          setWorkingHoursErrorMessage(getErrorMessage(error));
-        }
-      } finally {
-        if (isMounted) {
-          setIsWorkingHoursLoading(false);
-        }
-      }
-    }
-
-    loadWorkingHours();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [activeChartPeriod, dashboardService]);
-
-  const stats = useMemo(
-    () => buildSummaryCards(dashboardData.summary),
-    [dashboardData.summary]
-  );
+  const stats = useMemo(() => buildSummaryCards(emptySummary), []);
 
   const activities = useMemo(
     () => buildActivities(dashboardData.activities),
@@ -196,17 +103,13 @@ export function useProviderDashboard(
     [dashboardData.generatorsUsage]
   );
 
-  const unreadNotificationsCount = useMemo(
-    () => getUnreadNotificationsCount(dashboardData.notifications),
-    [dashboardData.notifications]
-  );
 
-  const addFrontendNotification = useCallback((notification) => {
-    setDashboardData((currentData) => ({
-      ...currentData,
-      notifications: [notification, ...currentData.notifications],
-    }));
-  }, []);
+  const addFrontendNotification = useCallback(
+    (notification) => {
+      addNotification(notification);
+    },
+    [addNotification]
+  );
 
   return {
     activeChartPeriod,
@@ -214,11 +117,11 @@ export function useProviderDashboard(
     activities: visibleActivities,
     chartPeriods: providerWorkingHourPeriods,
     dashboardCopy: providerDashboardCopy,
-    errorMessage,
+    errorMessage: "",
     generatorsUsage,
-    isDashboardLoading,
-    isWorkingHoursLoading,
-    notifications: dashboardData.notifications,
+    isDashboardLoading: false,
+    isWorkingHoursLoading: false,
+    notifications,
     providerProfile,
     quickActions: providerQuickActions,
     setActiveChartPeriod,
@@ -226,8 +129,8 @@ export function useProviderDashboard(
     showAllActivities,
     stats,
     unreadNotificationsCount,
-    workingHours,
-    workingHoursErrorMessage,
+    workingHours: { period: activeChartPeriod, points: [] },
+    workingHoursErrorMessage: "",
   };
 }
 

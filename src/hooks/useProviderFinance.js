@@ -1,8 +1,4 @@
-﻿import { useCallback, useEffect, useMemo, useState } from "react";
-
-import providerFinanceService from "../services/providerFinanceService";
-import { subscribeProviderDemoStore } from "../services/providerDemoStore";
-import { getStoredToken } from "../utils/authStorage";
+import { useCallback, useMemo, useState } from "react";
 
 const DEFAULT_PAGE_SIZE = 10;
 const knownStatuses = ["paid", "pending", "overdue", "draft"];
@@ -13,46 +9,12 @@ const initialFinanceState = {
   summary: null,
 };
 
-const invoicesConnectionErrorMessage = "تعذر الاتصال بالخادم وتحميل الفواتير";
-const invoicesLoginRequiredMessage =
-  "يجب تسجيل الدخول بحساب مزود خدمة حقيقي لعرض الفواتير";
-
 const statusLabels = {
   draft: "مسودة",
   overdue: "متأخرة",
   paid: "مدفوعة",
   pending: "قيد الانتظار",
 };
-
-function getErrorMessage(error) {
-  return (
-    error?.message ||
-    "تعذر تحميل بيانات الإدارة المالية. تأكد من توفر الخادم أو حاول مرة أخرى."
-  );
-}
-
-function getInvoicesErrorMessage(error) {
-  const status = error?.response?.status || error?.status;
-
-  if (status === 403) {
-    return "لا تملك صلاحية الوصول إلى الفواتير";
-  }
-
-  if (status >= 500) {
-    return "خطأ في الخادم أثناء تحميل الفواتير";
-  }
-
-  if (
-    status === 404 ||
-    status === 405 ||
-    error?.code === "ERR_NETWORK" ||
-    error?.code === "PROVIDER_INVOICES_ENDPOINT_MISSING"
-  ) {
-    return invoicesConnectionErrorMessage;
-  }
-
-  return error?.displayMessage || error?.message || invoicesConnectionErrorMessage;
-}
 
 function normalizeStatus(value) {
   return knownStatuses.includes(value) ? value : "draft";
@@ -162,26 +124,11 @@ function invoiceMatchesSearch(invoice, query) {
   return searchableText.includes(query.toLowerCase());
 }
 
-function sumPaidRecordsForCurrentYear(records) {
-  const currentYear = new Date().getFullYear();
-
-  return records
-    .filter((record) => record.status === "paid")
-    .filter((record) => {
-      const date = new Date(record.dueDate || "");
-
-      return !Number.isNaN(date.getTime()) && date.getFullYear() === currentYear;
-    })
-    .reduce((total, record) => total + Number(record.amount || 0), 0);
-}
-
 function buildDashboardSummary(summary, records) {
-  const yearlyRevenue = sumPaidRecordsForCurrentYear(records);
-
   return {
     ...summary,
     hasFinancialData: summary?.hasFinancialData || records.length > 0,
-    yearlyRevenue: yearlyRevenue || summary?.yearlyRevenue || summary?.weeklyRevenue || 0,
+    yearlyRevenue: summary?.yearlyRevenue || summary?.weeklyRevenue || 0,
     yearlyRevenueChange: summary?.yearlyRevenueChange ?? summary?.weeklyRevenueChange,
   };
 }
@@ -212,8 +159,8 @@ function buildQuickAccessItems(summary) {
     },
     {
       id: "reports",
-      buttonLabel: "عرض التقارير",
-      description: "الوصول إلى تقارير الأداء المالي والملخصات الدورية",
+      buttonLabel: "تقرير الشهر جاهز",
+      description: "استخراج التقارير بصيغة PDF وجداول",
       iconKey: "chart",
       path: "/provider/finance/reports",
       title: "التقارير المالية",
@@ -222,25 +169,8 @@ function buildQuickAccessItems(summary) {
   ];
 }
 
-function resolveProviderFinanceOptions(options) {
-  if (options?.getProviderFinancialSummary) {
-    return {
-      financeService: options,
-      invoicesOnly: false,
-    };
-  }
-
-  return {
-    financeService: options?.financeService || providerFinanceService,
-    invoicesOnly: options?.invoicesOnly === true,
-  };
-}
-
-export function useProviderFinance(options = {}) {
-  const { financeService, invoicesOnly } = resolveProviderFinanceOptions(options);
-  const [financeState, setFinanceState] = useState(initialFinanceState);
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("");
+export function useProviderFinance() {
+  const [financeState] = useState(initialFinanceState);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
@@ -248,76 +178,6 @@ export function useProviderFinance(options = {}) {
   const [isCreateInvoiceModalOpen, setIsCreateInvoiceModalOpen] = useState(false);
   const [isAdvancedFilterOpen, setIsAdvancedFilterOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
-  const [storeVersion, setStoreVersion] = useState(0);
-
-  useEffect(() => {
-    if (invoicesOnly) return undefined;
-
-    return subscribeProviderDemoStore(() => {
-      setStoreVersion((currentVersion) => currentVersion + 1);
-    });
-  }, [invoicesOnly]);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    async function loadFinanceData() {
-      try {
-        setIsLoading(true);
-        setErrorMessage("");
-
-        if (invoicesOnly) {
-          if (!getStoredToken()) {
-            if (isMounted) {
-              setFinanceState(initialFinanceState);
-              setErrorMessage(invoicesLoginRequiredMessage);
-            }
-
-            return;
-          }
-
-          const records = await financeService.getProviderInvoices();
-
-          if (isMounted) {
-            setFinanceState({
-              capacity: [],
-              records: Array.isArray(records) ? records : [],
-              summary: null,
-            });
-          }
-
-          return;
-        }
-
-        const [summary, records, capacity] = await Promise.all([
-          financeService.getProviderFinancialSummary(),
-          financeService.getProviderFinancialRecords(),
-          financeService.getProviderGeneratorCapacity(),
-        ]);
-
-        if (isMounted) {
-          setFinanceState({ capacity, records, summary });
-        }
-      } catch (error) {
-        if (isMounted) {
-          setFinanceState(initialFinanceState);
-          setErrorMessage(
-            invoicesOnly ? getInvoicesErrorMessage(error) : getErrorMessage(error)
-          );
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    loadFinanceData();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [financeService, invoicesOnly, storeVersion]);
 
   const invoices = useMemo(() => {
     return financeState.records.map(normalizeInvoiceRecord);
@@ -354,14 +214,6 @@ export function useProviderFinance(options = {}) {
     : filteredInvoices;
   const dashboardRecords = invoices.slice(0, 4);
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery, selectedStatus]);
-
-  useEffect(() => {
-    setCurrentPage((page) => Math.min(page, totalPages));
-  }, [totalPages]);
-
   const setInvoicePage = useCallback(
     (page) => {
       setCurrentPage(Math.max(1, Math.min(page, totalPages)));
@@ -392,10 +244,7 @@ export function useProviderFinance(options = {}) {
   }, []);
 
   const downloadInvoice = useCallback(() => false, []);
-
-  const refreshInvoices = useCallback(() => {
-    setStoreVersion((currentVersion) => currentVersion + 1);
-  }, []);
+  const refreshInvoices = useCallback(() => false, []);
 
   return {
     capacity: financeState.capacity,
@@ -405,13 +254,13 @@ export function useProviderFinance(options = {}) {
     dashboardRecords,
     dashboardSummary,
     downloadInvoice,
-    errorMessage,
+    errorMessage: "",
     filteredInvoices,
     invoiceSummaryCards,
     invoices,
     isAdvancedFilterOpen,
     isCreateInvoiceModalOpen,
-    isLoading,
+    isLoading: false,
     isUsingDemoInvoices: false,
     openCreateInvoiceModal,
     pageSize,
@@ -433,5 +282,3 @@ export function useProviderFinance(options = {}) {
 }
 
 export default useProviderFinance;
-
-

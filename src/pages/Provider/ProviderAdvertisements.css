@@ -5,6 +5,7 @@
   font-family: "Noto Sans Arabic", "Tajawal", Arial, sans-serif;
   display: flex;
   flex-direction: column;
+  overflow-x: clip;
 }
 
 .provider-advertisements-page * {
@@ -413,6 +414,9 @@
 .advertisements-history-card {
   min-height: 610px;
   padding: 43px 38px 34px;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .advertisements-history-card__header {
@@ -421,6 +425,7 @@
   justify-content: space-between;
   gap: 24px;
   margin-bottom: 32px;
+  min-width: 0;
 }
 
 .advertisements-history-card__header h2 {
@@ -429,6 +434,7 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
   font-size: 29px;
   font-weight: 900;
   line-height: 1.2;
@@ -455,16 +461,21 @@
 
 .advertisements-history-table {
   width: 100%;
+  max-width: 100%;
   display: grid;
   direction: rtl;
+  overflow: hidden;
 }
 
 .advertisements-history-table__head,
 .advertisements-history-row {
   display: grid;
-  grid-template-columns: minmax(245px, 1.3fr) minmax(120px, 0.58fr) minmax(100px, 0.5fr) minmax(170px, 0.65fr);
+  grid-template-columns: minmax(0, 1fr) 90px 120px 160px;
   align-items: center;
-  gap: 24px;
+  gap: 20px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .advertisements-history-table__head {
@@ -475,9 +486,28 @@
   font-weight: 900;
 }
 
+.advertisements-history-table__head span {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.advertisements-history-table__head span:first-child {
+  justify-self: stretch;
+  text-align: right;
+}
+
+.advertisements-history-table__head span:not(:first-child) {
+  justify-self: center;
+  text-align: center;
+}
+
 .advertisements-history-row {
-  min-height: 96px;
+  min-height: 104px;
   border-bottom: 1px solid #edf0f5;
+  padding: 16px 0;
 }
 
 .advertisements-history-row:last-child {
@@ -489,12 +519,18 @@
   align-items: center;
   gap: 14px;
   min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  direction: rtl;
+  text-align: right;
 }
 
 .advertisements-history-row__thumb {
-  flex: 0 0 auto;
-  width: 54px;
-  height: 54px;
+  flex: 0 0 64px;
+  width: 64px;
+  min-width: 64px;
+  max-width: 64px;
+  height: 64px;
   border-radius: 8px;
   background: #e8f0ff;
   color: #00359b;
@@ -506,58 +542,106 @@
 
 .advertisements-history-row__thumb img {
   width: 100%;
+  max-width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
+.advertisements-history-row__thumb svg {
+  flex: 0 0 auto;
+}
+
+.advertisements-history-row__content,
 .advertisements-history-row__ad strong,
 .advertisements-history-row__ad small {
   display: block;
   min-width: 0;
+  max-width: 100%;
+}
+
+.advertisements-history-row__content {
+  display: grid;
+  align-content: center;
+  gap: 4px;
 }
 
 .advertisements-history-row__ad strong {
   color: #111d34;
+  display: -webkit-box;
   overflow: hidden;
   font-size: 18px;
   font-weight: 900;
   line-height: 1.35;
+  text-align: right;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
 .advertisements-history-row__ad small {
-  margin-top: 4px;
+  margin-top: 0;
   color: #707887;
+  overflow: hidden;
   font-size: 14px;
   font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .advertisements-history-row__views {
   color: #111d34;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  justify-self: center;
   gap: 7px;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
   font-size: 18px;
   font-weight: 900;
+  white-space: nowrap;
 }
 
 .advertisements-history-row__views svg {
+  flex: 0 0 auto;
   color: #0c7a56;
   font-size: 17px;
 }
 
+.advertisements-history-row__views strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.advertisements-history-row__status {
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
 .advertisements-history-row__badge {
   min-width: 58px;
+  max-width: 100%;
   min-height: 31px;
   border-radius: 6px;
   padding: 5px 10px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
   font-size: 13px;
   font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .advertisements-history-row__badge--active {
@@ -573,11 +657,18 @@
 .advertisements-history-row__actions {
   display: flex;
   align-items: center;
+  justify-content: center;
+  justify-self: center;
   gap: 8px;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .advertisements-history-row__actions button {
+  flex: 0 0 34px;
   width: 34px;
+  min-width: 34px;
   height: 34px;
   border: 0;
   border-radius: 8px;
@@ -883,8 +974,8 @@
 
   .advertisements-history-table__head,
   .advertisements-history-row {
-    grid-template-columns: minmax(210px, 1.1fr) minmax(100px, 0.5fr) minmax(86px, 0.42fr) minmax(148px, 0.6fr);
-    gap: 18px;
+    grid-template-columns: minmax(0, 1fr) 84px 112px 148px;
+    gap: 16px;
   }
 
   .advertisements-history-row__actions {
@@ -955,26 +1046,56 @@
     padding: 28px 24px;
   }
 
+  .advertisements-history-table {
+    overflow: visible;
+  }
+
   .advertisements-history-table__head {
     display: none;
   }
 
   .advertisements-history-row {
-    grid-template-columns: 1fr;
-    gap: 14px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "ad ad"
+      "views status"
+      "actions actions";
+    gap: 14px 12px;
     min-height: 0;
-    padding: 20px 0;
+    margin-bottom: 12px;
+    border: 1px solid #edf0f5;
+    border-radius: 12px;
+    background: #ffffff;
+    padding: 16px;
   }
 
-  .advertisements-history-row__views,
-  .advertisements-history-row__status,
-  .advertisements-history-row__actions {
+  .advertisements-history-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .advertisements-history-row__ad {
+    grid-area: ad;
+    align-items: flex-start;
+  }
+
+  .advertisements-history-row__views {
+    grid-area: views;
     justify-self: stretch;
+    justify-content: center;
+  }
+
+  .advertisements-history-row__status {
+    grid-area: status;
+    justify-self: stretch;
+    justify-content: center;
   }
 
   .advertisements-history-row__actions {
+    grid-area: actions;
+    justify-self: stretch;
     justify-content: flex-start;
     flex-wrap: wrap;
+    overflow: visible;
   }
 
   .market-analytics__header {
@@ -988,7 +1109,6 @@
     max-width: 100%;
   }
 }
-
 @media (max-width: 560px) {
   .advertisement-overview {
     flex-direction: column-reverse;

@@ -13,6 +13,7 @@ import ProviderGeneratorUsageGrid from "../../components/Provider/dashboard/Prov
 import ProviderErrorState from "../../components/Provider/dashboard/ProviderErrorState";
 import Footer from "../../components/layout/Footer/Footer";
 import useProviderAdvertisements from "../../hooks/useProviderAdvertisements";
+import { providerServicePendingMessage } from "../../services/provider/providerFrontendStatus";
 import useProviderDashboard from "../../hooks/useProviderDashboard";
 import "./ProviderHome.css";
 
@@ -81,7 +82,7 @@ function ProviderHome() {
   async function handleCreateAdvertisement(formData) {
     const createdAdvertisement = await createAdvertisement(formData);
 
-    setAdvertisementNotice("تم نشر الإعلان بنجاح.");
+    setAdvertisementNotice(providerServicePendingMessage);
     return createdAdvertisement;
   }
 
@@ -94,7 +95,7 @@ function ProviderHome() {
     };
 
     addFrontendNotification(newNotification);
-    setNotificationToast("تم إرسال التنبيه بنجاح");
+    setNotificationToast(providerServicePendingMessage);
 
     return newNotification;
   }
@@ -167,7 +168,7 @@ function ProviderHome() {
         isOpen={isAdvertisementModalOpen}
         isSubmitting={advertisementPendingActionKey === "create"}
         onClose={() => setIsAdvertisementModalOpen(false)}
-        onCreated={() => setAdvertisementNotice("تم نشر الإعلان بنجاح.")}
+        onCreated={() => setAdvertisementNotice(providerServicePendingMessage)}
         onSubmit={handleCreateAdvertisement}
       />
 

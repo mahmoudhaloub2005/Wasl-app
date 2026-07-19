@@ -294,6 +294,12 @@ function AddGeneratorModal({ isOpen, onClose, onCreated, onSubmit }) {
       const result = await onSubmit(prepareGeneratorPayload(values));
 
       onCreated?.(result);
+
+      if (result?.frontendOnly) {
+        setApiError(result.message);
+        return;
+      }
+
       closeImmediately();
     } catch (error) {
       if (error?.fieldErrors) {

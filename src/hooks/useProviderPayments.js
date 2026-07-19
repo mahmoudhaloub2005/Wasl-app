@@ -1,7 +1,6 @@
-﻿import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
-import providerPaymentsService from "../services/providerPaymentsService";
-import { getStoredToken } from "../utils/authStorage";
+import { providerServicePendingMessage } from "../services/provider/providerFrontendStatus";
 
 const pendingStatuses = new Set(["pending", "review", "waiting", "under_review"]);
 const completedStatuses = new Set(["approved", "accepted", "rejected", "completed", "paid", "declined"]);
@@ -14,38 +13,9 @@ function isCompletedPayment(payment) {
   return completedStatuses.has(String(payment.status || "").toLowerCase());
 }
 
-function getPaymentErrorMessage(error) {
-  const status = error?.response?.status || error?.status;
-
-  if (status === 403) {
-    return "لا تملك صلاحية مراجعة طلبات الدفع";
-  }
-
-  if (status >= 500) {
-    return "حدث خطأ في الخادم أثناء تحميل طلبات الدفع";
-  }
-
-  if (
-    status === 404 ||
-    status === 405 ||
-    error?.code === "ERR_NETWORK" ||
-    error?.code === "PROVIDER_PAYMENTS_ENDPOINT_MISSING"
-  ) {
-    return "تعذر تحميل طلبات الدفع، يرجى المحاولة لاحقًا";
-  }
-
-  return error?.displayMessage || error?.message || "تعذر تحميل طلبات الدفع، يرجى المحاولة لاحقًا";
-}
-
-function getActionErrorMessage(error, fallback) {
-  return error?.response?.data?.message || error?.displayMessage || error?.message || fallback;
-}
-
-export function useProviderPayments(paymentsService = providerPaymentsService) {
-  const [payments, setPayments] = useState([]);
+export function useProviderPayments() {
+  const [payments] = useState([]);
   const [activeTab, setActiveTab] = useState("pending");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [processingPaymentId, setProcessingPaymentId] = useState("");
   const [processingAction, setProcessingAction] = useState("");
@@ -64,60 +34,19 @@ export function useProviderPayments(paymentsService = providerPaymentsService) {
   );
   const visiblePayments = activeTab === "pending" ? pendingPayments : completedPayments;
 
-  const fetchPayments = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError("");
-      setSuccessMessage("");
-
-      if (!getStoredToken()) {
-        setPayments([]);
-        setError("يجب تسجيل الدخول بحساب مزود خدمة لعرض طلبات الدفع");
-        return;
-      }
-
-      const result = await paymentsService.getProviderPaymentRequests({
-        status: activeTab,
-      });
-
-      setPayments(Array.isArray(result) ? result : []);
-    } catch (fetchError) {
-      setPayments([]);
-      setError(getPaymentErrorMessage(fetchError));
-    } finally {
-      setLoading(false);
-    }
-  }, [activeTab, paymentsService]);
-
-  useEffect(() => {
-    fetchPayments();
-  }, [fetchPayments]);
-
-  const refreshPayments = useCallback(() => {
-    fetchPayments();
-  }, [fetchPayments]);
+  const refreshPayments = useCallback(() => false, []);
 
   const approvePayment = useCallback(
     async (payment) => {
       if (!payment?.id || processingPaymentId) return;
 
-      try {
-        setError("");
-        setSuccessMessage("");
-        setProcessingPaymentId(payment.id);
-        setProcessingAction("approve");
-
-        await paymentsService.approveProviderPaymentRequest(payment.id);
-        setSuccessMessage("تم اعتماد طلب الدفع بنجاح");
-        await fetchPayments();
-      } catch (approveError) {
-        setError(getActionErrorMessage(approveError, "تعذر اعتماد طلب الدفع"));
-      } finally {
-        setProcessingPaymentId("");
-        setProcessingAction("");
-      }
+      setProcessingPaymentId(payment.id);
+      setProcessingAction("approve");
+      setSuccessMessage(providerServicePendingMessage);
+      setProcessingPaymentId("");
+      setProcessingAction("");
     },
-    [fetchPayments, paymentsService, processingPaymentId]
+    [processingPaymentId]
   );
 
   const openRejectModal = useCallback((payment) => {
@@ -144,27 +73,15 @@ export function useProviderPayments(paymentsService = providerPaymentsService) {
       return;
     }
 
-    try {
-      setError("");
-      setSuccessMessage("");
-      setRejectError("");
-      setProcessingPaymentId(selectedPayment.id);
-      setProcessingAction("reject");
-
-      await paymentsService.rejectProviderPaymentRequest(selectedPayment.id, {
-        reason,
-      });
-      setSuccessMessage("تم رفض طلب الدفع بنجاح");
-      setSelectedPayment(null);
-      setRejectReason("");
-      await fetchPayments();
-    } catch (rejectRequestError) {
-      setRejectError(getActionErrorMessage(rejectRequestError, "تعذر رفض طلب الدفع"));
-    } finally {
-      setProcessingPaymentId("");
-      setProcessingAction("");
-    }
-  }, [fetchPayments, paymentsService, processingPaymentId, rejectReason, selectedPayment]);
+    setRejectError("");
+    setProcessingPaymentId(selectedPayment.id);
+    setProcessingAction("reject");
+    setSuccessMessage(providerServicePendingMessage);
+    setSelectedPayment(null);
+    setRejectReason("");
+    setProcessingPaymentId("");
+    setProcessingAction("");
+  }, [processingPaymentId, rejectReason, selectedPayment]);
 
   const openProofPreview = useCallback((proof) => {
     if (proof?.url) {
@@ -182,9 +99,9 @@ export function useProviderPayments(paymentsService = providerPaymentsService) {
     closeProofPreview,
     closeRejectModal,
     completedPayments,
-    error,
-    fetchPayments,
-    loading,
+    error: "",
+    fetchPayments: refreshPayments,
+    loading: false,
     openProofPreview,
     openRejectModal,
     pendingPayments,

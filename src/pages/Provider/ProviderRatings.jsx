@@ -37,7 +37,6 @@ function ProviderRatings() {
     complaintsForExport,
     complaintsLoading,
     hasActiveAdvancedFilters,
-    isComplaintSearchActive,
     pendingActionKey,
     ratingSummary,
     ratingsError,
@@ -55,7 +54,6 @@ function ProviderRatings() {
     onComplaintReply,
     onComplaintSearchChange,
     onComplaintStatusChange,
-    onComplaintsRetry,
     onDeleteReviewReply,
     onEditReviewReply,
     onReplyToReview,
@@ -106,7 +104,6 @@ function ProviderRatings() {
             errorMessage={complaintsError}
             hasActiveAdvancedFilters={hasActiveAdvancedFilters}
             isLoading={complaintsLoading}
-            isSearchActive={isComplaintSearchActive}
             pendingActionKey={pendingActionKey}
             searchTerm={complaintSearchTerm}
             totalPages={totalComplaintPages}
@@ -117,7 +114,6 @@ function ProviderRatings() {
             onFilterChange={onComplaintFilterChange}
             onPageChange={setComplaintPage}
             onReply={onComplaintReply}
-            onRetry={onComplaintsRetry}
             onSearchChange={onComplaintSearchChange}
             onStatusChange={onComplaintStatusChange}
           />

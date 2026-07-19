@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { FiBell, FiMenu, FiSettings, FiUser, FiX } from "react-icons/fi";
+import { FiBell, FiMenu, FiSettings, FiX } from "react-icons/fi";
 
 import { providerNavigationLinks } from "../../../data/providerDashboardData";
+import NotificationsDropdown from "../notifications/NotificationsDropdown";
 import useProviderNavbarData from "../../../hooks/useProviderNavbarData";
 import logo from "../../../assets/customer/icons/logo.svg";
 import "./ProviderNavbar.css";
@@ -11,14 +12,14 @@ function ProviderNavbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState("");
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const { notifications, providerProfile, unreadNotificationsCount } =
     useProviderNavbarData();
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
       setIsMobileMenuOpen(false);
-      setOpenDropdown("");
+      setIsNotificationsOpen(false);
     }, 0);
 
     return () => {
@@ -29,21 +30,35 @@ function ProviderNavbar() {
   function goTo(path) {
     navigate(path);
     setIsMobileMenuOpen(false);
-    setOpenDropdown("");
+    setIsNotificationsOpen(false);
   }
 
-  function toggleDropdown(dropdownName) {
-    setOpenDropdown((currentDropdown) =>
-      currentDropdown === dropdownName ? "" : dropdownName
+  function toggleNotificationsDropdown() {
+    setIsNotificationsOpen((isOpen) => !isOpen);
+  }
+
+  function normalizePath(path) {
+    return path.replace(/\/+$/, "") || "/";
+  }
+
+  function isNavPathActive(activePath) {
+    const currentPath = normalizePath(location.pathname);
+    const normalizedActivePath = normalizePath(activePath);
+
+    return (
+      currentPath === normalizedActivePath ||
+      (normalizedActivePath !== "/provider" &&
+        currentPath.startsWith(`${normalizedActivePath}/`))
     );
   }
 
-  function getNavLinkClassName(link, isActive) {
-    const hasCustomActivePath = link.activePaths?.some((activePath) =>
-      location.pathname === activePath || location.pathname.startsWith(`${activePath}/`)
-    );
+  const activeNavigationId =
+    providerNavigationLinks.find((link) =>
+      (link.activePaths ?? [link.to]).some(isNavPathActive)
+    )?.id ?? "";
 
-    return isActive || hasCustomActivePath ? "active" : "";
+  function getNavLinkClassName(link) {
+    return link.id === activeNavigationId ? "active" : "";
   }
 
   return (
@@ -80,7 +95,7 @@ function ProviderNavbar() {
               to={link.to}
               end={link.id === "dashboard"}
               key={link.id}
-              className={({ isActive }) => getNavLinkClassName(link, isActive)}
+              className={() => getNavLinkClassName(link)}
               onClick={() => setIsMobileMenuOpen(false)}
             >
               {link.label}
@@ -94,8 +109,7 @@ function ProviderNavbar() {
               type="button"
               className="provider-navbar__avatar"
               aria-label="الملف الشخصي"
-              aria-expanded={openDropdown === "profile"}
-              onClick={() => toggleDropdown("profile")}
+              onClick={() => goTo("/provider/profile")}
             >
               {providerProfile.avatarUrl ? (
                 <img src={providerProfile.avatarUrl} alt="الملف الشخصي" />
@@ -105,23 +119,6 @@ function ProviderNavbar() {
                 </span>
               )}
             </button>
-
-            {openDropdown === "profile" && (
-              <div className="provider-navbar__dropdown provider-navbar__dropdown--profile">
-                <strong>{providerProfile.displayName}</strong>
-                <button type="button" onClick={() => goTo("/provider/profile")}>
-                  <FiUser aria-hidden="true" />
-                  الملف الشخصي
-                </button>
-                <button
-                  type="button"
-                  onClick={() => goTo("/provider/profile?tab=settings")}
-                >
-                  <FiSettings aria-hidden="true" />
-                  إعدادات الحساب
-                </button>
-              </div>
-            )}
           </div>
 
           <button
@@ -138,37 +135,19 @@ function ProviderNavbar() {
               type="button"
               className="provider-navbar__icon-button provider-navbar__notification"
               aria-label="الإشعارات"
-              aria-expanded={openDropdown === "notifications"}
-              onClick={() => toggleDropdown("notifications")}
+              aria-expanded={isNotificationsOpen}
+              onClick={toggleNotificationsDropdown}
             >
               <FiBell aria-hidden="true" />
               {unreadNotificationsCount > 0 && <span />}
             </button>
 
-            {openDropdown === "notifications" && (
-              <div className="provider-navbar__dropdown provider-navbar__dropdown--notifications">
-                <strong>الإشعارات</strong>
-                {unreadNotificationsCount > 0 ? (
-                  <p>لديك {unreadNotificationsCount} إشعارات تحتاج إلى متابعة.</p>
-                ) : (
-                  <p>لا توجد إشعارات جديدة حالياً.</p>
-                )}
-                {notifications.slice(0, 2).map((notification) => (
-                  <div
-                    className="provider-navbar__notification-preview"
-                    key={notification.id}
-                  >
-                    <span>{notification.title}</span>
-                    <small>{notification.body}</small>
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  onClick={() => goTo("/provider/notifications")}
-                >
-                  عرض الإشعارات
-                </button>
-              </div>
+            {isNotificationsOpen && (
+              <NotificationsDropdown
+                notifications={notifications}
+                unreadCount={unreadNotificationsCount}
+                onViewAll={() => goTo("/provider/notifications")}
+              />
             )}
           </div>
         </div>

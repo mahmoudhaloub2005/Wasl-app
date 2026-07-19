@@ -1,7 +1,6 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { FiX } from "react-icons/fi";
 
-import { getApiErrorMessage } from "../../../utils/apiError";
 import AdvertisementImageUpload from "./AdvertisementImageUpload";
 import "./AddAdvertisementModal.css";
 
@@ -64,13 +63,13 @@ function hasErrors(errors) {
   return Object.values(errors).some(Boolean);
 }
 
-function mapBackendFieldErrors(error) {
-  const backendErrors = error?.response?.data?.errors;
+function mapSubmitFieldErrors(error) {
+  const submitErrors = error?.response?.data?.errors;
   const fieldErrors = {};
 
-  if (!backendErrors || typeof backendErrors !== "object") return fieldErrors;
+  if (!submitErrors || typeof submitErrors !== "object") return fieldErrors;
 
-  Object.entries(backendErrors).forEach(([fieldName, messages]) => {
+  Object.entries(submitErrors).forEach(([fieldName, messages]) => {
     const [message] = Array.isArray(messages) ? messages : [messages];
     const lowerFieldName = fieldName.toLowerCase();
 
@@ -98,10 +97,10 @@ function getSubmitErrorMessage(error) {
   }
 
   if (!error?.response) {
-    return "تعذر الاتصال بالخادم. تحقق من اتصال الإنترنت وحاول مرة أخرى.";
+    return "تعذر حفظ البيانات محلياً. حاول تقليل حجم الصورة أو إغلاق بعض المسودات.";
   }
 
-  return getApiErrorMessage(error, "تعذر نشر الإعلان، يرجى المحاولة مرة أخرى.");
+  return error?.response?.data?.message || "سيتم تفعيل الحفظ النهائي بعد ربط الخدمة";
 }
 
 function createAdvertisementFormData(values) {
@@ -331,12 +330,12 @@ function AddAdvertisementModal({
       onCreated?.(createdAdvertisement);
       onClose();
     } catch (error) {
-      const backendFieldErrors = mapBackendFieldErrors(error);
+      const submitFieldErrors = mapSubmitFieldErrors(error);
 
-      if (Object.keys(backendFieldErrors).length) {
+      if (Object.keys(submitFieldErrors).length) {
         setFieldErrors((currentErrors) => ({
           ...currentErrors,
-          ...backendFieldErrors,
+          ...submitFieldErrors,
         }));
       }
 

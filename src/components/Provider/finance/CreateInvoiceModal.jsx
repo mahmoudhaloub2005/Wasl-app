@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { FiFileText, FiSearch, FiUser, FiUsers, FiX } from "react-icons/fi";
 
 import useCreateProviderInvoice from "../../../hooks/useCreateProviderInvoice";
@@ -72,6 +72,13 @@ function CreateInvoiceModal({ isOpen, onClose, onCreated }) {
   const invoiceForm = useCreateProviderInvoice({ isOpen, onClose, onCreated });
   const readingUnit = invoiceForm.subscription?.readingUnit || "أمبير";
 
+  const handleClose = useCallback(() => {
+    if (invoiceForm.isSubmitting) return;
+
+    invoiceForm.resetForm();
+    onClose?.();
+  }, [invoiceForm, onClose]);
+
   useEffect(() => {
     if (!isOpen) return undefined;
 
@@ -94,16 +101,10 @@ function CreateInvoiceModal({ isOpen, onClose, onCreated }) {
       window.removeEventListener("keydown", handleKeyDown);
       previousFocusRef.current?.focus?.();
     };
-  }, [invoiceForm.isSubmitting, isOpen]);
+  }, [handleClose, invoiceForm.isSubmitting, isOpen]);
 
   if (!isOpen) return null;
 
-  function handleClose() {
-    if (invoiceForm.isSubmitting) return;
-
-    invoiceForm.resetForm();
-    onClose?.();
-  }
 
   function handleSubmit(event) {
     event.preventDefault();
