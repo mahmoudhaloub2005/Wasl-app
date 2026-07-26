@@ -1,10 +1,15 @@
 import axios from "axios";
 import { clearAuthStorage, getStoredToken } from "../utils/authStorage";
+import { getApiMessage, getFieldErrors } from "./apiResponse";
+
+export const API_BASE_URL = (
+  import.meta.env.VITE_API_BASE_URL ||
+  import.meta.env.VITE_API_URL ||
+  "https://wasel-api-production-0719.up.railway.app/api"
+).replace(/\/+$/, "");
 
 const api = axios.create({
-  baseURL:
-    import.meta.env.VITE_API_URL ||
-    "https://wasel-api-production-0719.up.railway.app/api",
+  baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
@@ -12,14 +17,19 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = getStoredToken();
+  const token = String(getStoredToken() || "").trim();
+
+  config.headers.Accept = "application/json";
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
+  } else {
+    delete config.headers.Authorization;
   }
 
   if (config.data instanceof FormData) {
     delete config.headers["Content-Type"];
+    delete config.headers["content-type"];
   }
 
   return config;
@@ -28,6 +38,10 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    error.status = error.response?.status;
+    error.displayMessage = getApiMessage(error);
+    error.fieldErrors = getFieldErrors(error);
+
     if (error.response?.status === 401) {
       clearAuthStorage();
 

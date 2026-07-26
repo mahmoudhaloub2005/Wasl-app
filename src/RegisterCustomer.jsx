@@ -30,17 +30,10 @@ function RegisterCustomer() {
     try {
       const data = await registerCustomer(formData);
 
-      if (data?.errors) {
-        console.log("Error from backend:", data);
-        setMessage(data.message || "صار خطأ أثناء التسجيل");
+      if (data?.errors) {        setMessage(data.message || "صار خطأ أثناء التسجيل");
         return;
-      }
-
-      console.log("Success:", data);
-      setMessage("تم إنشاء الحساب بنجاح");
-    } catch (error) {
-      console.error("Network error:", error);
-      const firstError = error.response?.data?.errors
+      }      setMessage("تم إنشاء الحساب بنجاح");
+    } catch (error) {      const firstError = error.response?.data?.errors
         ? Object.values(error.response.data.errors)[0]?.[0]
         : null;
 
@@ -118,3 +111,4 @@ function RegisterCustomer() {
 }
 
 export default RegisterCustomer;
+

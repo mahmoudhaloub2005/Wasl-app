@@ -7,44 +7,33 @@ import DeleteSubscriberModal from "../../components/Provider/subscriptions/Delet
 import ProviderSubscriptionsList from "../../components/Provider/subscriptions/ProviderSubscriptionsList";
 import ProviderSubscriptionsTabs from "../../components/Provider/subscriptions/ProviderSubscriptionsTabs";
 import Footer from "../../components/layout/Footer/Footer";
-import { providerServicePendingMessage } from "../../services/provider/providerFrontendStatus";
+import useProviderSubscriptions from "../../hooks/useProviderSubscriptions";
 import "./ProviderSubscriptions.css";
-
-const PENDING_REQUESTS_STORAGE_KEY = "wasel_provider_pending_requests";
-const CURRENT_SUBSCRIBERS_STORAGE_KEY = "wasel_provider_current_subscribers";
 
 function getRouteTab(searchParams) {
   return searchParams.get("tab") === "current" ? "current" : "pending";
 }
 
-function clearStoredSubscriptionLists() {
-  try {
-    window.localStorage.removeItem(PENDING_REQUESTS_STORAGE_KEY);
-    window.localStorage.removeItem(CURRENT_SUBSCRIBERS_STORAGE_KEY);
-  } catch {
-    // Ignore storage access errors so the page can still render normally.
-  }
-}
-
 function ProviderSubscriptions() {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = getRouteTab(searchParams);
-  const [pendingRequests, setPendingRequests] = useState([]);
-  const [currentSubscribers, setCurrentSubscribers] = useState([]);
+  const {
+    acceptRequest,
+    currentSubscribers,
+    errorMessage,
+    isLoading,
+    pendingActionKey,
+    pendingRequests,
+    rejectRequest,
+  } = useProviderSubscriptions();
   const [subscriberToDelete, setSubscriberToDelete] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
-  const isLoading = false;
-  const errorMessage = "";
-  const pendingActionKey = "";
+  const [localErrorMessage, setLocalErrorMessage] = useState("");
 
   const counts = {
     pending: pendingRequests.length,
     current: currentSubscribers.length,
   };
-
-  useEffect(() => {
-    clearStoredSubscriptionLists();
-  }, []);
 
   useEffect(() => {
     if (!successMessage) return undefined;
@@ -64,19 +53,18 @@ function ProviderSubscriptions() {
     });
   }
 
-  function acceptRequest(requestId) {
-    setPendingRequests((currentRequests) =>
-      currentRequests.filter((request) => request.id !== requestId)
-    );
+  async function handleAcceptRequest(requestId) {
+    const result = await acceptRequest(requestId);
+    setSuccessMessage(result?.message || "تم قبول طلب الاشتراك بنجاح.");
   }
 
-  function rejectRequest(requestId) {
-    setPendingRequests((currentRequests) =>
-      currentRequests.filter((request) => request.id !== requestId)
-    );
+  async function handleRejectRequest(requestId) {
+    const result = await rejectRequest(requestId);
+    setSuccessMessage(result?.message || "تم رفض طلب الاشتراك.");
   }
 
   function handleRequestDelete(subscriber) {
+    setLocalErrorMessage("");
     setSubscriberToDelete(subscriber);
   }
 
@@ -85,15 +73,8 @@ function ProviderSubscriptions() {
   }
 
   function handleConfirmDelete() {
-    if (!subscriberToDelete) return;
-
-    setCurrentSubscribers((currentSubscribers) =>
-      currentSubscribers.filter(
-        (subscriber) => subscriber.id !== subscriberToDelete.id
-      )
-    );
     setSubscriberToDelete(null);
-    setSuccessMessage(providerServicePendingMessage);
+    setLocalErrorMessage("حذف المشتركين الحاليين غير موثق في واجهة Wasel API الحالية.");
   }
 
   return (
@@ -114,9 +95,19 @@ function ProviderSubscriptions() {
           />
         </section>
 
+        {(localErrorMessage || successMessage) ? (
+          <div
+            className="provider-subscriptions-error"
+            role={localErrorMessage ? "alert" : "status"}
+          >
+            {localErrorMessage || successMessage}
+          </div>
+        ) : null}
+
         {activeTab === "current" ? (
           <CurrentSubscribersList
             currentSubscribers={currentSubscribers}
+            isLoading={isLoading}
             onRequestDelete={handleRequestDelete}
           />
         ) : (
@@ -124,8 +115,8 @@ function ProviderSubscriptions() {
             activeTab={activeTab}
             errorMessage={errorMessage}
             isLoading={isLoading}
-            onAccept={acceptRequest}
-            onReject={rejectRequest}
+            onAccept={handleAcceptRequest}
+            onReject={handleRejectRequest}
             pendingActionKey={pendingActionKey}
             subscribers={pendingRequests}
           />
@@ -137,16 +128,6 @@ function ProviderSubscriptions() {
         onCancel={handleCancelDelete}
         onConfirm={handleConfirmDelete}
       />
-
-      {successMessage ? (
-        <div
-          className="current-subscribers-toast"
-          role="status"
-          aria-live="polite"
-        >
-          {successMessage}
-        </div>
-      ) : null}
 
       <Footer />
     </div>

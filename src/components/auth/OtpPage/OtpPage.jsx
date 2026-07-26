@@ -54,9 +54,6 @@ export default function OtpPage() {
     }
 
     setError("");
-
-    console.log("رمز التحقق:", code);
-
     if (flow === "reset-password") {
       navigate("/new-password", {
         state: {
@@ -88,19 +85,8 @@ export default function OtpPage() {
 
     setTimeout(() => {
       inputsRef.current[0]?.focus();
-    }, 0);
+    }, 0);  };
 
-    console.log("تم إعادة إرسال الرمز إلى:", email);
-  };
-
-  const handleChangeEmail = () => {
-    if (flow === "reset-password") {
-      navigate("/forgot-password");
-      return;
-    }
-
-    navigate("/login-info");
-  };
 
   return (
     <div className="otp-page">
@@ -167,3 +153,4 @@ export default function OtpPage() {
     </div>
   );
 }
+

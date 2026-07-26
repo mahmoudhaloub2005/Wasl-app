@@ -295,10 +295,6 @@ function AddGeneratorModal({ isOpen, onClose, onCreated, onSubmit }) {
 
       onCreated?.(result);
 
-      if (result?.frontendOnly) {
-        setApiError(result.message);
-        return;
-      }
 
       closeImmediately();
     } catch (error) {
@@ -439,3 +435,4 @@ function AddGeneratorModal({ isOpen, onClose, onCreated, onSubmit }) {
 }
 
 export default AddGeneratorModal;
+

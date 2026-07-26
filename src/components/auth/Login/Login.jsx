@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiUser, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import { loginUser } from "../../../services/authService";
+import { setStoredAuthSession } from "../../../utils/authStorage";
+import { getApiErrorMessage } from "../../../utils/apiError";
 import "./Login.css";
 import images from "../../../assets/images/images.png";
 
@@ -88,16 +90,12 @@ function Login() {
         return;
       }
 
-      const storage = formData.remember ? localStorage : sessionStorage;
-
-      storage.setItem("wasel_token", token);
-      storage.setItem("wasel_is_logged_in", "true");
-
-      if (user) {
-        storage.setItem("wasel_user", JSON.stringify(user));
-      }
-
-      storage.setItem("wasel_user_role", role);
+      setStoredAuthSession({
+        remember: formData.remember,
+        role,
+        token,
+        user,
+      });
 
       if (role === "provider") {
         navigate("/provider/home");
@@ -113,14 +111,12 @@ function Login() {
         navigate("/customer");
       }
     } catch (error) {
-      console.error("Login Error:", error);
-
-      const message =
-        error.response?.data?.message ||
-        error.response?.data?.error ||
-        "البريد الإلكتروني أو كلمة المرور غير صحيحة";
-
-      setErrorMessage(message);
+      setErrorMessage(
+        getApiErrorMessage(
+          error,
+          "البريد الإلكتروني أو كلمة المرور غير صحيحة"
+        )
+      );
     } finally {
       setIsLoading(false);
     }
@@ -230,3 +226,8 @@ function Login() {
 }
 
 export default Login;
+
+
+
+
+

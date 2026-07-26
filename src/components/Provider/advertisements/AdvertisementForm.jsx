@@ -3,6 +3,7 @@ import { FiImage, FiUploadCloud, FiX } from "react-icons/fi";
 
 const MAX_UPLOAD_SIZE_MB = 5;
 const MAX_UPLOAD_SIZE_BYTES = MAX_UPLOAD_SIZE_MB * 1024 * 1024;
+const IS_POSTER_IMAGE_UPLOAD_SUPPORTED = false;
 
 function getInitialFormValues(advertisement) {
   return {
@@ -33,16 +34,8 @@ function readFileAsDataUrl(file) {
 function validateForm(values) {
   const errors = [];
 
-  if (!values.imageUrl) {
-    errors.push("يرجى رفع صورة الإعلان.");
-  }
-
   if (!values.title.trim()) {
     errors.push("يرجى إدخال اسم العرض.");
-  }
-
-  if (!Number(values.price) || Number(values.price) <= 0) {
-    errors.push("يرجى إدخال سعر صحيح أكبر من صفر.");
   }
 
   if (!values.description.trim()) {
@@ -88,6 +81,11 @@ function AdvertisementForm({
       return;
     }
 
+    if (!IS_POSTER_IMAGE_UPLOAD_SUPPORTED) {
+      setUploadMessage("رفع صورة الإعلان غير مدعوم في واجهة Wasel API الحالية.");
+      return;
+    }
+
     try {
       const imageUrl = await readFileAsDataUrl(file);
       updateField("imageUrl", imageUrl);
@@ -124,8 +122,6 @@ function AdvertisementForm({
     try {
       await onSubmit({
         description: formValues.description.trim(),
-        imageUrl: formValues.imageUrl,
-        price: Number(formValues.price),
         title: formValues.title.trim(),
       });
 
@@ -271,3 +267,4 @@ function AdvertisementForm({
 }
 
 export default AdvertisementForm;
+

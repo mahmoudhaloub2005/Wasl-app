@@ -30,10 +30,6 @@ function unwrapItem(data) {
   return data?.data?.invoice || data?.invoice || data?.data || data;
 }
 
-function isMissingEndpoint(error) {
-  return error?.response?.status === 404 || error?.response?.status === 405;
-}
-
 function getFirstValue(source, keys, fallback = "") {
   for (const key of keys) {
     const value = source?.[key];
@@ -175,75 +171,20 @@ export function normalizeInvoice(invoice = {}) {
   };
 }
 
-function getInvoiceFromResponse(data) {
-  const list = unwrapList(data);
-  const invoice = list[0] || unwrapItem(data);
-
-  return isInvoiceLike(invoice) ? normalizeInvoice(invoice) : null;
-}
-
 function createInvoiceUnavailableError(lastError) {
   const error = new Error(
-    "لا يمكن إرسال إثبات الدفع قبل إنشاء فاتورة حقيقية من الخادم لهذا الاشتراك."
+    "إنشاء فاتورة من اشتراك غير موثق في واجهة Wasel API الحالية."
   );
 
   error.displayMessage =
-    "لا توجد فاتورة حقيقية مرتبطة بهذا الاشتراك حالياً. يلزم إضافة endpoint في الباك لإنشاء فاتورة مستحقة من الاشتراك قبل إرسال الدفع.";
+    "لا توجد فاتورة حقيقية مرتبطة بهذا الاشتراك حالياً. يجب إنشاء الفاتورة من لوحة المزود عبر endpoint /invoices قبل إرسال الدفع.";
   error.cause = lastError;
 
   return error;
 }
 
-export async function ensureInvoiceForSubscription({
-  subscriptionId,
-  amount,
-  month,
-} = {}) {
-  if (!subscriptionId) {
-    throw createInvoiceUnavailableError();
-  }
-
-  const payload = {
-    subscription_id: subscriptionId,
-    amount,
-    month,
-  };
-
-  const attempts = [
-    {
-      url: "/invoices/ensure",
-      body: payload,
-    },
-    {
-      url: `/subscriptions/${subscriptionId}/invoices`,
-      body: { amount, month },
-    },
-    {
-      url: "/invoices",
-      body: payload,
-    },
-  ];
-
-  let lastError = null;
-
-  for (const attempt of attempts) {
-    try {
-      const response = await api.post(attempt.url, attempt.body);
-      const invoice = getInvoiceFromResponse(response.data);
-
-      if (invoice?.id) {
-        return invoice;
-      }
-    } catch (error) {
-      lastError = error;
-
-      if (!isMissingEndpoint(error)) {
-        throw error;
-      }
-    }
-  }
-
-  throw createInvoiceUnavailableError(lastError);
+export async function ensureInvoiceForSubscription() {
+  throw createInvoiceUnavailableError();
 }
 
 export async function getMyInvoices(params = {}) {
@@ -255,3 +196,6 @@ export async function getInvoiceDetails(id) {
   const response = await api.get(`/invoices/${id}`);
   return normalizeInvoice(unwrapItem(response.data));
 }
+
+
+

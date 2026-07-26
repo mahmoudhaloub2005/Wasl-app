@@ -8,6 +8,7 @@ const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
 const MAX_DESCRIPTION_LENGTH = 500;
 const MAX_TITLE_LENGTH = 100;
 const SUPPORTED_IMAGE_TYPES = new Set(["image/png", "image/jpeg"]);
+const IS_POSTER_IMAGE_UPLOAD_SUPPORTED = false;
 const INITIAL_VALUES = {
   description: "",
   image: null,
@@ -15,7 +16,7 @@ const INITIAL_VALUES = {
 };
 
 function validateImageFile(file) {
-  if (!file) return "يرجى اختيار صورة للإعلان.";
+  if (!file) return "";
 
   const extension = file.name.split(".").pop()?.toLowerCase();
   const hasSupportedExtension = ["png", "jpg", "jpeg"].includes(extension);
@@ -36,7 +37,7 @@ function validateForm(values) {
   const description = values.description.trim();
   const errors = {
     description: "",
-    image: validateImageFile(values.image),
+    image: "",
     title: "",
   };
 
@@ -97,20 +98,17 @@ function getSubmitErrorMessage(error) {
   }
 
   if (!error?.response) {
-    return "تعذر حفظ البيانات محلياً. حاول تقليل حجم الصورة أو إغلاق بعض المسودات.";
+    return "تعذر نشر الإعلان. تحقق من الاتصال وحاول مرة أخرى.";
   }
 
   return error?.response?.data?.message || "سيتم تفعيل الحفظ النهائي بعد ربط الخدمة";
 }
 
-function createAdvertisementFormData(values) {
-  const formData = new FormData();
-
-  formData.append("title", values.title.trim());
-  formData.append("description", values.description.trim());
-  formData.append("image", values.image);
-
-  return formData;
+function createAdvertisementPayload(values) {
+  return {
+    title: values.title.trim(),
+    description: values.description.trim(),
+  };
 }
 
 function getFocusableElements(container) {
@@ -234,12 +232,15 @@ function AddAdvertisementModal({
     setIsDragActive(false);
 
     const imageError = validateImageFile(file);
+    const unsupportedImageError = IS_POSTER_IMAGE_UPLOAD_SUPPORTED
+      ? ""
+      : "رفع صورة الإعلان غير مدعوم في واجهة Wasel API الحالية.";
 
-    if (imageError) {
+    if (imageError || unsupportedImageError) {
       updateField("image", null);
       setFieldErrors((currentErrors) => ({
         ...currentErrors,
-        image: imageError,
+        image: imageError || unsupportedImageError,
       }));
       setPreviewUrl("");
       return;
@@ -323,8 +324,8 @@ function AddAdvertisementModal({
     setSubmitErrorMessage("");
 
     try {
-      const formData = createAdvertisementFormData(formValues);
-      const createdAdvertisement = await onSubmit(formData);
+      const payload = createAdvertisementPayload(formValues);
+      const createdAdvertisement = await onSubmit(payload);
 
       resetForm();
       onCreated?.(createdAdvertisement);
@@ -486,3 +487,4 @@ function AddAdvertisementModal({
 }
 
 export default AddAdvertisementModal;
+

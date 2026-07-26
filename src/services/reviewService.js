@@ -49,6 +49,7 @@ function getApiMessage(error, fallback = "حدث خطأ غير متوقع") {
 function createUnavailableOperationError(message = "هذه العملية غير متاحة حالياً") {
   const error = new Error(message);
   error.displayMessage = message;
+  error.isUnsupported = true;
   return error;
 }
 
@@ -107,6 +108,17 @@ export function normalizeReview(review = {}) {
     ]) ||
     "المولد";
 
+  const providerId =
+    getFirstValue(review, ["provider_id", "providerId"]) ||
+    getFirstValue(provider, ["id", "_id", "uuid", "provider_id", "providerId"]);
+
+  const generatorId =
+    getFirstValue(review, ["generator_id", "generatorId"]) ||
+    getFirstValue(generator, ["id", "_id", "uuid"]);
+
+  const targetId =
+    getFirstValue(review, ["target_id", "targetId"]) || providerId || generatorId;
+
   return {
     id:
       getFirstValue(review, ["id", "_id", "uuid"]) ||
@@ -117,14 +129,9 @@ export function normalizeReview(review = {}) {
       "subscriptionId",
     ]),
 
-    targetId: getFirstValue(review, [
-      "target_id",
-      "targetId",
-      "provider_id",
-      "providerId",
-      "generator_id",
-      "generatorId",
-    ]),
+    targetId,
+    providerId,
+    generatorId,
 
     provider: providerName,
 
@@ -238,11 +245,15 @@ export function normalizeReviewSubscription(subscription = {}) {
   لأنهم عندك بيرجعوا 404 و 405.
 */
 export async function getReviews() {
-  return [];
+  throw createUnavailableOperationError(
+    "قائمة التقييمات غير متاحة من الخادم حالياً."
+  );
 }
 
 export async function getMyReviews() {
-  return [];
+  throw createUnavailableOperationError(
+    "قائمة تقييمات العميل غير موثقة في واجهة Wasel API الحالية."
+  );
 }
 
 export async function getReviewableSubscriptions(params = {}) {
@@ -254,8 +265,6 @@ export async function getReviewableSubscriptions(params = {}) {
 }
 
 export async function createReview(data = {}) {
-  const subscriptionId = data.subscription_id || data.subscriptionId;
-
   const providerId =
     data.provider_id ||
     data.providerId ||
@@ -296,25 +305,11 @@ export async function createReview(data = {}) {
     comment,
   };
 
-  if (subscriptionId) {
-    payload.subscription_id = subscriptionId;
-  }
-
-  if (providerId) {
-    payload.provider_id = providerId;
-  }
-
-  if (generatorId) {
-    payload.generator_id = generatorId;
-  }
 
   try {
     const response = await api.post("/reviews", payload);
     return normalizeReview(unwrapItem(response.data));
   } catch (error) {
-    console.log("Review submit payload:", payload);
-    console.log("Review submit error response:", error.response?.data);
-
     error.displayMessage = getApiMessage(
       error,
       "فشل إرسال التقييم. تأكد من اختيار الاشتراك الصحيح."
@@ -331,3 +326,4 @@ export async function updateReview() {
 export async function deleteReview() {
   throw createUnavailableOperationError("حذف التقييم غير متاح حالياً من الخادم.");
 }
+

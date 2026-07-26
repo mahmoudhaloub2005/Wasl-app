@@ -5,7 +5,7 @@ import {
   IoTrashOutline,
 } from "react-icons/io5";
 
-function ReviewsList({ reviews, onEditReview, onDeleteReview }) {
+function ReviewsList({ reviews, emptyMessage = "", onEditReview, onDeleteReview }) {
   const getReviewIcon = (iconType) => {
     if (iconType === "city") {
       return <IoBusinessOutline />;
@@ -17,8 +17,8 @@ function ReviewsList({ reviews, onEditReview, onDeleteReview }) {
   if (reviews.length === 0) {
     return (
       <div className="reviews-empty-state">
-        <h3>لا توجد تقييمات حالياً</h3>
-        <p>عند إضافة تقييم جديد سيظهر هنا.</p>
+        <h3>قائمة التقييمات غير متاحة حالياً</h3>
+        <p>{emptyMessage || "لا يوفر الخادم حالياً واجهة لاسترجاع تقييمات العميل."}</p>
       </div>
     );
   }
@@ -39,25 +39,27 @@ function ReviewsList({ reviews, onEditReview, onDeleteReview }) {
               </div>
             </div>
 
-            <div className="review-actions">
-              <button
-                type="button"
-                className="review-action-button edit"
-                onClick={() => onEditReview?.(review)}
-              >
-                <IoCreateOutline />
-                تعديل
-              </button>
+            {!review.isTemporary && review.canManage ? (
+              <div className="review-actions">
+                <button
+                  type="button"
+                  className="review-action-button edit"
+                  onClick={() => onEditReview?.(review)}
+                >
+                  <IoCreateOutline />
+                  تعديل
+                </button>
 
-              <button
-                type="button"
-                className="review-action-button delete"
-                onClick={() => onDeleteReview?.(review.id)}
-              >
-                <IoTrashOutline />
-                حذف
-              </button>
-            </div>
+                <button
+                  type="button"
+                  className="review-action-button delete"
+                  onClick={() => onDeleteReview?.(review.id)}
+                >
+                  <IoTrashOutline />
+                  حذف
+                </button>
+              </div>
+            ) : null}
           </div>
 
           <div className="review-rating">
@@ -70,6 +72,13 @@ function ReviewsList({ reviews, onEditReview, onDeleteReview }) {
               </span>
             ))}
           </div>
+
+          {review.isTemporary ? (
+            <p className="review-card-notice">
+              مؤكد من رد الإرسال الحالي فقط، ولن يظهر بعد إعادة التحميل حتى
+              يوفّر الخادم واجهة لاسترجاع تقييمات العميل.
+            </p>
+          ) : null}
 
           <p className="review-text">{review.text}</p>
         </article>

@@ -1,8 +1,14 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+import providerReviewService, {
+  calculateSummaryFromReviews,
+} from "../services/providerReviewService";
 
 const COMPLAINTS_PAGE_SIZE = 3;
 const EMPTY_REVIEWS = [];
 const EMPTY_COMPLAINTS = [];
+const UNSUPPORTED_COMPLAINTS_MESSAGE =
+  "إدارة شكاوى المزود غير موثقة في واجهة Wasel API الحالية.";
 
 const initialAdvancedFilters = {
   status: "all",
@@ -20,31 +26,6 @@ function normalizeRatingValue(value) {
   if (!Number.isFinite(rating)) return 0;
 
   return Math.min(5, Math.max(1, Math.round(rating)));
-}
-
-function calculateSummary(reviews = []) {
-  const totalRatings = reviews.length;
-  const distribution = [5, 4, 3, 2, 1].map((rating) => {
-    const count = reviews.filter(
-      (review) => normalizeRatingValue(review.rating) === rating
-    ).length;
-
-    return {
-      rating,
-      count,
-      percentage: totalRatings ? Math.round((count / totalRatings) * 100) : 0,
-    };
-  });
-  const totalScore = reviews.reduce(
-    (total, review) => total + normalizeRatingValue(review.rating),
-    0
-  );
-
-  return {
-    averageRating: totalRatings ? Number((totalScore / totalRatings).toFixed(1)) : 0,
-    totalRatings,
-    distribution,
-  };
 }
 
 function sortReviewsByOption(reviews, sortOption) {
@@ -165,8 +146,8 @@ function hasActiveAdvancedFilters(filters) {
   });
 }
 
-async function noopUnavailableAction() {
-  return false;
+function getErrorMessage(error, fallback) {
+  return error?.displayMessage || error?.message || fallback;
 }
 
 export function useProviderRatings({
@@ -180,11 +161,51 @@ export function useProviderRatings({
     initialAdvancedFilters
   );
   const [complaintPage, setComplaintPageState] = useState(1);
-  const [reviews] = useState(() => [...initialReviews]);
-  const [complaints] = useState(() => [...initialComplaints]);
+  const [reviews, setReviews] = useState(() => [...initialReviews]);
+  const [complaints, setComplaints] = useState(() => [...initialComplaints]);
+  const [ratingSummary, setRatingSummary] = useState(() =>
+    calculateSummaryFromReviews(initialReviews)
+  );
+  const [ratingsLoading, setRatingsLoading] = useState(true);
+  const [complaintsLoading, setComplaintsLoading] = useState(false);
+  const [ratingsError, setRatingsError] = useState("");
+  const [complaintsError] = useState(UNSUPPORTED_COMPLAINTS_MESSAGE);
+  const [pendingActionKey, setPendingActionKey] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
-  const ratingSummary = useMemo(() => calculateSummary(reviews), [reviews]);
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadRatings() {
+      try {
+        setRatingsLoading(true);
+        setRatingsError("");
+        const nextReviews = await providerReviewService.getProviderReviews();
+        const nextSummary = await providerReviewService.getProviderRatingSummary(nextReviews);
+
+        if (isMounted) {
+          setReviews(nextReviews);
+          setRatingSummary(nextSummary);
+        }
+      } catch (error) {
+        if (isMounted) {
+          setReviews([]);
+          setRatingSummary(calculateSummaryFromReviews([]));
+          setRatingsError(getErrorMessage(error, "تعذر تحميل التقييمات من الخادم."));
+        }
+      } finally {
+        if (isMounted) {
+          setRatingsLoading(false);
+        }
+      }
+    }
+
+    loadRatings();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const sortedReviews = useMemo(
     () => sortReviewsByOption(reviews, reviewSort),
@@ -254,6 +275,21 @@ export function useProviderRatings({
     setComplaintPageState(page);
   }
 
+  async function runUnsupportedAction(actionKey, action) {
+    setPendingActionKey(actionKey);
+    setSuccessMessage("");
+
+    try {
+      await action();
+      return true;
+    } catch (error) {
+      setSuccessMessage(getErrorMessage(error, "هذه العملية غير متاحة حالياً."));
+      return false;
+    } finally {
+      setPendingActionKey("");
+    }
+  }
+
   return {
     advancedComplaintFilters,
     complaintFilter,
@@ -261,17 +297,19 @@ export function useProviderRatings({
     complaintSearchTerm,
     complaintStatusCounts,
     complaints: paginatedComplaints,
-    complaintsError: "",
+    complaintsError,
     complaintsForExport: filteredComplaints,
-    complaintsLoading: false,
+    complaintsLoading,
     hasActiveAdvancedFilters: hasActiveAdvancedFilters(advancedComplaintFilters),
-    pendingActionKey: "",
+    pendingActionKey,
     ratingSummary,
-    ratingsError: "",
-    ratingsLoading: false,
+    ratingsError,
+    ratingsLoading,
     reviewSort,
     reviews: sortedReviews,
     setComplaintPage,
+    setComplaints,
+    setComplaintsLoading,
     setReviewSort,
     setSuccessMessage,
     successMessage,
@@ -280,12 +318,27 @@ export function useProviderRatings({
     onAdvancedComplaintFiltersApply: applyAdvancedComplaintFilters,
     onAdvancedComplaintFiltersReset: resetAdvancedComplaintFilters,
     onComplaintFilterChange: changeComplaintFilter,
-    onComplaintReply: noopUnavailableAction,
+    onComplaintReply: (complaintId) =>
+      runUnsupportedAction(`complaint-reply-${complaintId}`, () =>
+        providerReviewService.replyToComplaint()
+      ),
     onComplaintSearchChange: setComplaintSearchTerm,
-    onComplaintStatusChange: noopUnavailableAction,
-    onDeleteReviewReply: noopUnavailableAction,
-    onEditReviewReply: noopUnavailableAction,
-    onReplyToReview: noopUnavailableAction,
+    onComplaintStatusChange: (complaintId) =>
+      runUnsupportedAction(`complaint-status-${complaintId}`, () =>
+        providerReviewService.updateComplaintStatus()
+      ),
+    onDeleteReviewReply: (reviewId) =>
+      runUnsupportedAction(`review-delete-${reviewId}`, () =>
+        providerReviewService.deleteReviewReply()
+      ),
+    onEditReviewReply: (reviewId) =>
+      runUnsupportedAction(`review-reply-${reviewId}`, () =>
+        providerReviewService.updateReviewReply()
+      ),
+    onReplyToReview: (reviewId) =>
+      runUnsupportedAction(`review-reply-${reviewId}`, () =>
+        providerReviewService.replyToReview()
+      ),
   };
 }
 

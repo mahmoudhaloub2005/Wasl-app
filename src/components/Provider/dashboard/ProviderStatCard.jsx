@@ -12,7 +12,7 @@ function ProviderStatCard({ stat, onNavigate }) {
   return (
     <button
       type="button"
-      className="provider-stat-card"
+      className={`provider-stat-card provider-stat-card--${stat.id}`}
       onClick={() => onNavigate(stat.path)}
     >
       {stat.badge ? (

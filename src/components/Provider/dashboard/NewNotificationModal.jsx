@@ -21,7 +21,7 @@ function validateNotificationForm(values) {
   }
 
   if (!values.message.trim()) {
-    errors.message = "يرجى إدخال الجملة التوضيحية";
+    errors.message = "يرجى إدخال نص الإشعار";
   }
 
   return errors;
@@ -31,10 +31,8 @@ function hasErrors(errors) {
   return Object.values(errors).some(Boolean);
 }
 
-function waitForProcessing() {
-  return new Promise((resolve) => {
-    window.setTimeout(resolve, 420);
-  });
+function getSubmitErrorMessage(error) {
+  return error?.displayMessage || error?.message || "تعذر إرسال الإشعار.";
 }
 
 function NewNotificationModal({ isOpen, onClose, onSubmit }) {
@@ -46,11 +44,13 @@ function NewNotificationModal({ isOpen, onClose, onSubmit }) {
   const [notificationForm, setNotificationForm] = useState(INITIAL_FORM);
   const [validationErrors, setValidationErrors] = useState(INITIAL_ERRORS);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitErrorMessage, setSubmitErrorMessage] = useState("");
 
   const resetModalState = useCallback(() => {
     setNotificationForm(INITIAL_FORM);
     setValidationErrors(INITIAL_ERRORS);
     setIsSubmitting(false);
+    setSubmitErrorMessage("");
   }, []);
 
   const handleClose = useCallback(() => {
@@ -102,6 +102,7 @@ function NewNotificationModal({ isOpen, onClose, onSubmit }) {
       ...currentErrors,
       [fieldName]: "",
     }));
+    setSubmitErrorMessage("");
   }
 
   async function handleSubmit(event) {
@@ -115,15 +116,17 @@ function NewNotificationModal({ isOpen, onClose, onSubmit }) {
     if (hasErrors(nextErrors)) return;
 
     setIsSubmitting(true);
+    setSubmitErrorMessage("");
 
     try {
-      await waitForProcessing();
       await onSubmit({
         message: notificationForm.message.trim(),
         title: notificationForm.title.trim(),
       });
       resetModalState();
       onClose();
+    } catch (error) {
+      setSubmitErrorMessage(getSubmitErrorMessage(error));
     } finally {
       setIsSubmitting(false);
     }
@@ -181,7 +184,7 @@ function NewNotificationModal({ isOpen, onClose, onSubmit }) {
           </label>
 
           <label className="new-notification-form__field" htmlFor={messageId}>
-            <span>جملة توضيحية</span>
+            <span>نص الإشعار</span>
             <textarea
               id={messageId}
               value={notificationForm.message}
@@ -199,12 +202,18 @@ function NewNotificationModal({ isOpen, onClose, onSubmit }) {
             ) : null}
           </label>
 
+          {submitErrorMessage ? (
+            <small className="new-notification-form__error" role="alert">
+              {submitErrorMessage}
+            </small>
+          ) : null}
+
           <button
             type="submit"
             className="new-notification-form__submit"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "جارٍ الإرسال..." : "إرسال تنبيه"}
+            {isSubmitting ? "جاري الإرسال..." : "إرسال تنبيه"}
           </button>
         </form>
       </section>

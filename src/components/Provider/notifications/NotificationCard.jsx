@@ -162,17 +162,21 @@ function NotificationCard({
           </button>
         ) : null}
 
-        <button
-          type="button"
-          className="provider-notification-card__delete"
-          onClick={handleDelete}
-        >
-          <FiTrash2 aria-hidden="true" />
-          <span>حذف</span>
-        </button>
+        {onDelete ? (
+          <button
+            type="button"
+            className="provider-notification-card__delete"
+            onClick={handleDelete}
+          >
+            <FiTrash2 aria-hidden="true" />
+            <span>حذف</span>
+          </button>
+        ) : null}
       </div>
     </article>
   );
 }
 
 export default NotificationCard;
+
+

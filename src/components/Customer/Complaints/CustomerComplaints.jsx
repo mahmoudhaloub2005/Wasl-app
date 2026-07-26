@@ -12,60 +12,6 @@ import {
 import { getGenerators } from "../../../services/generatorService";
 import { getApiErrorMessage } from "../../../utils/apiError";
 
-const LOCAL_COMPLAINTS_KEY = "customer_local_complaints";
-const LOCAL_DELETED_COMPLAINTS_KEY = "customer_deleted_complaints";
-
-function getLocalComplaints() {
-  try {
-    const value = localStorage.getItem(LOCAL_COMPLAINTS_KEY);
-    return value ? JSON.parse(value) : [];
-  } catch (error) {
-    console.error("Failed to read local complaints:", error);
-    return [];
-  }
-}
-
-function saveLocalComplaints(complaints) {
-  try {
-    localStorage.setItem(LOCAL_COMPLAINTS_KEY, JSON.stringify(complaints));
-  } catch (error) {
-    console.error("Failed to save local complaints:", error);
-  }
-}
-
-function getDeletedComplaintIds() {
-  try {
-    const value = localStorage.getItem(LOCAL_DELETED_COMPLAINTS_KEY);
-    return value ? JSON.parse(value) : [];
-  } catch (error) {
-    console.error("Failed to read deleted complaints:", error);
-    return [];
-  }
-}
-
-function saveDeletedComplaintIds(ids) {
-  try {
-    localStorage.setItem(LOCAL_DELETED_COMPLAINTS_KEY, JSON.stringify(ids));
-  } catch (error) {
-    console.error("Failed to save deleted complaints:", error);
-  }
-}
-
-function mergeComplaints(serverComplaints = [], localComplaints = []) {
-  const deletedIds = getDeletedComplaintIds().map(String);
-  const map = new Map();
-
-  [...serverComplaints, ...localComplaints].forEach((complaint) => {
-    if (!complaint?.id) return;
-
-    if (deletedIds.includes(String(complaint.id))) return;
-
-    map.set(String(complaint.id), complaint);
-  });
-
-  return Array.from(map.values());
-}
-
 function getTodayDate() {
   return new Date().toLocaleDateString("ar", {
     day: "numeric",
@@ -142,7 +88,6 @@ function CustomerComplaints() {
         setLoading(true);
         setPageMessage("");
 
-        const localComplaints = getLocalComplaints();
 
         const [generatorsResult, complaintsResult] = await Promise.allSettled([
           getGenerators(),
@@ -159,11 +104,6 @@ function CustomerComplaints() {
               currentTargetId || providers[0]?.id || ""
             );
           } else {
-            console.error(
-              "Failed to load provider options:",
-              generatorsResult.reason
-            );
-
             setProviderOptions([]);
             setTargetId("");
 
@@ -180,11 +120,9 @@ function CustomerComplaints() {
               ? complaintsResult.value
               : [];
 
-            setComplaints(mergeComplaints(serverComplaints, localComplaints));
+            setComplaints(serverComplaints);
           } else {
-            console.error("Failed to load complaints:", complaintsResult.reason);
-
-            setComplaints(localComplaints);
+            setComplaints([]);
 
             if (
               complaintsResult.reason?.response?.status !== 404 &&
@@ -197,12 +135,12 @@ function CustomerComplaints() {
           setPageMessage(nextMessages.join(" "));
         }
       } catch (error) {
-        console.error("Failed to load complaints page:", error);
+        void error;
 
         if (isMounted) {
           setPageMessage("تعذر تحميل البيانات من الخادم.");
           setProviderOptions([]);
-          setComplaints(getLocalComplaints());
+          setComplaints([]);
         }
       } finally {
         if (isMounted) {
@@ -261,36 +199,8 @@ function CustomerComplaints() {
   };
 
   const handleDeleteComplaint = (complaintId) => {
-    if (!complaintId) {
-      setPageMessage("لا يمكن حذف الشكوى لأن رقم الشكوى غير موجود.");
-      return;
-    }
-
-    const confirmed = window.confirm("هل أنت متأكد من حذف هذه الشكوى؟");
-
-    if (!confirmed) return;
-
-    const deletedIds = getDeletedComplaintIds();
-    const nextDeletedIds = Array.from(
-      new Set([...deletedIds.map(String), String(complaintId)])
-    );
-
-    saveDeletedComplaintIds(nextDeletedIds);
-
-    setComplaints((prevComplaints) => {
-      const nextComplaints = prevComplaints.filter(
-        (complaint) => String(complaint.id) !== String(complaintId)
-      );
-
-      saveLocalComplaints(nextComplaints);
-      return nextComplaints;
-    });
-
-    if (String(editingComplaint?.id) === String(complaintId)) {
-      resetForm();
-    }
-
-    setPageMessage("تم حذف الشكوى بنجاح.");
+    void complaintId;
+    setPageMessage("حذف الشكاوى غير موثق في واجهة Wasel API الحالية.");
   };
 
   const handleSubmit = async (event) => {
@@ -307,31 +217,7 @@ function CustomerComplaints() {
     }
 
     if (editingComplaint) {
-      const updatedComplaint = normalizeLocalComplaint({
-        ...editingComplaint,
-        targetId,
-        provider: getProviderName(providerOptions, targetId),
-        title: title.trim(),
-        details: details.trim(),
-        attachmentName,
-        status: editingComplaint.status || "pending",
-        statusText: editingComplaint.statusText || "قيد المراجعة",
-      });
-
-      setComplaints((prevComplaints) => {
-        const nextComplaints = prevComplaints.map((complaint) =>
-          String(complaint.id) === String(editingComplaint.id)
-            ? updatedComplaint
-            : complaint
-        );
-
-        saveLocalComplaints(nextComplaints);
-        return nextComplaints;
-      });
-
-      resetForm();
-      setSelectedFilter("all");
-      setPageMessage("تم تعديل الشكوى بنجاح.");
+      setPageMessage("تعديل الشكاوى غير موثق في واجهة Wasel API الحالية.");
       return;
     }
 
@@ -370,31 +256,16 @@ function CustomerComplaints() {
         statusText: createdComplaint.statusText || "قيد المراجعة",
       });
 
-      setComplaints((prevComplaints) => {
-        const nextComplaints = [finalComplaint, ...prevComplaints];
-        saveLocalComplaints(nextComplaints);
-        return nextComplaints;
-      });
+      setComplaints((prevComplaints) => [finalComplaint, ...prevComplaints]);
 
       resetForm();
       setSelectedFilter("all");
       setShowSuccessModal(true);
     } catch (error) {
-      console.error("Failed to submit complaint:", error);
-
-      setComplaints((prevComplaints) => {
-        const nextComplaints = [localComplaint, ...prevComplaints];
-        saveLocalComplaints(nextComplaints);
-        return nextComplaints;
-      });
-
-      resetForm();
-      setSelectedFilter("all");
-
-      setPageMessage(
+      setErrorMessage(
         getApiErrorMessage(
           error,
-          "تم حفظ الشكوى محلياً، لكن تعذر إرسالها للخادم حالياً."
+          "تعذر إرسال الشكوى إلى الخادم. حاول مرة أخرى."
         )
       );
     } finally {
@@ -644,3 +515,6 @@ function CustomerComplaints() {
 }
 
 export default CustomerComplaints;
+
+
+

@@ -758,6 +758,55 @@
   font-weight: 900;
 }
 
+.market-analytics__growth--down {
+  background: #ffe8e8;
+  color: #a32121;
+}
+
+.market-analytics__growth--flat,
+.market-analytics__growth--loading,
+.market-analytics__growth--unavailable {
+  background: #eef2f7;
+  color: #4f5665;
+}
+
+.market-analytics__state {
+  margin: -8px 0 24px;
+  border: 1px solid #d8deeb;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  color: #4f5665;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.7;
+}
+
+.market-analytics__state p {
+  margin: 0;
+}
+
+.market-analytics__state button {
+  min-height: 40px;
+  border: 0;
+  border-radius: 8px;
+  background: #00359b;
+  color: #ffffff;
+  padding: 8px 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
 .market-analytics__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -811,6 +860,36 @@
   font-size: 25px;
   font-weight: 900;
   line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.market-analytics-card--muted strong {
+  color: #4f5665;
+  font-size: 20px;
+}
+
+.market-analytics-card--loading {
+  pointer-events: none;
+}
+
+.market-analytics__skeleton {
+  width: 132px;
+  height: 27px;
+  border-radius: 999px;
+  display: block;
+  background: linear-gradient(90deg, #edf1f8 0%, #f8faff 50%, #edf1f8 100%);
+  background-size: 220% 100%;
+  animation: market-analytics-loading 1.15s ease-in-out infinite;
+}
+
+@keyframes market-analytics-loading {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
 }
 
 .advertisement-modal-backdrop {
@@ -1107,6 +1186,15 @@
     justify-self: start;
     width: max-content;
     max-width: 100%;
+  }
+
+  .market-analytics__state {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .market-analytics__state button {
+    width: 100%;
   }
 }
 @media (max-width: 560px) {

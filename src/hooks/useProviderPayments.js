@@ -1,6 +1,10 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { providerServicePendingMessage } from "../services/provider/providerFrontendStatus";
+import {
+  approveProviderPaymentRequest,
+  getProviderPaymentRequests,
+  rejectProviderPaymentRequest,
+} from "../services/providerPaymentsService";
 
 const pendingStatuses = new Set(["pending", "review", "waiting", "under_review"]);
 const completedStatuses = new Set(["approved", "accepted", "rejected", "completed", "paid", "declined"]);
@@ -13,8 +17,12 @@ function isCompletedPayment(payment) {
   return completedStatuses.has(String(payment.status || "").toLowerCase());
 }
 
+function getErrorMessage(error, fallback = "تعذر تحميل دفعات المراجعة.") {
+  return error?.displayMessage || error?.message || fallback;
+}
+
 export function useProviderPayments() {
-  const [payments] = useState([]);
+  const [payments, setPayments] = useState([]);
   const [activeTab, setActiveTab] = useState("pending");
   const [successMessage, setSuccessMessage] = useState("");
   const [processingPaymentId, setProcessingPaymentId] = useState("");
@@ -23,30 +31,59 @@ export function useProviderPayments() {
   const [rejectReason, setRejectReason] = useState("");
   const [rejectError, setRejectError] = useState("");
   const [proofPreview, setProofPreview] = useState(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  const pendingPayments = useMemo(
-    () => payments.filter(isPendingPayment),
-    [payments]
-  );
-  const completedPayments = useMemo(
-    () => payments.filter(isCompletedPayment),
-    [payments]
-  );
+  const refreshPayments = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const nextPayments = await getProviderPaymentRequests();
+      setPayments(Array.isArray(nextPayments) ? nextPayments : []);
+    } catch (loadError) {
+      setPayments([]);
+      setError(getErrorMessage(loadError));
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      refreshPayments();
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [refreshPayments]);
+
+  const pendingPayments = useMemo(() => payments.filter(isPendingPayment), [payments]);
+  const completedPayments = useMemo(() => payments.filter(isCompletedPayment), [payments]);
   const visiblePayments = activeTab === "pending" ? pendingPayments : completedPayments;
-
-  const refreshPayments = useCallback(() => false, []);
 
   const approvePayment = useCallback(
     async (payment) => {
       if (!payment?.id || processingPaymentId) return;
+      if (!window.confirm("هل تريد اعتماد هذه الدفعة؟")) return;
 
       setProcessingPaymentId(payment.id);
       setProcessingAction("approve");
-      setSuccessMessage(providerServicePendingMessage);
-      setProcessingPaymentId("");
-      setProcessingAction("");
+      setSuccessMessage("");
+      setError("");
+
+      try {
+        await approveProviderPaymentRequest(payment.id);
+        await refreshPayments();
+        setSuccessMessage("تم اعتماد الدفعة بنجاح.");
+      } catch (approveError) {
+        setError(getErrorMessage(approveError, "تعذر اعتماد الدفعة."));
+      } finally {
+        setProcessingPaymentId("");
+        setProcessingAction("");
+      }
     },
-    [processingPaymentId]
+    [processingPaymentId, refreshPayments]
   );
 
   const openRejectModal = useCallback((payment) => {
@@ -64,29 +101,30 @@ export function useProviderPayments() {
   }, [processingAction]);
 
   const rejectPayment = useCallback(async () => {
-    const reason = rejectReason.trim();
-
     if (!selectedPayment?.id || processingPaymentId) return;
-
-    if (!reason) {
-      setRejectError("سبب الرفض مطلوب");
-      return;
-    }
 
     setRejectError("");
     setProcessingPaymentId(selectedPayment.id);
     setProcessingAction("reject");
-    setSuccessMessage(providerServicePendingMessage);
-    setSelectedPayment(null);
-    setRejectReason("");
-    setProcessingPaymentId("");
-    setProcessingAction("");
-  }, [processingPaymentId, rejectReason, selectedPayment]);
+    setSuccessMessage("");
+    setError("");
+
+    try {
+      await rejectProviderPaymentRequest(selectedPayment.id);
+      await refreshPayments();
+      setSelectedPayment(null);
+      setRejectReason("");
+      setSuccessMessage("تم رفض الدفعة.");
+    } catch (rejectRequestError) {
+      setRejectError(getErrorMessage(rejectRequestError, "تعذر رفض الدفعة."));
+    } finally {
+      setProcessingPaymentId("");
+      setProcessingAction("");
+    }
+  }, [processingPaymentId, refreshPayments, selectedPayment]);
 
   const openProofPreview = useCallback((proof) => {
-    if (proof?.url) {
-      setProofPreview(proof);
-    }
+    if (proof?.url) setProofPreview(proof);
   }, []);
 
   const closeProofPreview = useCallback(() => {
@@ -99,9 +137,9 @@ export function useProviderPayments() {
     closeProofPreview,
     closeRejectModal,
     completedPayments,
-    error: "",
+    error,
     fetchPayments: refreshPayments,
-    loading: false,
+    loading,
     openProofPreview,
     openRejectModal,
     pendingPayments,
@@ -121,3 +159,6 @@ export function useProviderPayments() {
 }
 
 export default useProviderPayments;
+
+
+

@@ -1,4 +1,10 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+
+import {
+  getProviderFinancialRecords,
+  getProviderFinancialSummary,
+  getProviderGeneratorCapacity,
+} from "../services/providerFinanceService";
 
 const DEFAULT_PAGE_SIZE = 10;
 const knownStatuses = ["paid", "pending", "overdue", "draft"];
@@ -21,32 +27,19 @@ function normalizeStatus(value) {
 }
 
 function buildInitials(name) {
-  const parts = String(name || "")
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2);
-
+  const parts = String(name || "").trim().split(/\s+/).filter(Boolean).slice(0, 2);
   return parts.map((part) => Array.from(part)[0]).join(" ") || "؟";
 }
 
 function getInvoiceNumber(record) {
-  return (
-    record.invoiceNumber ||
-    record.invoice_number ||
-    record.number ||
-    record.code ||
-    ""
-  );
+  return record.invoiceNumber || record.invoice_number || record.number || record.code || "";
 }
 
 function normalizeInvoiceRecord(record = {}, index = 0) {
   const customerName = record.customerName || record.customer_name || "";
   const status = normalizeStatus(record.status);
   const invoiceNumber = getInvoiceNumber(record);
-  const id = String(
-    record.id || record.invoiceId || record.invoice_id || invoiceNumber || `invoice-${index}`
-  );
+  const id = String(record.id || record.invoiceId || record.invoice_id || invoiceNumber || `invoice-${index}`);
 
   return {
     ...record,
@@ -67,7 +60,6 @@ function buildStats(records) {
   return records.reduce(
     (stats, record) => {
       const status = normalizeStatus(record.status);
-
       return {
         ...stats,
         [status]: stats[status] + 1,
@@ -80,48 +72,16 @@ function buildStats(records) {
 
 function buildInvoiceSummaryCards(stats) {
   return [
-    {
-      id: "total-invoices",
-      iconKey: "file",
-      label: "إجمالي الفواتير",
-      tone: "blue",
-      value: stats.total,
-      variant: "invoice",
-    },
-    {
-      id: "pending-invoices",
-      iconKey: "clipboard",
-      label: "في انتظار الدفع",
-      tone: "orange",
-      value: stats.pending,
-      variant: "invoice",
-    },
-    {
-      id: "paid-invoices",
-      iconKey: "check",
-      label: "المدفوعة",
-      tone: "green",
-      value: stats.paid,
-      variant: "invoice",
-    },
-    {
-      id: "overdue-invoices",
-      iconKey: "alert",
-      label: "المتأخرة",
-      tone: "red",
-      value: stats.overdue,
-      valueTone: "red",
-      variant: "invoice",
-    },
+    { id: "total-invoices", iconKey: "file", label: "إجمالي الفواتير", tone: "blue", value: stats.total, variant: "invoice" },
+    { id: "pending-invoices", iconKey: "clipboard", label: "في انتظار الدفع", tone: "orange", value: stats.pending, variant: "invoice" },
+    { id: "paid-invoices", iconKey: "check", label: "المدفوعة", tone: "green", value: stats.paid, variant: "invoice" },
+    { id: "overdue-invoices", iconKey: "alert", label: "المتأخرة", tone: "red", value: stats.overdue, valueTone: "red", variant: "invoice" },
   ];
 }
 
 function invoiceMatchesSearch(invoice, query) {
   if (!query) return true;
-
-  const searchableText = `${invoice.invoiceNumber} ${invoice.customerName}`.toLowerCase();
-
-  return searchableText.includes(query.toLowerCase());
+  return `${invoice.invoiceNumber} ${invoice.customerName}`.toLowerCase().includes(query.toLowerCase());
 }
 
 function buildDashboardSummary(summary, records) {
@@ -137,40 +97,21 @@ function buildQuickAccessItems(summary) {
   const pendingPaymentsCount = summary?.pendingPaymentsCount || 0;
 
   return [
-    {
-      id: "invoices",
-      buttonLabel: "إدارة الفواتير",
-      description: "إنشاء ومراجعة فواتير المشتركين والمستحقات",
-      iconKey: "receipt",
-      path: "/provider/finance/invoices",
-      title: "الفواتير",
-      tone: "blue",
-    },
-    {
-      id: "payments",
-      buttonLabel: pendingPaymentsCount
-        ? `مراجعة ${pendingPaymentsCount} دفعات`
-        : "عرض المدفوعات",
-      description: "متابعة المدفوعات وسندات القبض وحالات التحقق",
-      iconKey: "shield",
-      path: "/provider/finance/payments",
-      title: "المدفوعات",
-      tone: "orange",
-    },
-    {
-      id: "reports",
-      buttonLabel: "تقرير الشهر جاهز",
-      description: "استخراج التقارير بصيغة PDF وجداول",
-      iconKey: "chart",
-      path: "/provider/finance/reports",
-      title: "التقارير المالية",
-      tone: "blue",
-    },
+    { id: "invoices", buttonLabel: "إدارة الفواتير", description: "إنشاء ومراجعة فواتير المشتركين والمستحقات", iconKey: "receipt", path: "/provider/finance/invoices", title: "الفواتير", tone: "blue" },
+    { id: "payments", buttonLabel: pendingPaymentsCount ? `مراجعة ${pendingPaymentsCount} دفعات` : "عرض المدفوعات", description: "متابعة المدفوعات وسندات القبض وحالات التحقق", iconKey: "shield", path: "/provider/finance/payments", title: "المدفوعات", tone: "orange" },
+    { id: "reports", buttonLabel: "تقرير الشهر جاهز", description: "استخراج التقارير بصيغة PDF وجداول", iconKey: "chart", path: "/provider/finance/reports", title: "التقارير المالية", tone: "blue" },
   ];
 }
 
-export function useProviderFinance() {
-  const [financeState] = useState(initialFinanceState);
+function getErrorMessage(error, fallback = "تعذر تحميل البيانات المالية من الخادم.") {
+  return error?.displayMessage || error?.message || fallback;
+}
+
+export function useProviderFinance({ invoicesOnly = false } = {}) {
+  const [financeState, setFinanceState] = useState(initialFinanceState);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isCapacityLoading, setIsCapacityLoading] = useState(!invoicesOnly);
+  const [errorMessage, setErrorMessage] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
@@ -179,26 +120,66 @@ export function useProviderFinance() {
   const [isAdvancedFilterOpen, setIsAdvancedFilterOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
 
-  const invoices = useMemo(() => {
-    return financeState.records.map(normalizeInvoiceRecord);
-  }, [financeState.records]);
+  const loadFinance = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setErrorMessage("");
+      const [records, summary] = await Promise.all([
+        getProviderFinancialRecords(),
+        getProviderFinancialSummary(),
+      ]);
+      setFinanceState((current) => ({
+        ...current,
+        records,
+        summary,
+      }));
+    } catch (error) {
+      setFinanceState((current) => ({ ...current, records: [], summary: null }));
+      setErrorMessage(getErrorMessage(error));
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const loadCapacity = useCallback(async () => {
+    if (invoicesOnly) return;
+
+    setIsCapacityLoading(true);
+
+    try {
+      const capacity = await getProviderGeneratorCapacity();
+      setFinanceState((current) => ({ ...current, capacity: Array.isArray(capacity) ? capacity : [] }));
+    } catch {
+      setFinanceState((current) => ({ ...current, capacity: [] }));
+    } finally {
+      setIsCapacityLoading(false);
+    }
+  }, [invoicesOnly]);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      loadFinance();
+      loadCapacity();
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [loadCapacity, loadFinance]);
+
+  const invoices = useMemo(() => financeState.records.map(normalizeInvoiceRecord), [financeState.records]);
 
   const dashboardSummary = useMemo(
     () => buildDashboardSummary(financeState.summary, invoices),
     [financeState.summary, invoices]
   );
 
-  const quickAccessItems = useMemo(
-    () => buildQuickAccessItems(dashboardSummary),
-    [dashboardSummary]
-  );
+  const quickAccessItems = useMemo(() => buildQuickAccessItems(dashboardSummary), [dashboardSummary]);
 
   const filteredInvoices = useMemo(
     () =>
       invoices.filter((invoice) => {
-        const matchesStatus =
-          selectedStatus === "all" || invoice.status === selectedStatus;
-
+        const matchesStatus = selectedStatus === "all" || invoice.status === selectedStatus;
         return matchesStatus && invoiceMatchesSearch(invoice, searchQuery.trim());
       }),
     [invoices, searchQuery, selectedStatus]
@@ -214,12 +195,9 @@ export function useProviderFinance() {
     : filteredInvoices;
   const dashboardRecords = invoices.slice(0, 4);
 
-  const setInvoicePage = useCallback(
-    (page) => {
-      setCurrentPage(Math.max(1, Math.min(page, totalPages)));
-    },
-    [totalPages]
-  );
+  const setInvoicePage = useCallback((page) => {
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+  }, [totalPages]);
 
   const openCreateInvoiceModal = useCallback(() => {
     setIsCreateInvoiceModalOpen(true);
@@ -235,7 +213,6 @@ export function useProviderFinance() {
 
   const viewInvoice = useCallback((invoice) => {
     setSelectedInvoice(invoice);
-
     return invoice.path;
   }, []);
 
@@ -244,7 +221,9 @@ export function useProviderFinance() {
   }, []);
 
   const downloadInvoice = useCallback(() => false, []);
-  const refreshInvoices = useCallback(() => false, []);
+  const refreshInvoices = useCallback(async () => {
+    await loadFinance();
+  }, [loadFinance]);
 
   return {
     capacity: financeState.capacity,
@@ -254,14 +233,14 @@ export function useProviderFinance() {
     dashboardRecords,
     dashboardSummary,
     downloadInvoice,
-    errorMessage: "",
+    errorMessage,
     filteredInvoices,
     invoiceSummaryCards,
     invoices,
     isAdvancedFilterOpen,
+    isCapacityLoading,
     isCreateInvoiceModalOpen,
-    isLoading: false,
-    isUsingDemoInvoices: false,
+    isLoading,
     openCreateInvoiceModal,
     pageSize,
     paginatedInvoices,
@@ -282,3 +261,6 @@ export function useProviderFinance() {
 }
 
 export default useProviderFinance;
+
+
+

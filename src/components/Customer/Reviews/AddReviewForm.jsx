@@ -4,6 +4,33 @@ import { IoChevronDownOutline } from "react-icons/io5";
 import CustomerActionSuccessModal from "../Shared/CustomerActionSuccessModal";
 import { getApiErrorMessage } from "../../../utils/apiError";
 
+function hasMatchingValue(leftValue, rightValue) {
+  return leftValue && rightValue && String(leftValue) === String(rightValue);
+}
+
+function matchesEditingReviewTarget(provider, editingReview) {
+  if (!editingReview) return false;
+
+  const providerValues = [
+    provider.id,
+    provider.targetId,
+    provider.providerId,
+    provider.generatorId,
+    provider.subscriptionId,
+  ];
+
+  const reviewValues = [
+    editingReview.targetId,
+    editingReview.providerId,
+    editingReview.generatorId,
+    editingReview.subscriptionId,
+  ];
+
+  return providerValues.some((providerValue) =>
+    reviewValues.some((reviewValue) => hasMatchingValue(providerValue, reviewValue))
+  );
+}
+
 function AddReviewForm({
   editingReview,
   providerOptions = [],
@@ -25,26 +52,30 @@ function AddReviewForm({
   );
 
   useEffect(() => {
-    if (editingReview) {
-      const matchingProvider = providerOptions.find(
-        (provider) =>
-          String(provider.id) === String(editingReview.targetId) ||
-          provider.name === editingReview.provider
-      );
+    const timeoutId = window.setTimeout(() => {
+      if (editingReview) {
+        const matchingProvider = providerOptions.find(
+          (provider) =>
+            matchesEditingReviewTarget(provider, editingReview) ||
+            provider.name === editingReview.provider
+        );
 
-      setProviderId(
-        editingReview.targetId || matchingProvider?.id || defaultProviderId
-      );
-      setRating(editingReview.rating);
-      setReviewText(editingReview.text);
+        setProviderId(matchingProvider?.id || defaultProviderId);
+        setRating(editingReview.rating);
+        setReviewText(editingReview.text);
+        setErrorMessage("");
+        return;
+      }
+
+      setProviderId(defaultProviderId);
+      setRating(5);
+      setReviewText("");
       setErrorMessage("");
-      return;
-    }
+    }, 0);
 
-    setProviderId(defaultProviderId);
-    setRating(5);
-    setReviewText("");
-    setErrorMessage("");
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
   }, [editingReview, defaultProviderId, providerOptions]);
 
   const resetForm = () => {
@@ -68,7 +99,10 @@ function AddReviewForm({
     }
 
     const reviewData = {
-      targetId: providerId,
+      targetId: selectedProvider?.targetId || providerId,
+      providerId: selectedProvider?.providerId || "",
+      generatorId: selectedProvider?.generatorId || "",
+      subscriptionId: selectedProvider?.subscriptionId || "",
       provider: selectedProvider?.name || "",
       rating,
       text: reviewText,
@@ -218,3 +252,4 @@ function AddReviewForm({
 }
 
 export default AddReviewForm;
+

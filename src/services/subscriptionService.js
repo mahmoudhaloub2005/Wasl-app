@@ -10,19 +10,13 @@ const SUBSCRIPTIONS_ENDPOINT = "/subscriptions";
 const LOCAL_SUBSCRIPTION_KEY = "customer_latest_subscription";
 
 function logSubscriptionDebug(label, details) {
-  if (import.meta.env.DEV) {
-    console.log(label, details);
-  }
+  void label;
+  void details;
 }
 
 function logSubscriptionError(label, error) {
-  if (import.meta.env.DEV) {
-    console.error(label, {
-      status: error.response?.status,
-      response: error.response?.data,
-      message: error.message,
-    });
-  }
+  void label;
+  void error;
 }
 
 function unwrapList(data) {
@@ -104,7 +98,7 @@ export function getLocalCustomerSubscription() {
 
     return subscription;
   } catch (error) {
-    console.error("Failed to read local subscription:", error);
+    void error;
     return null;
   }
 }
@@ -123,7 +117,7 @@ export function saveLocalCustomerSubscription(subscription) {
       })
     );
   } catch (error) {
-    console.error("Failed to save local subscription:", error);
+    void error;
   }
 }
 
@@ -711,18 +705,21 @@ function getSubscriptionForGenerator(subscriptions, generatorId) {
 }
 
 export async function getSubscriptions(params = {}) {
-  const response = await api.get(SUBSCRIPTIONS_ENDPOINT, { params });
-  return normalizeSubscriptionList(response.data);
+  void params;
+
+  throw createUnavailableOperationError(
+    "عرض كل الاشتراكات غير موثق في واجهة Wasel API الحالية."
+  );
 }
 
 export async function getMySubscriptions(params = {}) {
-  try {
-    logSubscriptionDebug("get subscriptions request", {
-      endpoint: GET_MY_SUBSCRIPTIONS_ENDPOINT,
-      hasToken: Boolean(getStoredToken()),
-      params,
-    });
+  logSubscriptionDebug("get subscriptions request", {
+    endpoint: GET_MY_SUBSCRIPTIONS_ENDPOINT,
+    hasToken: Boolean(getStoredToken()),
+    params,
+  });
 
+  try {
     const response = await api.get(GET_MY_SUBSCRIPTIONS_ENDPOINT, { params });
 
     logSubscriptionDebug("get subscriptions response", {
@@ -734,27 +731,6 @@ export async function getMySubscriptions(params = {}) {
     return normalizeSubscriptionList(response.data);
   } catch (error) {
     logSubscriptionError("get subscriptions error response", error);
-
-    if (error.response?.status === 404 || error.response?.status === 405) {
-      logSubscriptionDebug("get subscriptions fallback request", {
-        endpoint: SUBSCRIPTIONS_ENDPOINT,
-        hasToken: Boolean(getStoredToken()),
-        params,
-      });
-
-      const fallbackResponse = await api.get(SUBSCRIPTIONS_ENDPOINT, { params });
-
-      logSubscriptionDebug("get subscriptions response", {
-        endpoint: SUBSCRIPTIONS_ENDPOINT,
-        status: fallbackResponse.status,
-        data: fallbackResponse.data,
-      });
-
-      return normalizeSubscriptionList(fallbackResponse.data, {
-        requireCurrentUserOwner: true,
-      });
-    }
-
     throw error;
   }
 }
@@ -775,6 +751,8 @@ export async function getMySubscriptionForGenerator(generatorId, params = {}) {
 }
 
 export async function getSubscriptionDetails(id) {
+  void id;
+
   throw createUnavailableOperationError(
     "تفاصيل الاشتراك الفردية غير متاحة حالياً من الخادم."
   );
@@ -783,13 +761,7 @@ export async function getSubscriptionDetails(id) {
 export async function createSubscription(data) {
   const payload = {
     generator_id: data.generator_id,
-    amperes: data.amperes ?? data.ampere ?? data.ampereValue,
-    payment_plan: data.payment_plan ?? data.paymentPlan,
   };
-
-  if (data.monthly_cost !== undefined) {
-    payload.monthly_cost = data.monthly_cost;
-  }
 
   try {
     logSubscriptionDebug("create subscription request", {
@@ -817,6 +789,9 @@ export async function createSubscription(data) {
 }
 
 export async function updateSubscription(id, data) {
+  void id;
+  void data;
+
   throw createUnavailableOperationError(
     "تعديل الاشتراك غير متاح حالياً من الخادم."
   );
@@ -826,3 +801,6 @@ export async function deleteSubscription(id) {
   const response = await api.delete(`${SUBSCRIPTIONS_ENDPOINT}/${id}`);
   return response.data;
 }
+
+
+

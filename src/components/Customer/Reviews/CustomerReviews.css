@@ -566,3 +566,9 @@
     gap: 10px;
   }
 }
+.review-card-notice {
+  margin: 12px 0 0;
+  color: #8a5a00;
+  font-size: 0.9rem;
+  line-height: 1.7;
+}

@@ -56,7 +56,7 @@ function ProviderPending() {
     try {
       await logoutUser();
     } catch (error) {
-      console.error("Logout failed:", error);
+      void error;
     } finally {
       clearAuthStorage();
       navigate("/login", { replace: true });
@@ -115,3 +115,6 @@ function ProviderPending() {
 }
 
 export default ProviderPending;
+
+
+

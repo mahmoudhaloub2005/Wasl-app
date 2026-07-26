@@ -67,8 +67,6 @@ function ProviderGeneratorInfo() {
       return;
     }
 
-    console.log("بيانات المولد:", formData);
-
     setMessage("");
 
     navigate("/provider-documents", {
@@ -310,3 +308,4 @@ function ProviderGeneratorInfo() {
 }
 
 export default ProviderGeneratorInfo;
+

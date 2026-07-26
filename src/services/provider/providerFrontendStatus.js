@@ -1,10 +1,8 @@
-export const providerServicePendingMessage =
-  "سيتم تفعيل الحفظ النهائي بعد ربط الخدمة";
+export const unsupportedProviderOperationMessage =
+  "هذه العملية غير موثقة في واجهة Wasel API الحالية.";
 
-export function createProviderFrontendOnlyResult(overrides = {}) {
-  return {
-    frontendOnly: true,
-    message: providerServicePendingMessage,
-    ...overrides,
-  };
+export function createUnsupportedProviderOperationError() {
+  const error = new Error(unsupportedProviderOperationMessage);
+  error.displayMessage = unsupportedProviderOperationMessage;
+  return error;
 }

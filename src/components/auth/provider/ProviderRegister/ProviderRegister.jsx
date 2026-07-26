@@ -56,8 +56,6 @@ function useProviderRegister(navigate, initialData = {}) {
 
     setMessage("");
 
-    console.log("بيانات تسجيل مزود الخدمة:", formData);
-
     navigate("/provider-generator-info", {
       state: {
         providerData: formData,
@@ -297,3 +295,4 @@ const ProviderRegister = () => {
 };
 
 export default ProviderRegister;
+

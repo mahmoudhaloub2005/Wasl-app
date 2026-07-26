@@ -2,7 +2,7 @@ import { FiActivity } from "react-icons/fi";
 
 import GeneratorCapacityItem from "./GeneratorCapacityItem";
 
-function SubscriberCapacityCard({ capacity, isLoading, onNavigate }) {
+function SubscriberCapacityCard({ capacity = [], isLoading, onNavigate }) {
   return (
     <aside
       className="subscriber-capacity-card"
@@ -29,7 +29,11 @@ function SubscriberCapacityCard({ capacity, isLoading, onNavigate }) {
         </div>
       )}
 
-      <button type="button" onClick={() => onNavigate("/provider/finance/capacity")}>
+      <button
+        type="button"
+        aria-label="مشاهدة كافة بيانات سعة استهلاك المشتركين"
+        onClick={() => onNavigate("/provider/finance/capacity")}
+      >
         مشاهدة كافة البيانات
       </button>
     </aside>

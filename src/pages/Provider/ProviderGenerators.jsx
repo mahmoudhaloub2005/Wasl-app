@@ -14,7 +14,6 @@ import ProviderGeneratorsToolbar from "../../components/Provider/generators/Prov
 import ProviderNavbar from "../../components/Provider/ProviderNavbar/ProviderNavbar";
 import Footer from "../../components/layout/Footer/Footer";
 import useProviderGenerators from "../../hooks/useProviderGenerators";
-import { providerServicePendingMessage } from "../../services/provider/providerFrontendStatus";
 import "./ProviderGenerators.css";
 
 function ProviderGenerators() {
@@ -115,7 +114,7 @@ function ProviderGenerators() {
       setDeleteModalError("");
       await deleteGenerator(generatorToDelete.id);
       setGeneratorToDelete(null);
-      setGeneratorToast(providerServicePendingMessage);
+      setGeneratorToast("تم حذف المولد بنجاح.");
     } catch (error) {
       setDeleteModalError(
         error?.message || "تعذر حذف المولد. حاول مرة أخرى."
@@ -124,17 +123,15 @@ function ProviderGenerators() {
   }
 
   function handleGeneratorCreated(result) {
-    const isFrontendOnly = result?.frontendOnly || result?.temporary;
-
     setGeneratorNotice({
-      tone: isFrontendOnly ? "warning" : "success",
-      text: result?.message || providerServicePendingMessage,
+      tone: "success",
+      text: result?.message || "تم حفظ المولد بنجاح.",
     });
   }
 
   async function handleSaveGenerator(updatedGenerator) {
-    await updateGenerator(updatedGenerator);
-    setGeneratorToast(providerServicePendingMessage);
+    const result = await updateGenerator(updatedGenerator);
+    setGeneratorToast(result?.message || "تم حفظ تعديلات المولد بنجاح.");
   }
 
   return (
@@ -187,7 +184,7 @@ function ProviderGenerators() {
                 sortMode={sortMode}
                 statusFilter={statusFilter}
               />
-              <h2>ط¨ظ‚ظٹط© ط§ظ„ظ…ظˆظ„ط¯ط§طھ</h2>
+              <h2>بقية المولدات</h2>
             </div>
 
             <ProviderGeneratorsTable
@@ -242,3 +239,5 @@ function ProviderGenerators() {
 }
 
 export default ProviderGenerators;
+
+

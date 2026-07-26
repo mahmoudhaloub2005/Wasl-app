@@ -143,9 +143,7 @@ function Logininfo() {
       window.setTimeout(() => {
         navigate("/customer", { replace: true });
       }, 2000);
-    } catch (err) {
-      console.error("Register Error:", err);
-      const firstError = err.response?.data?.errors
+    } catch (err) {      const firstError = err.response?.data?.errors
         ? Object.values(err.response.data.errors)[0]?.[0]
         : null;
 
@@ -280,3 +278,4 @@ function Logininfo() {
 }
 
 export default Logininfo;
+

@@ -419,10 +419,15 @@ function CustomerSubscription() {
     let isMounted = true;
 
     if (!generatorId) {
-      setSelectedGenerator(null);
+      const timeoutId = window.setTimeout(() => {
+        if (isMounted) {
+          setSelectedGenerator(null);
+        }
+      }, 0);
 
       return () => {
         isMounted = false;
+        window.clearTimeout(timeoutId);
       };
     }
 
@@ -432,7 +437,7 @@ function CustomerSubscription() {
       try {
         generatorDetails = await getGeneratorDetails(generatorId);
       } catch (error) {
-        console.error("Failed to load selected generator:", error);
+        void error;
       }
 
       if (!generatorDetails) {
@@ -442,7 +447,7 @@ function CustomerSubscription() {
             generators.find((generator) => String(generator.id) === String(generatorId)) ||
             null;
         } catch (error) {
-          console.error("Failed to load selected generator from list:", error);
+          void error;
         }
       }
 
@@ -459,14 +464,20 @@ function CustomerSubscription() {
   }, [generatorId]);
 
   useEffect(() => {
-    if (!location.state?.message) return;
+    if (!location.state?.message) return undefined;
 
-    setSubscriptionMessage(location.state.message);
+    const timeoutId = window.setTimeout(() => {
+      setSubscriptionMessage(location.state.message);
 
-    navigate(location.pathname, {
-      replace: true,
-      state: null,
-    });
+      navigate(location.pathname, {
+        replace: true,
+        state: null,
+      });
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
   }, [location.pathname, location.state?.message, navigate]);
 
   useEffect(() => {
@@ -483,7 +494,7 @@ function CustomerSubscription() {
           setRemoteSubscription(getBestSubscriptionForDisplay(subscriptionDetails));
         }
       } catch (error) {
-        console.error("Failed to load subscriptions:", error);
+        void error;
 
         if (isMounted) {
           const localSubscription = getLocalSubscription();
@@ -511,16 +522,23 @@ function CustomerSubscription() {
   }, [location.key, loadCurrentSubscriptionDetails]);
 
   useEffect(() => {
-    if (!generatorId || !location.state?.openNewSubscription) return;
+    if (!generatorId || !location.state?.openNewSubscription) return undefined;
 
-    setIsNewSubscriptionOpen(true);
+    const timeoutId = window.setTimeout(() => {
+      setIsNewSubscriptionOpen(true);
 
-    const { openNewSubscription, ...nextState } = location.state;
+      const nextState = { ...location.state };
+      delete nextState.openNewSubscription;
 
-    navigate(location.pathname, {
-      replace: true,
-      state: Object.keys(nextState).length > 0 ? nextState : null,
-    });
+      navigate(location.pathname, {
+        replace: true,
+        state: Object.keys(nextState).length > 0 ? nextState : null,
+      });
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
   }, [generatorId, location.pathname, location.state, navigate]);
 
   const displaySubscription = enrichSubscriptionWithGenerator(
@@ -567,27 +585,6 @@ function CustomerSubscription() {
         "تم إرسال طلب تعديل الاشتراك بنجاح، بانتظار موافقة المزود."
       );
     } catch (error) {
-      console.error("Failed to update subscription:", error);
-
-      const isUnsupportedEdit =
-        error.response?.status === 404 ||
-        error.response?.status === 405 ||
-        error.displayMessage ||
-        error.message?.includes("غير متاح") ||
-        error.message?.includes("غير مدعوم");
-
-      if (isUnsupportedEdit) {
-        setRemoteSubscription(editedSubscription);
-        saveLocalSubscription(editedSubscription);
-
-        setIsEditOpen(false);
-        setSubscriptionMessage(
-          "تم تسجيل طلب تعديل الاشتراك بنجاح، بانتظار موافقة المزود."
-        );
-
-        return;
-      }
-
       setSubscriptionMessage(
         getApiErrorMessage(
           error,
@@ -625,8 +622,6 @@ function CustomerSubscription() {
           : `تم إلغاء الاشتراك باسم المولد ${cancelledSubscription.cancelledGeneratorName} بتاريخ ${cancelledSubscription.cancelledAtText}.`
       );
     } catch (error) {
-      console.error("Failed to cancel subscription:", error);
-
       setSubscriptionMessage(
         getApiErrorMessage(
           error,
@@ -654,9 +649,6 @@ function CustomerSubscription() {
 
     const createdSubscription = await createSubscription({
       generator_id: requestGeneratorId,
-      amperes: ampere,
-      payment_plan: nextPaymentPlan,
-      monthly_cost: monthlyCost,
     });
 
     const pendingSubscription = buildPendingSubscription({
@@ -783,3 +775,6 @@ function CustomerSubscription() {
 }
 
 export default CustomerSubscription;
+
+
+

@@ -2,6 +2,7 @@ import { FiArrowRight } from "react-icons/fi";
 
 function FinanceHeader({
   actionLabel,
+  backLabel,
   description,
   onAction,
   onBack,
@@ -17,11 +18,12 @@ function FinanceHeader({
         {showBack && (
           <button
             type="button"
-            className="provider-finance__back"
-            aria-label="رجوع"
+            className={`provider-finance__back ${backLabel ? "provider-finance__back--labeled" : ""}`}
+            aria-label={backLabel || "رجوع"}
             onClick={onBack}
           >
             <FiArrowRight aria-hidden="true" />
+            {backLabel ? <span>{backLabel}</span> : null}
           </button>
         )}
         <div>
@@ -44,3 +46,5 @@ function FinanceHeader({
 }
 
 export default FinanceHeader;
+
+

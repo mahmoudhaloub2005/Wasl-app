@@ -48,9 +48,6 @@ function ContactUs() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    console.log("بيانات التواصل:", formData);
-
     setSuccessMessage("تم إرسال رسالتك بنجاح، سيتم التواصل معك قريباً");
 
     setFormData({

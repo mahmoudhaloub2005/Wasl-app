@@ -9,7 +9,6 @@ function SendPaymentProof({
   invoice = null,
   invoiceId = "",
   invoiceNumber = "",
-  allowTemporaryPayment = false,
   onSubmitPaymentProof,
 }) {
   const navigate = useNavigate();
@@ -20,7 +19,7 @@ function SendPaymentProof({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const maxFileSize = 5 * 1024 * 1024;
-  const canSubmitPayment = Boolean(invoiceId || allowTemporaryPayment);
+  const canSubmitPayment = Boolean(invoiceId);
 
   const handleAmountChange = (event) => {
     if (!canSubmitPayment) {
@@ -101,7 +100,6 @@ function SendPaymentProof({
       setSelectedFile(null);
       setShowSuccessModal(true);
     } catch (error) {
-      console.error("Failed to submit payment proof:", error);
       setErrorMessage(
         getApiErrorMessage(error, "تعذر إرسال إثبات الدفع للخادم. حاول مرة أخرى.")
       );
@@ -191,3 +189,4 @@ function SendPaymentProof({
 }
 
 export default SendPaymentProof;
+

@@ -1,3 +1,5 @@
+export const AUTH_USER_UPDATED_EVENT = "wasel_user_updated";
+
 export function getStoredToken() {
   return (
     localStorage.getItem("wasel_token") ||
@@ -29,11 +31,85 @@ export function getStoredUser() {
       parsedUser
     );
   } catch (error) {
-    console.error("Failed to parse stored user:", error);
+    void error;
     return null;
   }
 }
 
+function getAuthStorageForUser() {
+  if (localStorage.getItem("wasel_user") !== null) return localStorage;
+  if (sessionStorage.getItem("wasel_user") !== null) return sessionStorage;
+  if (localStorage.getItem("wasel_token") !== null) return localStorage;
+  if (sessionStorage.getItem("wasel_token") !== null) return sessionStorage;
+
+  return localStorage;
+}
+
+export function setStoredUser(user) {
+  if (!user || typeof user !== "object") return null;
+
+  const storage = getAuthStorageForUser();
+  storage.setItem("wasel_user", JSON.stringify(user));
+
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(
+      new CustomEvent(AUTH_USER_UPDATED_EVENT, {
+        detail: { user },
+      })
+    );
+  }
+
+  return user;
+}
+
+export function setStoredUserRole(role) {
+  const cleanRole = String(role || "").trim().toLowerCase();
+  const storage = getAuthStorageForUser();
+
+  if (!cleanRole) {
+    localStorage.removeItem("wasel_user_role");
+    sessionStorage.removeItem("wasel_user_role");
+    return "";
+  }
+
+  storage.setItem("wasel_user_role", cleanRole);
+  return cleanRole;
+}
+
+export function setStoredAuthSession({ remember = false, role, token, user } = {}) {
+  const storage = remember ? localStorage : sessionStorage;
+  const otherStorage = remember ? sessionStorage : localStorage;
+  const cleanToken = String(token || "").trim();
+  const cleanRole = String(role || "").trim().toLowerCase();
+
+  otherStorage.removeItem("wasel_token");
+  otherStorage.removeItem("wasel_is_logged_in");
+  otherStorage.removeItem("wasel_user");
+  otherStorage.removeItem("wasel_user_role");
+
+  if (cleanToken) {
+    storage.setItem("wasel_token", cleanToken);
+    storage.setItem("wasel_is_logged_in", "true");
+  }
+
+  if (user && typeof user === "object") {
+    storage.setItem("wasel_user", JSON.stringify(user));
+  }
+
+  if (cleanRole) {
+    storage.setItem("wasel_user_role", cleanRole);
+  }
+
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(
+      new CustomEvent(AUTH_USER_UPDATED_EVENT, {
+        detail: { user, role: cleanRole },
+      })
+    );
+  }
+
+  return { role: cleanRole, token: cleanToken, user };
+}
 function normalizeUserIdentifier(value) {
   if (value === undefined || value === null || value === "") return "";
   return String(value).trim().toLowerCase();
@@ -94,6 +170,7 @@ function normalizeAvatarSource(value) {
   }
 
   const apiBaseUrl =
+    import.meta.env.VITE_API_BASE_URL ||
     import.meta.env.VITE_API_URL ||
     "https://wasel-api-production-0719.up.railway.app/api";
   const assetBaseUrl = apiBaseUrl.replace(/\/api\/?$/, "");
@@ -178,3 +255,4 @@ export function clearAuthStorage() {
   sessionStorage.removeItem("wasel_user");
   sessionStorage.removeItem("wasel_user_role");
 }
+

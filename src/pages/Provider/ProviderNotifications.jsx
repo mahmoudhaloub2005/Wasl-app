@@ -41,9 +41,10 @@ function matchesSearch(notification, searchTerm) {
 function ProviderNotifications() {
   const navigate = useNavigate();
   const {
-    deleteNotification,
+    errorMessage,
     hasUnreadNotifications,
     markAllAsRead,
+    isLoading,
     markAsRead,
     notifications,
   } = useProviderNotifications();
@@ -99,20 +100,27 @@ function ProviderNotifications() {
           onTypeChange={setTypeFilter}
         />
 
+        {errorMessage ? (
+          <p className="subscription-action-message" role="alert">{errorMessage}</p>
+        ) : null}
+
+        {isLoading ? (
+          <p className="subscription-action-message" role="status">جاري تحميل الإشعارات...</p>
+        ) : null}
+
         <section className="provider-notifications-list" aria-live="polite">
-          {filteredNotifications.length > 0 ? (
+          {!isLoading && filteredNotifications.length > 0 ? (
             filteredNotifications.map((notification) => (
               <NotificationCard
                 key={notification.id}
                 notification={notification}
-                onDelete={deleteNotification}
                 onMarkAsRead={markAsRead}
                 onOpen={openNotification}
               />
             ))
-          ) : (
+          ) : !isLoading ? (
             <NotificationsEmptyState />
-          )}
+          ) : null}
         </section>
       </main>
 
@@ -122,3 +130,5 @@ function ProviderNotifications() {
 }
 
 export default ProviderNotifications;
+
+

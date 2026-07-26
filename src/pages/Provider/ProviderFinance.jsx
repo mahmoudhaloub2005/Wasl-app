@@ -40,11 +40,6 @@ function ProviderFinance() {
         </div>
       )}
 
-      {finance.isUsingDemoInvoices && (
-        <div className="provider-finance__notice" role="status">
-          يتم عرض بيانات تطوير مؤقتة لأن بيانات المالية غير متوفرة حالياً من الخادم.
-        </div>
-      )}
 
       <FinancialSummaryCards
         isLoading={finance.isLoading}
@@ -78,7 +73,7 @@ function ProviderFinance() {
 
         <SubscriberCapacityCard
           capacity={finance.capacity}
-          isLoading={finance.isLoading}
+          isLoading={finance.isCapacityLoading}
           onNavigate={goTo}
         />
       </section>
@@ -87,3 +82,4 @@ function ProviderFinance() {
 }
 
 export default ProviderFinance;
+

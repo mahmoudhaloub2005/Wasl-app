@@ -44,6 +44,7 @@ import ProviderSubscriptions from "./pages/Provider/ProviderSubscriptions";
 import ProviderGenerators from "./pages/Provider/ProviderGenerators";
 import ProviderAdvertisements from "./pages/Provider/ProviderAdvertisements";
 import ProviderFinance from "./pages/Provider/ProviderFinance";
+import ProviderCapacityPage from "./pages/Provider/ProviderCapacityPage";
 import ProviderInvoices from "./pages/Provider/ProviderInvoices";
 import ProviderPayments from "./pages/Provider/ProviderPayments";
 import ProviderRatings from "./pages/Provider/ProviderRatings";
@@ -149,7 +150,7 @@ function App() {
         path="/provider/generators/:generatorId/edit"
         element={
           <ProviderProtectedPage>
-            <ProviderPreparedRoute title="ط·ع¾ط·آ¹ط·آ¯ط¸ظ¹ط¸â€‍ ط·آ§ط¸â€‍ط¸â€¦ط¸ث†ط¸â€‍ط·آ¯" />
+            <ProviderPreparedRoute title="تعديل المولد" />
           </ProviderProtectedPage>
         }
       />
@@ -158,7 +159,7 @@ function App() {
         path="/provider/generators/:generatorId"
         element={
           <ProviderProtectedPage>
-            <ProviderPreparedRoute title="ط·ع¾ط¸ظ¾ط·آ§ط·آµط¸ظ¹ط¸â€‍ ط·آ§ط¸â€‍ط¸â€¦ط¸ث†ط¸â€‍ط·آ¯" />
+            <ProviderPreparedRoute title="تفاصيل المولد" />
           </ProviderProtectedPage>
         }
       />
@@ -212,7 +213,7 @@ function App() {
         path="/provider/finance/invoices/:recordId"
         element={
           <ProviderProtectedPage>
-            <ProviderPreparedRoute title="ط·ع¾ط¸ظ¾ط·آ§ط·آµط¸ظ¹ط¸â€‍ ط·آ§ط¸â€‍ط¸ظ¾ط·آ§ط·ع¾ط¸ث†ط·آ±ط·آ©" />
+            <ProviderPreparedRoute title="تفاصيل الفاتورة" />
           </ProviderProtectedPage>
         }
       />
@@ -230,7 +231,7 @@ function App() {
         path="/provider/finance/payments/:recordId"
         element={
           <ProviderProtectedPage>
-            <ProviderPreparedRoute title="ط·ع¾ط¸ظ¾ط·آ§ط·آµط¸ظ¹ط¸â€‍ ط·آ§ط¸â€‍ط·آ¯ط¸ظ¾ط·آ¹" />
+            <ProviderPreparedRoute title="تفاصيل الدفع" />
           </ProviderProtectedPage>
         }
       />
@@ -239,7 +240,7 @@ function App() {
         path="/provider/finance/reports"
         element={
           <ProviderProtectedPage>
-            <ProviderPreparedRoute title="ط·آ§ط¸â€‍ط·ع¾ط¸â€ڑط·آ§ط·آ±ط¸ظ¹ط·آ± ط·آ§ط¸â€‍ط¸â€¦ط·آ§ط¸â€‍ط¸ظ¹ط·آ©" />
+            <ProviderPreparedRoute title="التقارير المالية" />
           </ProviderProtectedPage>
         }
       />
@@ -248,7 +249,7 @@ function App() {
         path="/provider/finance/capacity"
         element={
           <ProviderProtectedPage>
-            <ProviderPreparedRoute title="ط·آ³ط·آ¹ط·آ© ط·آ§ط·آ³ط·ع¾ط¸â€،ط¸â€‍ط·آ§ط¸ئ’ ط·آ§ط¸â€‍ط¸â€¦ط·آ´ط·ع¾ط·آ±ط¸ئ’ط¸ظ¹ط¸â€ " />
+            <ProviderCapacityPage />
           </ProviderProtectedPage>
         }
       />
@@ -307,7 +308,7 @@ function App() {
         path="/provider/activities/:activityId"
         element={
           <ProviderProtectedPage>
-            <ProviderPreparedRoute title="ط·ع¾ط¸ظ¾ط·آ§ط·آµط¸ظ¹ط¸â€‍ ط·آ§ط¸â€‍ط¸â€ ط·آ´ط·آ§ط·آ·" />
+            <ProviderPreparedRoute title="تفاصيل النشاط" />
           </ProviderProtectedPage>
         }
       />
@@ -351,7 +352,7 @@ function App() {
         }
       />
 
-      {/* ط·آ§ط¸â€‍ط·آ§ط·آ´ط·ع¾ط·آ±ط·آ§ط¸ئ’ط·آ§ط·ع¾ ط¸â€¦ط¸â€  ط·آ§ط¸â€‍ط¸â€ ط·آ§ط¸ظ¾ط·آ¨ط·آ§ط·آ± */}
+      {/* Customer subscriptions */}
       <Route
         path="/customer/subscriptions"
         element={
@@ -361,7 +362,7 @@ function App() {
         }
       />
 
-      {/* ط·آ§ط¸â€‍ط·آ§ط·آ´ط·ع¾ط·آ±ط·آ§ط¸ئ’ ط¸â€¦ط¸â€  ط·ع¾ط¸ظ¾ط·آ§ط·آµط¸ظ¹ط¸â€‍ ط¸â€¦ط¸ث†ط¸â€‍ط·آ¯ ط¸â€¦ط·آ¹ط¸ظ¹ط¸â€کط¸â€  */}
+      {/* Customer subscription by generator */}
       <Route
         path="/customer/subscriptions/:generatorId"
         element={
@@ -371,7 +372,7 @@ function App() {
         }
       />
 
-      {/* ط·آ§ط·آ­ط·ع¾ط¸ظ¹ط·آ§ط·آ· ط¸â€‍ط¸ث† ط·آ§ط¸â€‍ط·آ±ط·آ§ط·آ¨ط·آ· ط·آ¨ط·آ¯ط¸ث†ط¸â€  s */}
+      {/* Legacy subscription redirects */}
       <Route
         path="/customer/subscription"
         element={<Navigate to="/customer/subscriptions" replace />}
@@ -386,7 +387,7 @@ function App() {
         }
       />
 
-      {/* ط·آ§ط¸â€‍ط¸ظ¾ط¸ث†ط·آ§ط·ع¾ط¸ظ¹ط·آ± ط¸ث†ط·آ§ط¸â€‍ط¸â€¦ط·آ¯ط¸ظ¾ط¸ث†ط·آ¹ط·آ§ط·ع¾ */}
+      {/* Customer bills */}
       <Route
         path="/customer/bills"
         element={
@@ -437,7 +438,7 @@ function App() {
       />
       <Route path="/customer/*" element={<Navigate to="/customer" replace />} />
 
-      {/* ط¸â€‍ط·آ§ط·آ²ط¸â€¦ ط¸ظ¹ط¸ئ’ط¸ث†ط¸â€  ط·آ¢ط·آ®ط·آ± Route */}
+      {/* Fallback route */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
@@ -458,6 +459,10 @@ export default App;
 // }
 
 // export default App;
+
+
+
+
 
 
 

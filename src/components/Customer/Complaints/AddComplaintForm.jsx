@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { IoChevronDownOutline } from "react-icons/io5";
 
 function AddComplaintForm({
@@ -19,25 +19,30 @@ function AddComplaintForm({
     "سيتي جريد للطاقة",
   ];
 
-  useEffect(() => {
-    if (editingComplaint) {
-      setProvider(editingComplaint.provider);
-      setTitle(editingComplaint.title);
-      setDescription(editingComplaint.description);
-      setErrorMessage("");
-      return;
-    }
-
-    resetForm();
-  }, [editingComplaint]);
-
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setProvider("مولد النور");
     setTitle("");
     setDescription("");
     setErrorMessage("");
-  };
+  }, []);
 
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      if (editingComplaint) {
+        setProvider(editingComplaint.provider);
+        setTitle(editingComplaint.title);
+        setDescription(editingComplaint.description);
+        setErrorMessage("");
+        return;
+      }
+
+      resetForm();
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [editingComplaint, resetForm]);
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -150,3 +155,4 @@ function AddComplaintForm({
 }
 
 export default AddComplaintForm;
+

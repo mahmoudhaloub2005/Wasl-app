@@ -1,3 +1,2 @@
-export const API_URL = "https://wasel-api-production-0719.up.railway.app/api";
-
+export { API_BASE_URL as API_URL } from "./services/api";
 export { default } from "./services/api";

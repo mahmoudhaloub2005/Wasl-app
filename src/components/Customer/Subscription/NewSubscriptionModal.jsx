@@ -99,9 +99,7 @@ function NewSubscriptionModal({ generator, onClose, onConfirm }) {
         monthlyCost: fees.base + fees.maintenance,
         dueNow: 0,
       });
-    } catch (error) {
-      console.error("Failed to create subscription:", error);
-      setErrorMessage(
+    } catch (error) {      setErrorMessage(
         getApiErrorMessage(error, "تعذر إرسال طلب الاشتراك. حاول مرة أخرى.")
       );
     } finally {
@@ -257,3 +255,4 @@ function NewSubscriptionModal({ generator, onClose, onConfirm }) {
 }
 
 export default NewSubscriptionModal;
+

@@ -7,181 +7,10 @@ import SendPaymentProof from "./SendPaymentProof";
 import PaymentsHistory from "./PaymentsHistory";
 import { getMyInvoices } from "../../../services/invoiceService";
 import { createPayment, getMyPayments } from "../../../services/paymentService";
-import {
-  getCurrentSubscription,
-  getCustomerSubscriptionForDisplay,
-  getLocalCustomerSubscription,
-} from "../../../services/subscriptionService";
 import { getApiErrorMessage } from "../../../utils/apiError";
 
 function isMissingEndpoint(error) {
   return error?.response?.status === 404 || error?.response?.status === 405;
-}
-
-function toNumber(value, fallback = 0) {
-  const parsed = Number(String(value ?? "").replace(/[^\d.]/g, ""));
-  return Number.isFinite(parsed) ? parsed : fallback;
-}
-
-function formatCurrency(value) {
-  if (value === undefined || value === null || value === "") return "";
-
-  const text = String(value);
-  return /شيكل|₪/.test(text) ? text : `${text} شيكل`;
-}
-
-function formatCurrentArabicMonth(date = new Date()) {
-  return new Intl.DateTimeFormat("ar", {
-    month: "long",
-    year: "numeric",
-  }).format(date);
-}
-
-function formatArabicDateTime(date = new Date()) {
-  return new Intl.DateTimeFormat("ar", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(date);
-}
-
-function getPackageAmountFromAmpere(ampere) {
-  const ampereValue = toNumber(ampere);
-  const packageAmounts = {
-    3: 45,
-    5: 60,
-    10: 115,
-    15: 170,
-  };
-
-  return packageAmounts[ampereValue] || 0;
-}
-
-function getSubscriptionAmount(subscription = {}) {
-  const directAmount = toNumber(
-    subscription.monthlyCost ||
-      subscription.monthly_cost ||
-      subscription.priceText ||
-      subscription.invoice?.currentBill ||
-      subscription.amount
-  );
-
-  if (directAmount > 0) return directAmount;
-
-  const pricePerAmpere = toNumber(
-    subscription.pricePerAmpereValue ||
-      subscription.pricePerAmpere ||
-      subscription.ampPrice
-  );
-  const amperes = toNumber(
-    subscription.ampereValue || subscription.amperes || subscription.ampere
-  );
-
-  if (pricePerAmpere > 0 && amperes > 0) {
-    return pricePerAmpere * amperes;
-  }
-
-  return getPackageAmountFromAmpere(amperes);
-}
-
-function getSubscriptionProviderName(subscription = {}) {
-  return (
-    subscription.providerName ||
-    subscription.provider_name ||
-    subscription.provider?.name ||
-    subscription.generator?.provider?.name ||
-    subscription.generatorName ||
-    subscription.generator_name ||
-    "المولد"
-  );
-}
-
-function getSubscriptionStatusText(subscription = {}) {
-  return String(
-    subscription.status ||
-      subscription.state ||
-      subscription.statusLabel ||
-      subscription.statusText ||
-      subscription.rawStatus ||
-      ""
-  ).toLowerCase();
-}
-
-function isRejectedOrCancelledSubscription(subscription = {}) {
-  const statusText = getSubscriptionStatusText(subscription);
-
-  return (
-    subscription.isCancelled ||
-    subscription.isRejected ||
-    statusText.includes("cancel") ||
-    statusText.includes("reject") ||
-    statusText.includes("ملغي") ||
-    statusText.includes("ملغى") ||
-    statusText.includes("مرفوض")
-  );
-}
-
-function canBuildDraftInvoiceFromSubscription(subscription = {}) {
-  if (!subscription || isRejectedOrCancelledSubscription(subscription)) {
-    return false;
-  }
-
-  const amountValue = getSubscriptionAmount(subscription);
-  const hasSubscriptionIdentity = Boolean(
-    subscription.id ||
-      subscription.subscriptionNumber ||
-      subscription.generatorId ||
-      subscription.generatorName ||
-      subscription.generator_name
-  );
-
-  return Boolean(subscription.isActive || hasSubscriptionIdentity || amountValue > 0);
-}
-
-function getFirstDraftSubscription(...subscriptions) {
-  return (
-    subscriptions.find((subscription) =>
-      canBuildDraftInvoiceFromSubscription(subscription)
-    ) || null
-  );
-}
-
-function buildSubscriptionDraftInvoice(subscription) {
-  if (!canBuildDraftInvoiceFromSubscription(subscription)) return null;
-
-  const now = new Date();
-  const year = now.getFullYear();
-  const monthNumber = String(now.getMonth() + 1).padStart(2, "0");
-  const amountValue = getSubscriptionAmount(subscription);
-  const subscriptionId = String(
-    subscription.id ||
-      subscription.subscriptionNumber ||
-      subscription.generatorId ||
-      "001"
-  );
-
-  return {
-    id: "",
-    temporaryId: `TEMP-${year}-${monthNumber}-${subscriptionId}`,
-    invoiceNumber: `TEMP-${year}-${monthNumber}-${subscriptionId}`,
-    month: formatCurrentArabicMonth(now),
-    amount: formatCurrency(amountValue),
-    amountValue,
-    status: "unpaid",
-    statusText: "غير مدفوعة",
-    paidAt: "",
-    dueDate: "",
-    issuedAt: now.toISOString(),
-    paymentMethod: "دفعة",
-    isTemporary: true,
-    demoOnly: true,
-    subscriptionId,
-    generatorName: subscription.generatorName || subscription.generator_name || "",
-    providerName: getSubscriptionProviderName(subscription),
-    packageText: subscription.ampere || subscription.package || "",
-  };
 }
 
 function CustomerBills() {
@@ -197,22 +26,12 @@ function CustomerBills() {
       setLoading(true);
       setErrorMessage("");
 
-      const [
-        invoicesResult,
-        paymentsResult,
-        currentSubscriptionResult,
-        displaySubscriptionResult,
-      ] =
-        await Promise.allSettled([
-          getMyInvoices(),
-          getMyPayments(),
-          getCurrentSubscription(),
-          getCustomerSubscriptionForDisplay(),
-        ]);
-
+      const [invoicesResult, paymentsResult] = await Promise.allSettled([
+        getMyInvoices(),
+        getMyPayments(),
+      ]);
       let nextBills = [];
       let nextPayments = [];
-      let draftSubscription = null;
       let firstError = null;
 
       if (invoicesResult.status === "fulfilled") {
@@ -231,40 +50,6 @@ function CustomerBills() {
         firstError = firstError || paymentsResult.reason;
       }
 
-      const localSubscription = getLocalCustomerSubscription();
-
-      if (
-        currentSubscriptionResult.status === "rejected" &&
-        !isMissingEndpoint(currentSubscriptionResult.reason)
-      ) {
-        firstError = firstError || currentSubscriptionResult.reason;
-      }
-
-      if (
-        displaySubscriptionResult.status === "rejected" &&
-        !isMissingEndpoint(displaySubscriptionResult.reason)
-      ) {
-        firstError = firstError || displaySubscriptionResult.reason;
-      }
-
-      draftSubscription = getFirstDraftSubscription(
-        currentSubscriptionResult.status === "fulfilled"
-          ? currentSubscriptionResult.value
-          : null,
-        displaySubscriptionResult.status === "fulfilled"
-          ? displaySubscriptionResult.value
-          : null,
-        localSubscription
-      );
-
-      if (nextBills.length === 0 && draftSubscription) {
-        const draftInvoice = buildSubscriptionDraftInvoice(draftSubscription);
-
-        if (draftInvoice) {
-          nextBills = [draftInvoice];
-        }
-      }
-
       setBills(nextBills);
       setPayments(nextPayments);
 
@@ -274,8 +59,6 @@ function CustomerBills() {
         );
       }
     } catch (error) {
-      console.error("Failed to load invoices:", error);
-
       setBills([]);
       setPayments([]);
       setErrorMessage(
@@ -287,7 +70,13 @@ function CustomerBills() {
   }
 
   useEffect(() => {
-    loadBillsData();
+    const timeoutId = window.setTimeout(() => {
+      loadBillsData();
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
   }, []);
 
   const unpaidBills = useMemo(
@@ -358,42 +147,15 @@ function CustomerBills() {
     setSelectedInvoice(bill);
   }
 
-  async function handleSubmitPaymentProof({ amount, file, invoice, invoiceId }) {
+  async function handleSubmitPaymentProof({ amount, file, invoiceId }) {
     try {
       setErrorMessage("");
       setSuccessMessage("");
 
-      if (invoice?.isTemporary) {
-        const submittedAt = new Date();
-        const temporaryInvoiceKey = invoice.temporaryId || invoice.invoiceNumber;
-
-        setBills((currentBills) =>
-          currentBills.map((bill) =>
-            (bill.temporaryId || bill.invoiceNumber) === temporaryInvoiceKey
-              ? {
-                  ...bill,
-                  status: "pending",
-                  statusText: "قيد التحقق",
-                  paidAt: formatArabicDateTime(submittedAt),
-                  paymentMethod: "إثبات دفع",
-                }
-              : bill
-          )
-        );
-
-        setPayments((currentPayments) => [
-          {
-            id: `demo-payment-${temporaryInvoiceKey}-${submittedAt.getTime()}`,
-            title: `إثبات دفع للفاتورة ${invoice.invoiceNumber}`,
-            date: formatArabicDateTime(submittedAt),
-            amount: `+${amount}`,
-          },
-          ...currentPayments,
-        ]);
-
-        setSelectedInvoice(null);
-        setSuccessMessage("تم إرسال إثبات الدفع بنجاح، وسيتم مراجعته قريباً.");
-        return;
+      if (!invoiceId) {
+        const error = new Error("لا توجد فاتورة حقيقية لإرسال دفعة عليها.");
+        error.displayMessage = error.message;
+        throw error;
       }
 
       await createPayment({
@@ -407,8 +169,6 @@ function CustomerBills() {
       setSelectedInvoice(null);
       setSuccessMessage("تم إرسال إثبات الدفع بنجاح");
     } catch (error) {
-      console.error("Failed to submit payment:", error);
-
       setErrorMessage(
         getApiErrorMessage(error, "تعذر إرسال الدفعة. حاول مرة أخرى.")
       );
@@ -510,14 +270,11 @@ function CustomerBills() {
           </div>
 
           <SendPaymentProof
-            key={`${paymentInvoice?.id || paymentInvoice?.temporaryId || "empty"}-${
-              paymentInvoice?.amountValue || ""
-            }`}
+            key={`${paymentInvoice?.id || "empty"}-${paymentInvoice?.amountValue || ""}`}
             defaultAmount={paymentInvoice?.amountValue || ""}
             invoice={paymentInvoice}
             invoiceId={paymentInvoice?.id || ""}
             invoiceNumber={paymentInvoice?.invoiceNumber || ""}
-            allowTemporaryPayment={Boolean(paymentInvoice?.isTemporary)}
             onSubmitPaymentProof={handleSubmitPaymentProof}
           />
         </div>
@@ -527,3 +284,5 @@ function CustomerBills() {
 }
 
 export default CustomerBills;
+
+

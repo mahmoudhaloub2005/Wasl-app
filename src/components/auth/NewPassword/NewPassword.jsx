@@ -43,9 +43,6 @@ const NewPassword = () => {
     }
 
     setError("");
-
-    console.log("كلمة المرور الجديدة:", formData.password);
-
     navigate("/reset-success");
   };
 

@@ -13,12 +13,16 @@ import ProviderGeneratorUsageGrid from "../../components/Provider/dashboard/Prov
 import ProviderErrorState from "../../components/Provider/dashboard/ProviderErrorState";
 import Footer from "../../components/layout/Footer/Footer";
 import useProviderAdvertisements from "../../hooks/useProviderAdvertisements";
-import { providerServicePendingMessage } from "../../services/provider/providerFrontendStatus";
 import useProviderDashboard from "../../hooks/useProviderDashboard";
+import { sendProviderNotification } from "../../services/notificationService";
 import "./ProviderHome.css";
 
 const ADD_GENERATOR_ROUTE = "/provider/generators?add=1";
 const ADD_ADVERTISEMENT_ROUTE = "/provider/advertisements/add";
+
+function getErrorMessage(error, fallback = "تعذر تنفيذ العملية. حاول مرة أخرى.") {
+  return error?.displayMessage || error?.message || fallback;
+}
 
 function ProviderHome() {
   const navigate = useNavigate();
@@ -34,7 +38,6 @@ function ProviderHome() {
   } = useProviderAdvertisements();
   const {
     activeChartPeriod,
-    addFrontendNotification,
     activities,
     chartPeriods,
     dashboardCopy,
@@ -82,22 +85,26 @@ function ProviderHome() {
   async function handleCreateAdvertisement(formData) {
     const createdAdvertisement = await createAdvertisement(formData);
 
-    setAdvertisementNotice(providerServicePendingMessage);
+    setAdvertisementNotice("تم نشر الإعلان بنجاح.");
     return createdAdvertisement;
   }
 
   async function handleSubmitNotification(notificationForm) {
-    const newNotification = {
-      id: crypto.randomUUID(),
-      title: notificationForm.title,
-      message: notificationForm.message,
-      createdAt: new Date().toISOString(),
-    };
+    const title = String(notificationForm.title || "").trim();
+    const message = String(notificationForm.message || "").trim();
 
-    addFrontendNotification(newNotification);
-    setNotificationToast(providerServicePendingMessage);
+    try {
+      const result = await sendProviderNotification({
+        title,
+        message,
+      });
 
-    return newNotification;
+      setNotificationToast("تم إرسال الإشعار للمشتركين بنجاح.");
+      return result;
+    } catch (error) {
+      setNotificationToast(getErrorMessage(error, "تعذر إرسال الإشعار."));
+      throw error;
+    }
   }
 
   return (
@@ -168,7 +175,7 @@ function ProviderHome() {
         isOpen={isAdvertisementModalOpen}
         isSubmitting={advertisementPendingActionKey === "create"}
         onClose={() => setIsAdvertisementModalOpen(false)}
-        onCreated={() => setAdvertisementNotice(providerServicePendingMessage)}
+        onCreated={() => setAdvertisementNotice("تم نشر الإعلان بنجاح.")}
         onSubmit={handleCreateAdvertisement}
       />
 

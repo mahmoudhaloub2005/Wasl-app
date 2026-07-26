@@ -31,24 +31,11 @@ function buildProviderRegistrationForm(providerData, generatorData, files) {
   formData.append("password_confirmation", providerData.password);
   formData.append("phone", providerData.phone);
   formData.append("company_name", providerData.facilityName);
-  formData.append("provider_name", providerData.fullName);
-  formData.append("provider_company_name", providerData.facilityName);
-  formData.append("provider_email", providerData.email);
-  formData.append("provider_phone", providerData.phone);
-  formData.append("generator_name", generatorData.generatorName);
+  formData.append("terms_subscr", providerData.terms ? "1" : "0");
   formData.append("generator_type", generatorData.generatorType);
-  formData.append("area", generatorData.area);
-  formData.append("location", generatorData.location);
-  formData.append("price_per_ampere", generatorData.price);
-  formData.append("available_load", generatorData.availableLoad);
-  formData.append("capacity", generatorData.capacity);
-  formData.append("status", "pending");
-  formData.append("description", generatorData.description);
   formData.append("generator_powerKW", generatorData.capacity);
-  formData.append("generator_gps", generatorData.location);
+  formData.append("generator_gps", generatorData.location || generatorData.area);
   formData.append("generator_price", generatorData.price);
-  formData.append("generator_start_time", generatorData.startTime);
-  formData.append("generator_end_time", generatorData.endTime);
 
   if (files.ownershipFile) formData.append("proofs[]", files.ownershipFile);
   if (files.idFile) formData.append("proofs[]", files.idFile);
@@ -103,10 +90,6 @@ function useProviderDocuments(navigate, providerData, generatorData) {
       return;
     }
 
-    console.log("صورة الهوية:", files.idFile);
-    console.log("إثبات الملكية:", files.ownershipFile);
-    console.log("الرخصة:", files.licenseFile);
-
     setMessage("");
     setMessageType("");
     setSubmitting(true);
@@ -128,7 +111,6 @@ function useProviderDocuments(navigate, providerData, generatorData) {
         },
       });
     } catch (error) {
-      console.error("Provider register error:", error);
       setMessage(
         getApiErrorMessage(error, "تعذر إرسال طلب تسجيل المزود، حاول مرة أخرى")
       );
@@ -373,3 +355,4 @@ function ProviderDocuments() {
 }
 
 export default ProviderDocuments;
+

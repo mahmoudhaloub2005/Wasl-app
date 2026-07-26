@@ -1,6 +1,10 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { providerServicePendingMessage } from "../services/provider/providerFrontendStatus";
+import {
+  createProviderInvoice,
+  getProviderInvoiceSubscriptionDetails,
+  searchProviderInvoiceSubscribers,
+} from "../services/providerInvoicesService";
 
 const MIN_SEARCH_LENGTH = 2;
 
@@ -20,7 +24,6 @@ const initialState = {
 
 function isValidDate(value) {
   if (!value) return false;
-
   const date = new Date(value);
   return !Number.isNaN(date.getTime());
 }
@@ -30,7 +33,7 @@ function validateCurrentReading(currentReading, previousReading) {
 
   const currentValue = Number(currentReading);
 
-  if (!Number.isFinite(currentValue)) return "القراءة الحالية يجب أن تكون رقمًا";
+  if (!Number.isFinite(currentValue)) return "القراءة الحالية يجب أن تكون رقماً";
   if (currentValue < 0) return "القراءة الحالية لا يمكن أن تكون سالبة";
 
   if (previousReading !== "" && previousReading !== null && previousReading !== undefined) {
@@ -45,21 +48,59 @@ function validateCurrentReading(currentReading, previousReading) {
 }
 
 function getSubscriptionNumber(selectedSubscriber, subscription) {
-  return (
-    subscription?.subscriptionNumber ||
-    selectedSubscriber?.subscriptionNumber ||
-    selectedSubscriber?.subscriptionId ||
-    ""
-  );
+  return subscription?.subscriptionNumber || selectedSubscriber?.subscriptionNumber || selectedSubscriber?.subscriptionId || "";
 }
 
-export function useCreateProviderInvoice({ isOpen } = {}) {
+function getSubscriptionId(selectedSubscriber, subscription) {
+  return subscription?.id || selectedSubscriber?.subscriptionId || selectedSubscriber?.id || "";
+}
+
+function getErrorMessage(error, fallback = "تعذر تنفيذ العملية. حاول مرة أخرى.") {
+  return error?.displayMessage || error?.message || fallback;
+}
+
+export function useCreateProviderInvoice({ isOpen, onClose, onCreated } = {}) {
   const [state, setState] = useState(initialState);
-  const [isSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = useCallback(() => {
     setState(initialState);
   }, []);
+
+  useEffect(() => {
+    if (!isOpen) return undefined;
+
+    let isMounted = true;
+
+    async function loadInitialSubscribers() {
+      try {
+        setState((current) => ({ ...current, subscriberSearchLoading: true, searchError: "" }));
+        const results = await searchProviderInvoiceSubscribers("");
+
+        if (isMounted) {
+          setState((current) => ({
+            ...current,
+            subscriberResults: results,
+            subscriberSearchLoading: false,
+          }));
+        }
+      } catch (error) {
+        if (isMounted) {
+          setState((current) => ({
+            ...current,
+            searchError: getErrorMessage(error, "تعذر تحميل المشتركين."),
+            subscriberSearchLoading: false,
+          }));
+        }
+      }
+    }
+
+    loadInitialSubscribers();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isOpen]);
 
   const setSubscriberQuery = useCallback((value) => {
     setState((current) => ({
@@ -67,20 +108,71 @@ export function useCreateProviderInvoice({ isOpen } = {}) {
       searchError: "",
       selectedSubscriber: null,
       subscriberQuery: value,
-      subscriberResults: [],
       subscription: null,
       previousReading: "",
     }));
   }, []);
 
-  const selectSubscriber = useCallback((subscriber) => {
+  useEffect(() => {
+    if (!isOpen) return undefined;
+
+    const query = state.subscriberQuery.trim();
+
+    if (query.length > 0 && query.length < MIN_SEARCH_LENGTH) {
+      setState((current) => ({ ...current, subscriberResults: [] }));
+      return undefined;
+    }
+
+    let isMounted = true;
+    const timer = window.setTimeout(async () => {
+      try {
+        setState((current) => ({ ...current, subscriberSearchLoading: true, searchError: "" }));
+        const results = await searchProviderInvoiceSubscribers(query);
+
+        if (isMounted) {
+          setState((current) => ({ ...current, subscriberResults: results, subscriberSearchLoading: false }));
+        }
+      } catch (error) {
+        if (isMounted) {
+          setState((current) => ({
+            ...current,
+            searchError: getErrorMessage(error, "تعذر البحث في المشتركين."),
+            subscriberResults: [],
+            subscriberSearchLoading: false,
+          }));
+        }
+      }
+    }, 250);
+
+    return () => {
+      isMounted = false;
+      window.clearTimeout(timer);
+    };
+  }, [isOpen, state.subscriberQuery]);
+
+  const selectSubscriber = useCallback(async (subscriber) => {
+    const basicSubscription = subscriber?.subscription || null;
+
     setState((current) => ({
       ...current,
       selectedSubscriber: subscriber,
       subscriberQuery: subscriber?.name || "",
       subscriberResults: [],
-      subscription: subscriber?.subscription || null,
+      subscription: basicSubscription,
+      previousReading: basicSubscription?.previousReading || basicSubscription?.previous_reading || "",
+      fieldErrors: { ...current.fieldErrors, subscriber: "", subscription: "" },
     }));
+
+    try {
+      const details = await getProviderInvoiceSubscriptionDetails(subscriber.subscriptionId || subscriber.id);
+      setState((current) => ({
+        ...current,
+        subscription: details,
+        previousReading: details.previousReading ?? "",
+      }));
+    } catch {
+      // The subscriber row is still usable if the backend response already contains subscription data.
+    }
   }, []);
 
   const setDueDate = useCallback((value) => {
@@ -101,46 +193,58 @@ export function useCreateProviderInvoice({ isOpen } = {}) {
 
   const validation = useMemo(() => {
     const errors = {};
-    const subscriptionNumber = getSubscriptionNumber(
-      state.selectedSubscriber,
-      state.subscription
-    );
-    const currentReadingError = validateCurrentReading(
-      state.currentReading,
-      state.previousReading
-    );
+    const subscriptionId = getSubscriptionId(state.selectedSubscriber, state.subscription);
+    const currentReadingError = validateCurrentReading(state.currentReading, state.previousReading);
 
     if (!state.selectedSubscriber) errors.subscriber = "يرجى اختيار مشترك";
-    if (!subscriptionNumber) errors.subscription = "رقم الاشتراك غير متوفر";
-    if (!state.dueDate || !isValidDate(state.dueDate)) {
-      errors.due_date = "تاريخ الاستحقاق مطلوب";
-    }
+    if (!subscriptionId) errors.subscription = "رقم الاشتراك غير متوفر";
+    if (!state.dueDate || !isValidDate(state.dueDate)) errors.due_date = "تاريخ الاستحقاق مطلوب";
     if (currentReadingError) errors.current_reading = currentReadingError;
 
     return errors;
   }, [state.currentReading, state.dueDate, state.previousReading, state.selectedSubscriber, state.subscription]);
 
   const createInvoice = useCallback(async () => {
-    if (!isOpen) return;
+    if (!isOpen || isSubmitting) return;
 
     if (Object.keys(validation).length) {
       setState((current) => ({ ...current, fieldErrors: validation }));
       return;
     }
 
-    setState((current) => ({
-      ...current,
-      fieldErrors: {},
-      submitError: providerServicePendingMessage,
-    }));
-  }, [isOpen, validation]);
+    setIsSubmitting(true);
+    setState((current) => ({ ...current, fieldErrors: {}, submitError: "" }));
+
+    try {
+      const invoice = await createProviderInvoice({
+        subscription_id: getSubscriptionId(state.selectedSubscriber, state.subscription),
+        previous_reading: state.previousReading || 0,
+        current_reading: state.currentReading,
+        due_date: state.dueDate,
+      });
+
+      await onCreated?.(invoice);
+      resetForm();
+      onClose?.();
+      return invoice;
+    } catch (error) {
+      setState((current) => ({
+        ...current,
+        fieldErrors: error?.fieldErrors || current.fieldErrors,
+        submitError: getErrorMessage(error, "تعذر إصدار الفاتورة."),
+      }));
+      throw error;
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [isOpen, isSubmitting, onClose, onCreated, resetForm, state.currentReading, state.dueDate, state.previousReading, state.selectedSubscriber, state.subscription, validation]);
 
   return {
     ...state,
-    canCreateInvoice: false,
-    canSearchSubscribers: false,
+    canCreateInvoice: true,
+    canSearchSubscribers: true,
     createInvoice,
-    isSubmitDisabled: true,
+    isSubmitDisabled: isSubmitting || Object.keys(validation).length > 0,
     isSubmitting,
     minSearchLength: MIN_SEARCH_LENGTH,
     resetForm,
@@ -148,7 +252,7 @@ export function useCreateProviderInvoice({ isOpen } = {}) {
     setCurrentReading,
     setDueDate,
     setSubscriberQuery,
-    statusMessage: providerServicePendingMessage,
+    statusMessage: "",
     subscriptionNumber: getSubscriptionNumber(state.selectedSubscriber, state.subscription),
     validation,
   };

@@ -178,10 +178,23 @@
   grid-template-rows: auto 1fr auto auto;
   align-items: start;
   text-align: right;
+  direction: rtl;
   cursor: pointer;
   transition:
     transform 0.18s ease,
     box-shadow 0.18s ease;
+}
+
+.provider-stat-card--monthly-income {
+  order: 1;
+}
+
+.provider-stat-card--active-subscribers {
+  order: 2;
+}
+
+.provider-stat-card--new-requests {
+  order: 3;
 }
 
 .provider-stat-card--loading,
@@ -237,26 +250,28 @@
 }
 
 .provider-stat-card__badge {
-  grid-column: 1;
+  grid-column: 2;
   grid-row: 1;
-  justify-self: start;
-  min-height: 42px;
-  border-radius: 999px;
-  padding: 7px 14px;
+  justify-self: end;
+  min-height: 26px;
+  border-radius: 6px;
+  padding: 5px 10px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 13px;
   font-weight: 900;
   line-height: 1;
+  direction: ltr;
+  unicode-bidi: isolate;
 }
 
 .provider-stat-card__badge-placeholder {
-  grid-column: 1;
+  grid-column: 2;
   grid-row: 1;
   width: 1px;
-  height: 42px;
-  justify-self: start;
+  height: 26px;
+  justify-self: end;
 }
 
 .provider-stat-card__badge--success {
@@ -275,13 +290,15 @@
 }
 
 .provider-stat-card__icon {
-  grid-column: 2;
-  width: 59px;
-  height: 67px;
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: start;
+  width: 58px;
+  height: 58px;
   border-radius: 10px;
   display: grid;
   place-items: center;
-  font-size: 30px;
+  font-size: 29px;
 }
 
 .provider-stat-card__icon--blue {
@@ -302,22 +319,23 @@
 .provider-stat-card__title {
   grid-column: 1 / -1;
   align-self: end;
-  justify-self: end;
-  margin-top: 26px;
+  justify-self: start;
+  margin-top: 24px;
   color: #4f5665;
   font-size: 17px;
   font-weight: 800;
+  text-align: right;
 }
 
 .provider-stat-card__value {
   grid-column: 1 / -1;
-  justify-self: end;
+  justify-self: start;
   margin-top: 7px;
   color: #00359b;
   display: inline-flex;
   align-items: baseline;
-  flex-direction: row-reverse;
-  gap: 10px;
+  gap: 8px;
+  direction: rtl;
   font-size: 40px;
   font-weight: 900;
   line-height: 1;

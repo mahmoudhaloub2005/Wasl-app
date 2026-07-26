@@ -1,33 +1,9 @@
 import api from "./api";
+import { getApiMessage, getFirstValue, sanitizeText, unwrapList } from "./apiResponse";
 
 import newNotifications from "../assets/customer/icons/new-notifications.svg";
 import paidBill from "../assets/customer/icons/paid-bill.svg";
 import unpaidBill from "../assets/customer/icons/unpaid-bill.svg";
-
-function unwrapList(data) {
-  if (Array.isArray(data)) return data;
-  if (Array.isArray(data?.data)) return data.data;
-  if (Array.isArray(data?.notifications)) return data.notifications;
-  if (Array.isArray(data?.data?.notifications)) return data.data.notifications;
-  if (Array.isArray(data?.items)) return data.items;
-  if (data?.notification) return [data.notification];
-  if (data?.data?.notification) return [data.data.notification];
-  if (data?.data && typeof data.data === "object") return [data.data];
-
-  return [];
-}
-
-function getFirstValue(source, keys, fallback = "") {
-  for (const key of keys) {
-    const value = source?.[key];
-
-    if (value !== undefined && value !== null && value !== "") {
-      return value;
-    }
-  }
-
-  return fallback;
-}
 
 function formatDate(value) {
   if (!value) return "";
@@ -46,10 +22,30 @@ function formatDate(value) {
   }).format(date);
 }
 
-function getNotificationVisual(type) {
-  const value = String(type || "").toLowerCase();
+function normalizeBoolean(value) {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "number") return value === 1;
 
-  if (value.includes("payment") || value.includes("paid")) {
+  const text = String(value || "").trim().toLowerCase();
+  return ["1", "true", "read", "yes", "seen"].includes(text);
+}
+
+function normalizeNotificationType(type) {
+  const value = String(type || "system").toLowerCase().replace(/[_-]+/g, "_");
+
+  if (value.includes("payment") || value.includes("paid")) return "payment";
+  if (value.includes("bill") || value.includes("invoice")) return "invoice";
+  if (value.includes("subscriber") || value.includes("subscription")) return "subscriber";
+  if (value.includes("complaint")) return "complaint";
+  if (value.includes("generator")) return "generator";
+
+  return "system";
+}
+
+function getNotificationVisual(type) {
+  const value = normalizeNotificationType(type);
+
+  if (value === "payment") {
     return {
       icon: paidBill,
       iconAlt: "دفعة",
@@ -57,7 +53,7 @@ function getNotificationVisual(type) {
     };
   }
 
-  if (value.includes("bill") || value.includes("invoice")) {
+  if (value === "invoice") {
     return {
       icon: unpaidBill,
       iconAlt: "فاتورة",
@@ -72,33 +68,95 @@ function getNotificationVisual(type) {
   };
 }
 
+function unwrapNotificationItem(data) {
+  return data?.data?.notification || data?.notification || data?.data || data || {};
+}
+
 export function normalizeNotification(notification = {}) {
-  const type = getFirstValue(notification, ["type", "category"]);
+  const type = getFirstValue(notification, ["type", "category"], "system");
   const visual = getNotificationVisual(type);
+  const createdAt = getFirstValue(notification, [
+    "created_at",
+    "createdAt",
+    "time",
+    "date",
+    "sent_at",
+    "sentAt",
+  ]);
+  const description = sanitizeText(
+    getFirstValue(notification, ["description", "message", "body", "text"])
+  );
 
   return {
-    id: getFirstValue(notification, ["id", "_id", "uuid"]),
-    title: getFirstValue(notification, ["title", "subject"], "تنبيه جديد"),
-    description: getFirstValue(
-      notification,
-      ["description", "message", "body", "text"],
-      ""
+    id: String(getFirstValue(notification, ["id", "_id", "uuid"])),
+    type: normalizeNotificationType(type),
+    title: sanitizeText(
+      getFirstValue(notification, ["title", "subject"]),
+      "تنبيه جديد"
     ),
-    time:
-      formatDate(
-        getFirstValue(notification, ["time", "date", "created_at", "createdAt"])
-      ) || "الآن",
-    isRead: Boolean(getFirstValue(notification, ["is_read", "isRead", "read"], false)),
+    description,
+    body: sanitizeText(getFirstValue(notification, ["body", "message", "text"]), description),
+    message: description,
+    time: formatDate(createdAt) || "الآن",
+    createdAt: createdAt || new Date().toISOString(),
+    isRead: normalizeBoolean(
+      getFirstValue(notification, ["is_read", "isRead", "read", "read_at", "readAt"], false)
+    ),
+    route: sanitizeText(getFirstValue(notification, ["route", "path", "url"])),
+    raw: notification,
     ...visual,
   };
 }
 
 export async function getMyNotifications(params = {}) {
   const response = await api.get("/notifications/my", { params });
-  return unwrapList(response.data).map(normalizeNotification);
+  return unwrapList(response.data, ["notifications"])
+    .map(normalizeNotification)
+    .filter((notification) => notification.id);
 }
 
 export async function markNotificationAsRead(id) {
   const response = await api.post(`/notifications/${id}/read`);
   return response.data;
+}
+
+export async function sendProviderNotification({ message, title, userId, user_id } = {}) {
+  const cleanMessage = sanitizeText(message);
+  const cleanTitle = sanitizeText(title);
+  const recipientId = user_id || userId;
+
+  if (!recipientId) {
+    const error = new Error(
+      "إرسال الإشعار يتطلب رقم مستخدم مستلم حسب واجهة Wasel API الحالية."
+    );
+    error.displayMessage = error.message;
+    throw error;
+  }
+
+  if (!cleanTitle) {
+    const error = new Error("يرجى إدخال عنوان الإشعار.");
+    error.displayMessage = error.message;
+    throw error;
+  }
+
+  if (!cleanMessage) {
+    const error = new Error("يرجى إدخال نص الإشعار.");
+    error.displayMessage = error.message;
+    throw error;
+  }
+
+  const payload = {
+    user_id: recipientId,
+    title: cleanTitle,
+    message: cleanMessage,
+  };
+
+  try {
+    const response = await api.post("/notifications/send", payload);
+
+    return unwrapNotificationItem(response.data);
+  } catch (error) {
+    error.displayMessage = getApiMessage(error, "تعذر إرسال الإشعار للمشتركين.");
+    throw error;
+  }
 }
