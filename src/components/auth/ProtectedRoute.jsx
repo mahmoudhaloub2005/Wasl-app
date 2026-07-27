@@ -42,17 +42,45 @@ function getRoleFromResponse(data, user) {
 
 function ProtectedRoute({ children, allowedRoles }) {
   const location = useLocation();
+
   const [status, setStatus] = useState(() =>
     getStoredToken() ? "checking" : "unauthenticated"
   );
-  const [role, setRole] = useState(() => getStoredUserRole());
+
+  const [role, setRole] = useState(() =>
+    String(getStoredUserRole() || "")
+      .trim()
+      .toLowerCase()
+  );
+
+  // تجاوز الحماية أثناء التطوير المحلي فقط
+  const localBypass =
+    import.meta.env.DEV &&
+    import.meta.env.VITE_BYPASS_AUTH === "true";
+
+  const demoPreviewBypass =
+    import.meta.env.VITE_VERCEL_ENV === "preview" &&
+    import.meta.env.VITE_VERCEL_GIT_COMMIT_REF === "frontend-demo" &&
+    import.meta.env.VITE_DEMO_BYPASS === "true";
+
+  const bypassAuth = localBypass || demoPreviewBypass;
 
   useEffect(() => {
+    // لا نفحص التوكن ولا نتصل بالباك عند تفعيل التجاوز
+    if (bypassAuth) {
+      return undefined;
+    }
+
     let isMounted = true;
     const token = getStoredToken();
 
     if (!token) {
       clearAuthStorage();
+
+      if (isMounted) {
+        setStatus("unauthenticated");
+      }
+
       return () => {
         isMounted = false;
       };
@@ -90,7 +118,12 @@ function ProtectedRoute({ children, allowedRoles }) {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [bypassAuth]);
+
+  // افتح الصفحة مباشرة عند تفعيل التجاوز
+  if (bypassAuth) {
+    return children;
+  }
 
   if (status === "checking") {
     return (
@@ -104,7 +137,10 @@ function ProtectedRoute({ children, allowedRoles }) {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
-  if (allowedRoles?.length && (!role || !allowedRoles.includes(role))) {
+  if (
+    allowedRoles?.length &&
+    (!role || !allowedRoles.includes(role))
+  ) {
     return <Navigate to="/login" replace />;
   }
 
@@ -112,5 +148,3 @@ function ProtectedRoute({ children, allowedRoles }) {
 }
 
 export default ProtectedRoute;
-
-
