@@ -94,7 +94,9 @@ function isGeneratorLike(value) {
     "generatorType",
     "provider_id",
     "providerId",
-  ].some((key) => value[key] !== undefined && value[key] !== null);
+  ].some(
+    (key) => value[key] !== undefined && value[key] !== null
+  );
 }
 
 function toNumber(value, fallback = 0) {
@@ -111,9 +113,11 @@ function normalizeKey(value) {
 
 function getMappedLabel(value, labels) {
   const rawValue = String(value || "").trim();
+
   if (!rawValue) return "";
 
   const lookupKey = rawValue.toLowerCase().replace(/[-\s]+/g, "_");
+
   return labels[lookupKey] || rawValue;
 }
 
@@ -121,8 +125,13 @@ function translateGeneratorType(value) {
   const key = normalizeKey(value);
 
   if (!key) return "";
+
   if (key.includes("diesel")) return "ديزل";
-  if (key.includes("gasoline") || key.includes("petrol")) return "بنزين";
+
+  if (key.includes("gasoline") || key.includes("petrol")) {
+    return "بنزين";
+  }
+
   if (key.includes("gas")) return "غاز";
 
   return getMappedLabel(value, GENERATOR_TYPE_LABELS);
@@ -132,12 +141,29 @@ function translateGeneratorStatus(value) {
   const key = normalizeKey(value);
 
   if (!key) return "";
-  if (key.includes("maintenance")) return "صيانة";
-  if (key.includes("inactive")) return "متوقف";
-  if (key.includes("pending") || key.includes("waiting") || key.includes("review")) {
+
+  if (key.includes("maintenance")) {
+    return "صيانة";
+  }
+
+  if (key.includes("inactive")) {
+    return "متوقف";
+  }
+
+  if (
+    key.includes("pending") ||
+    key.includes("waiting") ||
+    key.includes("review")
+  ) {
     return "قيد المراجعة";
   }
-  if (key.includes("active") || key.includes("approved") || key.includes("enabled")) {
+
+  if (
+    key.includes("active") ||
+    key.includes("approved") ||
+    key.includes("enabled") ||
+    key.includes("working")
+  ) {
     return "يعمل الآن";
   }
 
@@ -146,6 +172,7 @@ function translateGeneratorStatus(value) {
 
 function isCoordinateText(value) {
   const text = String(value || "").trim();
+
   return /^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/.test(text);
 }
 
@@ -163,7 +190,9 @@ function formatLocation(value) {
     );
   }
 
-  if (isCoordinateText(value)) return "موقع جغرافي محدد";
+  if (isCoordinateText(value)) {
+    return "موقع جغرافي محدد";
+  }
 
   return String(value);
 }
@@ -216,8 +245,16 @@ function hasUnavailableProviderStatus(value) {
 }
 
 function isVisibleGenerator(generator = {}) {
-  const provider = generator.provider || generator.owner || generator.user || {};
-  const generatorStatus = getFirstValue(generator, ["status", "state"]);
+  const provider =
+    generator.provider ||
+    generator.owner ||
+    generator.user ||
+    {};
+
+  const generatorStatus = getFirstValue(
+    generator,
+    ["status", "state"]
+  );
 
   const providerStatus = getNestedValue(
     { provider, generator },
@@ -231,24 +268,38 @@ function isVisibleGenerator(generator = {}) {
     ]
   );
 
-  return !hasBlockedStatus(generatorStatus) && !hasUnavailableProviderStatus(providerStatus);
+  return (
+    !hasBlockedStatus(generatorStatus) &&
+    !hasUnavailableProviderStatus(providerStatus)
+  );
 }
 
 function formatCurrency(value) {
-  if (value === undefined || value === null || value === "") return "";
+  if (value === undefined || value === null || value === "") {
+    return "";
+  }
 
   const text = String(value);
-  return /شيكل|₪|د\.ع|kw|kva|amp/i.test(text) ? text : `${text} شيكل`;
+
+  return /شيكل|₪|د\.ع|kw|kva|amp/i.test(text)
+    ? text
+    : `${text} شيكل`;
 }
 
 function formatCapacity(value) {
-  if (value === undefined || value === null || value === "") return "";
+  if (value === undefined || value === null || value === "") {
+    return "";
+  }
 
   return String(value);
 }
 
 function normalizeGenerator(generator = {}) {
-  const provider = generator.provider || generator.owner || generator.user || {};
+  const provider =
+    generator.provider ||
+    generator.owner ||
+    generator.user ||
+    {};
 
   const providerId = getNestedValue(
     { provider, generator },
@@ -349,11 +400,14 @@ function normalizeGenerator(generator = {}) {
 
   const providerArea =
     providerOwnArea ||
-    getNestedValue({ generator }, [
-      "generator.area",
-      "generator.region",
-      "generator.city",
-    ]);
+    getNestedValue(
+      { generator },
+      [
+        "generator.area",
+        "generator.region",
+        "generator.city",
+      ]
+    );
 
   const providerAddress = getNestedValue(
     { provider, generator },
@@ -463,38 +517,56 @@ function normalizeGenerator(generator = {}) {
     "generator_powerKW",
   ]);
 
-  const rawStatus = getFirstValue(generator, ["status", "state"]);
+  const rawStatus = getFirstValue(
+    generator,
+    ["status", "state"]
+  );
 
   const statusLabel = getFirstValue(
     generator,
-    ["status_label", "statusLabel", "status_text", "statusText"],
+    [
+      "status_label",
+      "statusLabel",
+      "status_text",
+      "statusText",
+    ],
     rawStatus
   );
 
-  const rawGeneratorType = getFirstValue(generator, [
-    "generator_type",
-    "generatorType",
-    "type",
-  ]);
+  const rawGeneratorType = getFirstValue(
+    generator,
+    [
+      "generator_type",
+      "generatorType",
+      "type",
+    ]
+  );
 
-  const translatedType = translateGeneratorType(rawGeneratorType);
+  const translatedType =
+    translateGeneratorType(rawGeneratorType);
 
   const rawGeneratorName =
-    getFirstValue(generator, [
-      "generator_name",
-      "generatorName",
-      "title",
-      "model",
-      "brand",
-      "name",
-    ]) || translatedType;
+    getFirstValue(
+      generator,
+      [
+        "generator_name",
+        "generatorName",
+        "title",
+        "model",
+        "brand",
+        "name",
+      ]
+    ) || translatedType;
 
   const displayName =
     companyName ||
     rawGeneratorName ||
-    (translatedType ? `مولد ${translatedType}` : "مولد جديد");
+    (translatedType
+      ? `مولد ${translatedType}`
+      : "مولد جديد");
 
-  const statusType = normalizeStatusType(rawStatus);
+  const statusType =
+    normalizeStatusType(rawStatus);
 
   const terms =
     generator.terms ||
@@ -505,39 +577,53 @@ function normalizeGenerator(generator = {}) {
   const review = generator.review || {};
 
   return {
-    id: getFirstValue(generator, ["id", "_id", "uuid", "slug"]),
+    id: getFirstValue(
+      generator,
+      ["id", "_id", "uuid", "slug"]
+    ),
 
     image:
-      getFirstValue(generator, [
-        "image",
-        "image_url",
-        "imageUrl",
-        "photo",
-        "photo_url",
-      ]) || placeholderGeneratorImage,
+      getFirstValue(
+        generator,
+        [
+          "image",
+          "image_url",
+          "imageUrl",
+          "photo",
+          "photo_url",
+        ]
+      ) || placeholderGeneratorImage,
 
     name: displayName,
+
     generatorName: rawGeneratorName,
+
     providerCompanyName: companyName,
 
+    // هذه الخاصية أصبحت وصفية فقط.
+    // لا نستخدمها لإخفاء المولد من Customer.
     isCompanyGenerator: Boolean(companyName),
 
     generatorType: translatedType,
 
-    status: translateGeneratorStatus(statusLabel),
+    status:
+      translateGeneratorStatus(statusLabel),
 
     statusType,
 
     location: formatLocation(
-      getFirstValue(generator, [
-        "area",
-        "region",
-        "city",
-        "address",
-        "location",
-        "gps",
-        "generator_gps",
-      ])
+      getFirstValue(
+        generator,
+        [
+          "area",
+          "region",
+          "city",
+          "address",
+          "location",
+          "gps",
+          "generator_gps",
+        ]
+      )
     ),
 
     price: price ? String(price) : "",
@@ -546,143 +632,403 @@ function normalizeGenerator(generator = {}) {
 
     priceText: getFirstValue(
       generator,
-      ["price_text", "priceText", "formatted_price", "formattedPrice"],
+      [
+        "price_text",
+        "priceText",
+        "formatted_price",
+        "formattedPrice",
+      ],
       formatCurrency(price)
     ),
 
-    currency: getFirstValue(generator, ["currency", "price_currency"]),
+    currency: getFirstValue(
+      generator,
+      [
+        "currency",
+        "price_currency",
+      ]
+    ),
 
-    capacity: formatCapacity(capacity),
+    capacity:
+      formatCapacity(capacity),
 
-    rating: getFirstValue(generator, ["rating", "avg_rating", "averageRating"]),
+    rating: getFirstValue(
+      generator,
+      [
+        "rating",
+        "avg_rating",
+        "averageRating",
+      ]
+    ),
 
-    shortDescription: getFirstValue(generator, [
-      "short_description",
-      "shortDescription",
-      "summary",
-      "description",
-    ]),
+    shortDescription:
+      getFirstValue(
+        generator,
+        [
+          "short_description",
+          "shortDescription",
+          "summary",
+          "description",
+        ]
+      ),
 
-    serviceDescription: getFirstValue(generator, [
-      "service_description",
-      "serviceDescription",
-      "description",
-      "details",
-    ]),
+    serviceDescription:
+      getFirstValue(
+        generator,
+        [
+          "service_description",
+          "serviceDescription",
+          "description",
+          "details",
+        ]
+      ),
 
     provider: {
-      hasProviderInfo: hasProviderRelation,
+      hasProviderInfo:
+        hasProviderRelation,
+
       id: providerId,
-      name: companyName || providerName || "",
+
+      name:
+        companyName ||
+        providerName ||
+        "",
+
       phone: providerPhone,
+
       email: providerEmail,
-      area: formatLocation(providerArea),
-      address: formatLocation(providerAddress),
-      description: providerDescription,
-      subscribersCount: providerSubscribersCount,
-      rating: providerRating,
-      status: translateGeneratorStatus(rawProviderStatus || rawStatus),
+
+      area:
+        formatLocation(providerArea),
+
+      address:
+        formatLocation(providerAddress),
+
+      description:
+        providerDescription,
+
+      subscribersCount:
+        providerSubscribersCount,
+
+      rating:
+        providerRating,
+
+      status:
+        translateGeneratorStatus(
+          rawProviderStatus || rawStatus
+        ),
     },
 
-    terms: Array.isArray(terms) ? terms : [],
+    terms:
+      Array.isArray(terms)
+        ? terms
+        : [],
 
     review: {
-      userName: getNestedValue({ review, generator }, [
-        "review.userName",
-        "review.user_name",
-        "generator.review_user_name",
-      ]),
+      userName:
+        getNestedValue(
+          { review, generator },
+          [
+            "review.userName",
+            "review.user_name",
+            "generator.review_user_name",
+          ]
+        ),
 
-      date: getNestedValue({ review, generator }, [
-        "review.date",
-        "generator.review_date",
-      ]),
+      date:
+        getNestedValue(
+          { review, generator },
+          [
+            "review.date",
+            "generator.review_date",
+          ]
+        ),
 
-      text: getNestedValue({ review, generator }, [
-        "review.text",
-        "review.comment",
-        "generator.review_text",
-      ]),
+      text:
+        getNestedValue(
+          { review, generator },
+          [
+            "review.text",
+            "review.comment",
+            "generator.review_text",
+          ]
+        ),
     },
   };
 }
 
-function makeAhliElectricityCard(sourceGenerator) {
-  if (!sourceGenerator) return null;
+/**
+ * Extract pagination information from Laravel-style
+ * paginator responses.
+ *
+ * Supported examples:
+ *
+ * {
+ *   data: [...],
+ *   current_page: 1,
+ *   last_page: 3
+ * }
+ *
+ * or:
+ *
+ * {
+ *   data: {
+ *     data: [...],
+ *     current_page: 1,
+ *     last_page: 3
+ *   }
+ * }
+ */
+function getPaginationInfo(data) {
+  const pagination =
+    data?.meta ||
+    data?.data?.meta ||
+    data ||
+    {};
+
+  const currentPage = Number(
+    data?.current_page ??
+      data?.data?.current_page ??
+      pagination?.current_page ??
+      1
+  );
+
+  const lastPage = Number(
+    data?.last_page ??
+      data?.data?.last_page ??
+      pagination?.last_page ??
+      currentPage
+  );
+
+  const nextPageUrl =
+    data?.next_page_url ??
+    data?.data?.next_page_url ??
+    pagination?.next_page_url ??
+    null;
 
   return {
-    ...sourceGenerator,
-    name: "شركة الكهرباء الأهلية",
-    providerCompanyName: "شركة الكهرباء الأهلية",
-    generatorName: sourceGenerator.generatorName || "مولد كهرباء",
-    provider: {
-      ...sourceGenerator.provider,
-      name: "شركة الكهرباء الأهلية",
-      hasProviderInfo: true,
-    },
-    isCompanyGenerator: true,
-    isPinnedAhliElectricity: true,
+    currentPage:
+      Number.isFinite(currentPage) &&
+      currentPage > 0
+        ? currentPage
+        : 1,
+
+    lastPage:
+      Number.isFinite(lastPage) &&
+      lastPage > 0
+        ? lastPage
+        : 1,
+
+    nextPageUrl,
   };
 }
 
+/**
+ * Get all generator pages from the real backend.
+ *
+ * The backend uses Laravel pagination and currently
+ * returns a limited number of generators per page.
+ *
+ * We intentionally do NOT rely on per_page=100 because
+ * the backend may ignore that parameter.
+ */
+async function fetchAllGeneratorPages(params = {}) {
+  const requestedPage =
+    params?.page !== undefined
+      ? Number(params.page)
+      : null;
+
+  const baseParams = {
+    ...params,
+  };
+
+  delete baseParams.page;
+
+  const allGenerators = [];
+  const seenIds = new Set();
+
+  let page =
+    Number.isFinite(requestedPage) &&
+    requestedPage > 0
+      ? requestedPage
+      : 1;
+
+  let firstResponse = null;
+
+  while (true) {
+    const response = await api.get(
+      "/generators",
+      {
+        params: {
+          ...baseParams,
+          page,
+        },
+      }
+    );
+
+    if (!firstResponse) {
+      firstResponse = response;
+    }
+
+    const responseData = response.data;
+
+    const pageGenerators =
+      unwrapList(responseData);
+
+    for (const generator of pageGenerators) {
+      if (!isGeneratorLike(generator)) {
+        continue;
+      }
+
+      const generatorId =
+        getFirstValue(
+          generator,
+          [
+            "id",
+            "_id",
+            "uuid",
+            "slug",
+          ]
+        );
+
+      if (
+        generatorId === undefined ||
+        generatorId === null ||
+        generatorId === ""
+      ) {
+        continue;
+      }
+
+      const idKey = String(generatorId);
+
+      if (seenIds.has(idKey)) {
+        continue;
+      }
+
+      seenIds.add(idKey);
+      allGenerators.push(generator);
+    }
+
+    const pagination =
+      getPaginationInfo(responseData);
+
+    /*
+     * Stop if:
+     * - backend says this is the last page
+     * - there is no next page
+     */
+    if (
+      pagination.nextPageUrl &&
+      page < pagination.lastPage
+    ) {
+      page += 1;
+      continue;
+    }
+
+    if (
+      page < pagination.lastPage
+    ) {
+      page += 1;
+      continue;
+    }
+
+    break;
+  }
+
+  return {
+    data: allGenerators,
+    firstResponse,
+  };
+}
+
+/**
+ * Normalize a real backend generator list.
+ *
+ * IMPORTANT:
+ * No fake/pinned company generator is created here.
+ * Every returned generator originates from the backend.
+ */
 function normalizeVisibleGenerators(data) {
-  const normalizedGenerators = unwrapList(data)
+  return unwrapList(data)
     .filter(isGeneratorLike)
     .filter(isVisibleGenerator)
     .map(normalizeGenerator)
     .filter((generator) => generator.id);
-
-  const companyGenerators = normalizedGenerators.filter(
-    (generator) => generator.isCompanyGenerator
-  );
-
-  const ahliFromBackend =
-    companyGenerators.find((generator) =>
-      String(generator.name || "").includes("شركة الكهرباء الأهلية")
-    ) || null;
-
-  const ahliCard = makeAhliElectricityCard(
-    ahliFromBackend || normalizedGenerators[0]
-  );
-
-  const providerAddedGenerators = companyGenerators.filter((generator) => {
-    if (!generator?.id) return false;
-    if (ahliCard && String(generator.id) === String(ahliCard.id)) return false;
-
-    return true;
-  });
-
-  return [ahliCard, ...providerAddedGenerators].filter(Boolean);
 }
 
+/**
+ * Get all generators available from the real backend.
+ */
 export async function getGenerators(params = {}) {
-  const response = await api.get("/generators", { params });
-  return normalizeVisibleGenerators(response.data);
-}
+  const { data } =
+    await fetchAllGeneratorPages(params);
 
-export async function searchGenerators(query) {
-  const response = await api.get("/generators/search", {
-    params: { q: query },
+  return normalizeVisibleGenerators({
+    data,
   });
-
-  return normalizeVisibleGenerators(response.data);
 }
 
-export async function getGeneratorDetails(id) {
-  const response = await api.get(`/generators/${id}`);
-  const generator = unwrapItem(response.data);
+/**
+ * Search generators through the real backend search endpoint.
+ */
+export async function searchGenerators(query) {
+  const response = await api.get(
+    "/generators/search",
+    {
+      params: {
+        q: query,
+      },
+    }
+  );
 
-  if (!isGeneratorLike(generator) || !isVisibleGenerator(generator)) {
+  return normalizeVisibleGenerators(
+    response.data
+  );
+}
+
+/**
+ * Get one real generator by its backend ID.
+ */
+export async function getGeneratorDetails(id) {
+  if (
+    id === undefined ||
+    id === null ||
+    id === ""
+  ) {
+    return null;
+  }
+
+  const response = await api.get(
+    `/generators/${id}`
+  );
+
+  const generator =
+    unwrapItem(response.data);
+
+  if (
+    !isGeneratorLike(generator) ||
+    !isVisibleGenerator(generator)
+  ) {
     return null;
   }
 
   return normalizeGenerator(generator);
 }
 
+/**
+ * Compare real generators using the backend endpoint.
+ */
 export async function compareGenerators(ids) {
-  const response = await api.get("/generators/compare", {
-    params: { "ids[]": ids },
-  });
+  const response = await api.get(
+    "/generators/compare",
+    {
+      params: {
+        "ids[]": ids,
+      },
+    }
+  );
 
-  return normalizeVisibleGenerators(response.data);
+  return normalizeVisibleGenerators(
+    response.data
+  );
 }
